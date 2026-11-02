@@ -1987,7 +1987,7 @@ document.addEventListener("DOMContentLoaded",()=>{try{flPickRender();document.qu
         .pr-act{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
         </style>
         <div class="sec-h">
-          <div><h2>ข้อมูลสำหรับ Present</h2><p>ภาพแนวนอน 16:9 พร้อมใส่สไลด์นำเสนอ · อัปเดตตามข้อมูลล่าสุด</p></div><button class="btn-sec" id="prmJump" type="button" onclick="document.querySelector('.prm-group').scrollIntoView({behavior:'smooth',block:'start'})">ข้อมูลแผนที่ อำเภอเมือง ↓</button>
+          <div><h2>ข้อมูลสำหรับ Present</h2><p>ภาพแนวนอน 16:9 พร้อมใส่สไลด์นำเสนอ · อัปเดตตามข้อมูลล่าสุด</p></div><div id="prmTabs" role="tablist" style="display:flex;gap:6px"><button class="btn-sec" id="prmJump" type="button" data-t="img" aria-pressed="true">ภาพนำเสนอ 16:9</button><button class="btn-sec" id="prmTabMap" type="button" data-t="map" aria-pressed="false">แผนที่</button></div>
         </div>
         <div class="pr-grid">
           <div class="pr-card"><h3>สถานการณ์น้ำ จังหวัดประจวบคีรีขันธ์ 16:9</h3><p id="prStSub">อ่างเก็บน้ำขนาดใหญ่ กลาง และเล็ก พร้อมมาตรวัดร้อยละความจุ</p>
@@ -2018,7 +2018,8 @@ document.addEventListener("DOMContentLoaded",()=>{try{flPickRender();document.qu
             <div class="pr-img"><img id="prFlImg" alt="ภาพตัวอย่างการสนับสนุนเครื่องจักร-เครื่องมือ 16:9"></div>
             <div class="flPickBox" id="flPickPr" hidden style="margin-top:10px"></div><div class="pr-act"><button class="btn-sec flPickBtn" data-box="flPickPr" type="button">เลือกจุด</button><button class="btn-sec" id="prFlSave" type="button">บันทึกภาพ 16:9</button></div></div>
         </div>
-        <div class="prm-group"><div class="sec-h" style="margin-top:28px;padding-top:18px;border-top:1px solid var(--line)"><div><h2>ข้อมูลแผนที่ อำเภอเมือง</h2><p>ภาพรวมอำเภอ และรายตำบล 6 ตำบล · ภาพ 16:9 พร้อมใส่สไลด์</p></div><div style="display:flex;gap:8px;align-items:center"><span id="prmPdfSt" style="font-size:12px;color:var(--muted)"></span><button class="btn-primary" id="prmPdf" type="button">รายงาน PDF 4K (8 หน้า)</button></div></div>
+        <div class="prm-group" hidden><div class="sec-h" style="margin-top:4px"><div><h2 style="font-size:20px">แผนที่ทางน้ำ</h2><p>แผนที่ลำน้ำ คลอง อ่างเก็บน้ำ และขอบเขตพื้นที่ · ภาพ 16:9 คมชัด 4K</p></div></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:8px"><div class="sec-h" style="margin:0 0 12px"><div><h3 style="margin:0;font-size:17px">ข้อมูลแผนที่ อำเภอเมือง</h3><p>ภาพรวมอำเภอ และรายตำบล 6 ตำบล</p></div><div style="display:flex;gap:8px;align-items:center"><span id="prmPdfSt" style="font-size:12px;color:var(--muted)"></span><button class="btn-primary" id="prmPdf" type="button">รายงาน PDF 4K (8 หน้า)</button></div></div>
         <div class="pr-grid">
           <div class="pr-card" data-prm="1"><h3>แหล่งน้ำ อำเภอเมืองประจวบคีรีขันธ์ 16:9</h3><p>อ่างฯ ขนาดกลาง 2 · อ่างฯ ขนาดเล็ก 14 (ความจุ/ปริมาณน้ำ) · ฝาย 7 · แผนที่พื้นที่เสี่ยง</p>
             <div class="pr-img"><img id="prMsrcImg" alt="แหล่งน้ำ อำเภอเมืองประจวบคีรีขันธ์ 16:9" src="prm/m1_sources.jpg" loading="lazy" decoding="async"></div>
@@ -2044,8 +2045,12 @@ document.addEventListener("DOMContentLoaded",()=>{try{flPickRender();document.qu
           <div class="pr-card" data-prm="1"><h3>แผนที่ทางน้ำ ตำบลห้วยทราย 16:9</h3><p>ทางน้ำสายสำคัญ · อ่างเก็บน้ำขนาดเล็ก 2 แห่ง</p>
             <div class="pr-img"><img id="prMhsaiImg" alt="แผนที่ทางน้ำ ตำบลห้วยทราย 16:9" src="prm/m8_huaisai.png" loading="lazy" decoding="async"></div>
             <div class="pr-act"><button class="btn-sec" id="prMhsaiSave" data-fn="แผนที่ทางน้ำ_ต.ห้วยทราย_16x9_4K.png" type="button">บันทึกภาพ 16:9 (4K)</button></div></div>
-          </div></div><!--/prm-group-->
-                                      </section>
+          </div></div></div><!--/prm-group-->
+        <div class="prm-group" hidden><div class="sec-h" style="margin-top:4px"><div><h2 style="font-size:20px">แผนที่ทางน้ำ</h2><p>แผนที่ลำน้ำ คลอง อ่างเก็บน้ำ และขอบเขตพื้นที่ · ภาพ 16:9 คมชัด 4K</p></div></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:8px"><div class="sec-h" style="margin:0 0 12px"><div><h3 style="margin:0;font-size:17px">ข้อมูลแผนที่ อำเภอเมือง</h3><p>ภาพรวมอำเภอ และรายตำบล 6 ตำบล</p></div><div style="display:flex;gap:8px;align-items:center"><span id="prmPdfSt" style="font-size:12px;color:var(--muted)"></span><button class="btn-primary" id="prmPdf" type="button">รายงาน PDF 4K (8 หน้า)</button></div></div>
+        <div class="pr-grid">
+          </div></div></div><!--/prm-group-->
+                                              </section>
 <script>
 document.addEventListener("DOMContentLoaded",()=>{try{
   const img=document.getElementById("prRainImg");let busy=0;
@@ -4965,6 +4970,7 @@ function drawReservoir169(r){
   document.getElementById("prOneSave").onclick=()=>{sel=S.value;expKind="one169";openExport()};})();
 /*ONE169_END*/</script>
 <script>/*PRM_START*/
+(function(){const G=document.querySelector('.prm-group'),SEC=G&&G.closest('section'),tabs=document.querySelectorAll('#prmTabs button');const setT=t=>{if(!G)return;const main=[...SEC.querySelectorAll('.pr-grid')].filter(g=>!G.contains(g));main.forEach(g=>g.style.display=t==='map'?'none':'');G.hidden=t!=='map';tabs.forEach(b=>{b.setAttribute('aria-pressed',b.dataset.t===t);b.className=b.dataset.t===t?'btn-primary':'btn-sec'});try{localStorage.setItem('prmTab',t)}catch(e){}};tabs.forEach(b=>b.onclick=()=>setT(b.dataset.t));let t0='img';try{t0=localStorage.getItem('prmTab')||'img'}catch(e){}setT(t0);})();
 (function(){const pb=document.getElementById("prmPdf");if(pb)pb.onclick=async()=>{const st=document.getElementById("prmPdfSt");pb.disabled=true;try{st.textContent="กำลังโหลด PDF…";const blob=await (await fetch("prm/report.pdf")).blob();const fn="รายงานแผนที่แหล่งน้ำ-ทางน้ำ_อ.เมืองประจวบ.pdf";try{if(typeof DL!=="undefined"&&DL){const r=await DL.save({filename:fn,data:blob});st.textContent=r.status==="saved"?"บันทึกแล้ว: "+fn:"ส่งไฟล์แล้ว";return}}catch(e){}const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();a.remove();st.textContent="ดาวน์โหลด "+fn}catch(e){st.textContent="สร้าง PDF ไม่สำเร็จ";console.error(e)}finally{pb.disabled=false}};const b=id=>{const bt=document.getElementById(id+"Save"),im=document.getElementById(id+"Img");if(!bt||!im)return;bt.onclick=async()=>{const fn=bt.dataset.fn;const blob=await (await fetch(im.getAttribute("src"))).blob();
  try{if(typeof DL!=="undefined"&&DL){await DL.save({filename:fn,data:blob});bt.textContent="บันทึกแล้ว";setTimeout(()=>bt.textContent="บันทึกภาพ 16:9 (4K)",2500);return}}catch(e){}
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();a.remove()}};b("prMsrc");b("prMwmap");b("prMbonok");b("prMaonoi");b("prMtown");b("prMkolak");b("prMkwan");b("prMhsai");})();
