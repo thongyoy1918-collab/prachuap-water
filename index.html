@@ -1977,150 +1977,6 @@ document.addEventListener("DOMContentLoaded",()=>{try{flPickRender();document.qu
 .fl-pk-i input{width:18px;height:18px;accent-color:var(--accent);margin:0}.fl-pk-i .no{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
 .fl-pk-i .t{display:flex;flex-direction:column;font-weight:600}.fl-pk-i small{font-weight:400;color:var(--muted);font-size:12px}
 </style>
-<script>/*EXEC_START*/
-function drawExec(){
-  const W=1600,H=Math.round(W*297/210),cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
-  c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
-  const DT=(document.getElementById("datePill")||{}).textContent||"";
-  header(c,W,"รายงานสรุปสถานการณ์น้ำประจำวัน","จังหวัดประจวบคีรีขันธ์ · อ่างเก็บน้ำ 9 แห่ง · อ่างขนาดเล็ก · อ่างฯ ยางชุม · อุทกภัย · หน่วย ล้าน ลบ.ม.",DT);
-  const f3=v=>v==null?"–":Number(v).toLocaleString("th-TH",{minimumFractionDigits:3,maximumFractionDigits:3}),f1=v=>Number(v).toFixed(1);
-  const R=RES,sum=k=>R.reduce((a,r)=>a+(+r[k]||0),0),cap=sum("cap"),cur=sum("cur"),pct=cur/cap*100,inf=sum("inf"),rel=sum("rel");
-  const PB=R.find(r=>r.id==="pranburi"),MID=R.filter(r=>r.type!=="large"),mc=MID.reduce((a,r)=>a+r.cur,0),mk=MID.reduce((a,r)=>a+r.cap,0);
-  const HI=R.filter(r=>r.status==="high"),LO=R.filter(r=>r.status==="low"),OK=R.filter(r=>r.status!=="high"&&r.status!=="low");
-  const SI=typeof smInfo==="function"?smInfo():null;
-  // Yang Chum actual vs plan
-  let YC=null;if(typeof SPD!=="undefined"){const q=SPD.act.map((a,i)=>a?i:-1).filter(i=>i>=0).pop();if(q!=null){const a=SPD.act[q],F=SPD.fc[q];YC={d:F[0].replace(" 69",""),aIn:a[0],pIn:F[1],aSp:a[3]||0,pSp:F[11],aOut:a[1]-(a[3]||0),pOut:F[10],aSt:a[2],pSt:F[3],pct:a[4]*100,end:String(SPD.sum[6][2]).replace(" 69","")}}}
-  const FA=FLOOD.area||{},FS=FLOOD.sites||[],cnt=t=>FS.filter(s=>s.type===t).reduce((a,s)=>a+(s.count||1),0),act=FS.filter(s=>/กำลัง/.test(s.status)).length;
-  const ST=typeof STREAMS!=="undefined"?STREAMS:[],up=ST.filter(s=>/เพิ่ม/.test(s[7])),dn=ST.filter(s=>/ลด/.test(s[7]));
-  const nm=r=>(r.type==="large"?"":"อ่างฯ ")+r.name;
-  // ---- 1) key messages
-  let y=290;const B=[];{
-    B.push(["#1C86C0","ปริมาณน้ำรวมอ่างเก็บน้ำ 9 แห่ง "+f3(cur)+" ล้าน ลบ.ม. ("+f1(pct)+"% ของความจุ) · เขื่อนปราณบุรี "+f3(PB.cur)+" ("+f1(PB.pct)+"%) อยู่ในเกณฑ์"]);
-    if(YC)B.push(["#D93A3A","อ่างฯ ยางชุม "+f3(YC.aSt)+" ("+f1(YC.pct)+"%) "+(YC.aSt>41.1?"น้ำยังล้น Spillway "+f3(YC.aSp)+" ล้าน ลบ.ม./วัน (ล้นน้อยกว่าแผน)":"น้ำหยุดล้น Spillway แล้ว")+" · Inflow จริงต่ำกว่าแผน "+Math.abs((YC.aIn-YC.pIn)/YC.pIn*100).toFixed(0)+"% · ระบายผ่านอาคาร 5.90 ลบ.ม./วิ ตามแผน"]);
-    if(LO.length)B.push(["#D9A400","ต่ำกว่าเกณฑ์ควบคุมล่าง (LRC) "+LO.length+" แห่ง: "+LO.map(r=>nm(r)+" "+f1(r.pct)+"%").join(", ")+" · ต้องเก็บกักน้ำและใช้น้ำอย่างประหยัด"]);
-    B.push(["#1E9A52","อุทกภัย 3 อำเภอ (บางสะพาน บางสะพานน้อย ทับสะแก) ได้รับผลกระทบ "+(FA.hh||0)+" ครัวเรือน "+(FA.rai||0)+" ไร่ · โครงการฯ สนับสนุนเครื่องสูบน้ำ "+cnt("pump")+" เครื่อง รถขุด "+cnt("backhoe")+" คัน รวม "+FS.length+" จุด"+(act?" (กำลังสูบน้ำ "+act+" จุด)":"")]);
-    const c2=document.createElement("canvas").getContext("2d"),LH=30,GAP=14;let need=0;B.forEach(b=>{need+=wrapT(c2,b[1],0,0,W-80-108-36,LH,{s:21,w:500})*LH+GAP});
-    const h=Math.max(300,96+need+12);c.save();c.shadowColor="rgba(17,40,59,.14)";c.shadowBlur=22;c.shadowOffsetY=6;rr(c,40,y,W-80,h,22);c.fillStyle="#fff";c.fill();c.restore();rr(c,40,y,W-80,h,22);c.strokeStyle="#D5DEE7";c.lineWidth=1.5;c.stroke();c.save();rr(c,40,y,W-80,h,22);c.clip();c.fillStyle=RP.navy2;c.fillRect(40,y,10,h);c.restore();
-    T(c,"ประเด็นสำคัญวันนี้",76,y+56,{s:32,w:700,c:RP.ink});T(c,"สรุปจากรายงานประจำวัน "+DT,W-76,y+56,{s:19,c:RP.muted,a:"right"});
-    let by=y+104;B.forEach(b=>{c.beginPath();c.arc(86,by-8,8,0,7);c.fillStyle=b[0];c.fill();const n=wrapT(c,b[1],108,by,W-80-108-36,LH,{s:21,c:RP.ink,w:500});by+=n*LH+GAP});
-    y+=h+18}
-  // ---- 2) KPI tiles
-  {const K=[["อ่างเก็บน้ำ 9 แห่ง",f3(cur),f1(pct)+"% · ความจุ "+f3(cap),RP.act],["เขื่อนปราณบุรี",f3(PB.cur),f1(PB.pct)+"% · ระบาย "+f3(PB.rel)+" /วัน",RP.act],["อ่างขนาดกลาง 8 แห่ง",f3(mc),f1(mc/mk*100)+"% · ความจุ "+f3(mk),RP.act],SI?["อ่างขนาดเล็ก "+SI.n+" แห่ง",f3(SI.stor),f1(SI.p)+"% · ข้อมูล "+SMALL.date,RP.act]:["Inflow รวมวันนี้",f3(inf),"Outflow "+f3(rel),RP.act]];
-    const kw=(W-80-3*16)/4;K.forEach((k,i)=>{const x=40+i*(kw+16);card(c,x,y,kw,140,18);c.fillStyle=RP.sky;c.fillRect(x,y+20,5,100);T(c,k[0],x+26,y+40,{s:20,w:600,c:RP.ink2});fitT(c,k[1],x+26,y+90,kw-50,{s:44,w:700,c:RP.ink});T(c,"ล้าน ลบ.ม.",x+kw-22,y+90,{s:16,c:RP.muted,a:"right"});fitT(c,k[2],x+26,y+122,kw-50,{s:17,c:RP.muted})});y+=158}
-  // ---- 3) reservoir table with bars
-    const L=[];
-    if(YC)L.push("อ่างฯ ยางชุม: คงการระบาย 5.90 ลบ.ม./วิ จนน้ำหยุดล้น Spillway แล้วปรับลดตามแผน ควบคุมให้ต่ำกว่าเกณฑ์ URC 1 ล้าน ลบ.ม. ภายใน 30 พ.ย. · เฝ้าระวังพื้นที่ท้ายอ่างฯ");
-    if(LO.length)L.push(LO.map(nm).join(" และ ")+": ต่ำกว่าเกณฑ์ LRC งดการระบายที่ไม่จำเป็น เก็บกักน้ำไว้เป็นต้นทุนฤดูแล้ง");
-    L.push("พื้นที่อุทกภัย อ.บางสะพาน: คงเครื่องสูบน้ำเร่งระบายน้ำท่วมขัง และติดตามระดับน้ำในคลองบางสะพาน"+(ST.length?" · สถานีวัดน้ำท่า "+ST.length+" แห่ง: ลดลง "+dn.length+" แห่ง"+(up.length?" เพิ่มขึ้น "+up.length+" แห่ง ("+up.map(s=>s[1].replace(/\s*\(.*\)/,"")).join(", ")+")":""):""));
-  const c3=document.createElement("canvas").getContext("2d");let need4=86+10;L.forEach(t=>{need4+=wrapT(c3,t,0,0,W-80-110-30,28,{s:20})*28+12});
-  const RH=Math.max(42,Math.min(62,Math.floor((H-96-20-y-(96+58+52+20)-(440+20)-need4)/R.length)));
-  {const rh=RH,h=96+58+R.length*rh+52;card(c,40,y,W-80,h,20);
-    T(c,"1) สถานการณ์อ่างเก็บน้ำ 9 แห่ง เทียบเกณฑ์ควบคุม (Rule Curve)",70,y+50,{s:27,w:700});
-    const lg=[[RP.high,"สูงกว่า URC "+HI.length],[RP.ok,"อยู่ในเกณฑ์ "+OK.length],[RP.low,"ต่ำกว่า LRC "+LO.length]];let lx=W-70;lg.slice().reverse().forEach(q=>{c.font=`600 18px ${FF}`;const w=c.measureText(q[1]).width;T(c,q[1],lx,y+48,{s:18,w:600,c:q[0],a:"right"});c.beginPath();c.arc(lx-w-14,y+42,7,0,7);c.fillStyle=q[0];c.fill();lx-=w+44});
-    const X0=60,cols=[["อ่างเก็บน้ำ",X0,"left"],["ปริมาณน้ำ",470,"right"],["% ความจุ (แถบ = ปริมาณน้ำ · ขีด = LRC / URC)",510,"left"],["Inflow",1100,"right"],["Outflow",1215,"right"],["ฝน มม.",1310,"right"],["สถานะ",1430,"center"]];
-    const ty=y+78;rr(c,X0-6,ty,W-120+12,52,10);c.fillStyle=RP.thd;c.fill();cols.forEach(q=>T(c,q[0],q[1]+(q[2]==="left"?10:0),ty+33,{s:17,w:700,c:RP.ink2,a:q[2]}));
-    let ry=ty+58;const bx=520,bw=400;
-    R.forEach((r,k)=>{if(k%2){c.fillStyle=RP.zeb;c.fillRect(X0-6,ry,W-120+12,rh)}const [sl,sc,sb]=statusOf(r);
-      T(c,nm(r),X0+10,ry+22,{s:19,w:700});T(c,r.amp,X0+10,ry+40,{s:13,c:RP.muted});
-      T(c,f3(r.cur),470,ry+31,{s:20,w:600,a:"right"});
-      rr(c,bx,ry+13,bw,20,10);c.fillStyle=RP.line2;c.fill();const p=Math.min(100,r.pct);rr(c,bx,ry+13,Math.max(20,bw*p/100),20,10);c.fillStyle=lvC(r.pct);c.fill();
-      [[r.lrcT,RP.lrc],[r.urcT,RP.urc]].forEach(([v,col])=>{if(v==null)return;const tx=bx+bw*Math.min(1,v/r.cap);c.fillStyle=col;c.fillRect(tx-1.5,ry+7,3,32)});
-      T(c,f1(r.pct)+"%",bx+bw+14,ry+31,{s:20,w:700,c:r.pct>100?RP.low:RP.ink});
-      T(c,f3(r.inf),1100,ry+31,{s:19,a:"right",c:RP.inA});T(c,f3(r.rel),1215,ry+31,{s:19,a:"right",c:RP.outA});T(c,r.rain&&r.rain[0]!=null?f1(r.rain[0]):"–",1310,ry+31,{s:19,a:"right",c:RP.ink2});
-      c.font=`700 16px ${FF}`;const pw=c.measureText(sl).width+28;rr(c,1430-pw/2,ry+9,pw,28,14);c.fillStyle=sb;c.fill();T(c,sl,1430,ry+29,{s:16,w:700,c:sc,a:"center"});
-      c.fillStyle=RP.line;c.fillRect(X0-6,ry+rh-1,W-120+12,1);ry+=rh});
-    T(c,"รวม 9 แห่ง",X0+10,ry+32,{s:20,w:700});T(c,f3(cur),470,ry+32,{s:20,w:700,a:"right"});T(c,f1(pct)+"% ของความจุ "+f3(cap),bx,ry+32,{s:19,w:700,c:RP.ink2});T(c,f3(inf),1100,ry+32,{s:19,w:700,a:"right",c:RP.inA});T(c,f3(rel),1215,ry+32,{s:19,w:700,a:"right",c:RP.outA});
-    y+=h+20}
-  // ---- 4) two cards: Yang Chum + Flood
-  {const h=440,cw=(W-80-20)/2;
-    // Yang Chum
-    let x=40;card(c,x,y,cw,h,20);T(c,"2) อ่างฯ ยางชุม · น้ำล้น Spillway",x+30,y+48,{s:26,w:700});
-    if(YC){T(c,"ผลจริง "+YC.d+" เทียบแผน (ล้าน ลบ.ม.)",x+cw-30,y+48,{s:16,c:RP.muted,a:"right"});
-      T(c,"ปริมาณน้ำ",x+30,y+90,{s:18,c:RP.muted,w:600});T(c,f3(YC.aSt),x+30,y+142,{s:52,w:700,c:"#0A8F4E"});c.font=`700 52px ${FF}`;const w=c.measureText(f3(YC.aSt)).width;
-      T(c,f1(YC.pct)+"%",x+44+w,y+120,{s:24,w:700,c:RP.low});T(c,(YC.aSt>41.1?"สูงกว่าสันฝาย +":"ต่ำกว่าสันฝาย ")+Math.abs(YC.aSt-41.1).toFixed(3),x+44+w,y+144,{s:17,w:600,c:RP.ink2});
-      const rows=[["Inflow",YC.aIn,YC.pIn],["ระบายผ่านอาคาร",YC.aOut,YC.pOut],["ล้น Spillway",YC.aSp,YC.pSp]];
-      let ty=y+176;rr(c,x+24,ty,cw-48,40,8);c.fillStyle=RP.thd;c.fill();[["รายการ",x+40,"left"],["จริง",x+300,"right"],["แผน",x+430,"right"],["ส่วนต่าง",x+cw-44,"right"]].forEach(q=>T(c,q[0],q[1],ty+27,{s:17,w:700,c:RP.ink2,a:q[2]}));ty+=40;
-      rows.forEach(rw=>{const d=rw[1]-rw[2],pc=rw[2]?d/rw[2]*100:0,ok=Math.abs(pc)<=5,col=ok?"#0A8F4E":d>0?"#C0392B":"#1C6FB8";T(c,rw[0],x+40,ty+32,{s:19,w:600});T(c,f3(rw[1]),x+300,ty+32,{s:21,w:700,a:"right",c:"#0A8F4E"});T(c,f3(rw[2]),x+430,ty+32,{s:19,a:"right",c:RP.muted});T(c,(d>=0?"+":"")+d.toFixed(3)+" ("+(pc>=0?"+":"")+pc.toFixed(0)+"%)",x+cw-44,ty+32,{s:19,w:700,a:"right",c:col});c.fillStyle=RP.line;c.fillRect(x+24,ty+42,cw-48,1);ty+=43});
-      const P0=SPD.plan[0],P1=SPD.plan[1];
-      wrapT(c,"แผนระบาย: "+P0[0].replace(" 69","")+" คง "+P0[1].toFixed(2)+" ลบ.ม./วิ → "+P1[0].replace(" 69","")+" ลด "+P1[1].toFixed(2)+" ลบ.ม./วิ · คาดน้ำหยุดล้นตามแผน "+YC.end+(YC.aIn<YC.pIn?" (แนวโน้มเร็วกว่าแผน)":""),x+30,ty+34,cw-60,26,{s:18,w:600,c:RP.ink2})}
-    else T(c,"ยังไม่มีข้อมูลผลจริง",x+30,y+100,{s:20,c:RP.muted});
-    // Flood
-    x=40+cw+20;card(c,x,y,cw,h,20);T(c,"3) อุทกภัย 2569 · การช่วยเหลือ",x+30,y+48,{s:26,w:700});T(c,"ข้อมูล "+(FA.asof||FLOOD.date||"").replace(" 2569",""),x+cw-30,y+48,{s:15,c:RP.muted,a:"right"});
-    const S4=[["ครัวเรือน",FA.hh||0,"#C2531B"],["ไร่",FA.rai||0,"#C2531B"],["เครื่องสูบน้ำ",cnt("pump"),"#1E9A52"],["รถขุด (คัน)",cnt("backhoe"),"#E07A1F"]];const sw=(cw-60-3*12)/4;
-    S4.forEach((s,i)=>{const sx=x+30+i*(sw+12);rr(c,sx,y+68,sw,92,14);c.fillStyle="#F4F8FB";c.fill();T(c,String(s[1]),sx+sw/2,y+122,{s:42,w:700,c:s[2],a:"center"});T(c,s[0],sx+sw/2,y+148,{s:17,w:600,c:RP.ink2,a:"center"})});
-    let ty=y+178;rr(c,x+24,ty,cw-48,40,8);c.fillStyle=RP.thd;c.fill();[["อำเภอ",x+40,"left"],["หมู่บ้าน",x+260,"right"],["ครัวเรือน",x+370,"right"],["ไร่",x+450,"right"],["การดำเนินการ",x+480,"left"]].forEach(q=>T(c,q[0],q[1],ty+27,{s:17,w:700,c:RP.ink2,a:q[2]}));ty+=40;
-    (FA.rows||[]).forEach(rw=>{T(c,rw[0],x+40,ty+31,{s:19,w:600});T(c,String(rw[1]),x+260,ty+31,{s:19,a:"right"});T(c,String(rw[4]),x+370,ty+31,{s:19,a:"right",w:700,c:rw[4]?RP.low:RP.ink});T(c,String(rw[5]),x+450,ty+31,{s:19,a:"right"});fitT(c,rw[8]||"",x+480,ty+31,x+cw-40-(x+480),{s:17,c:RP.ink2});c.fillStyle=RP.line;c.fillRect(x+24,ty+42,cw-48,1);ty+=43});
-    fitT(c,"การดำเนินการล่าสุด: "+(FS.length?FS[FS.length-1].title+" "+(FS[FS.length-1].place||"")+" อ."+FS[FS.length-1].amphoe+" ("+FS[FS.length-1].status+")":"–"),x+30,y+h-22,cw-60,{s:17,w:600,c:RP.ink2});
-    y+=h+20}
-  // ---- 5) management & streams
-  {const h=H-96-20-y;card(c,40,y,W-80,h,20);T(c,"4) แนวทางบริหารจัดการน้ำ / ข้อเสนอ",70,y+46,{s:26,w:700});
-    let ly=y+86;L.forEach((t,i)=>{c.beginPath();c.arc(84,ly-8,14,0,7);c.fillStyle=RP.navy2;c.fill();T(c,String(i+1),84,ly-2,{s:16,w:700,c:"#fff",a:"center"});const n=wrapT(c,t,110,ly,W-80-110-30,28,{s:20,c:RP.ink});ly+=n*28+12})}
-  footer(c,W,H,"ผู้จัดทำ: ฝ่ายจัดสรรน้ำและปรับปรุงระบบชลประทาน · รายงานสรุปสถานการณ์น้ำประจำวัน","ที่มา: รายงานสถานการณ์น้ำประจำวัน · ไฟล์กราฟ Rule Curve · สรุปสถานการณ์อุทกภัย · โครงการชลประทานประจวบคีรีขันธ์ สำนักงานชลประทานที่ 14");
-  return cv}
-(function(){const b=document.getElementById("btnExec");if(b)b.onclick=()=>{expKind="exec";openExport()}})();
-/*EXEC_END*/</script>
-<script>/*ONE169_START*/
-function drawReservoir169(r){
-  const W=1600,H=900,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
-  c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
-  const DT=(document.getElementById("datePill")||{}).textContent||"",DS=DT.replace(/\s*25\d\d$/,"");
-  // slim header
-  {const g=c.createLinearGradient(0,0,W,110);g.addColorStop(0,RP.navy);g.addColorStop(1,RP.navy2);c.fillStyle=g;c.fillRect(0,0,W,110);
-   c.save();c.globalAlpha=.08;c.strokeStyle="#fff";c.lineWidth=2;for(let k=0;k<3;k++){c.beginPath();for(let x=0;x<=W;x+=8){const y=80+k*12+Math.sin(x/80+k)*6;x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke()}c.restore();
-   let tx=36;if(RID_LOGO.complete&&RID_LOGO.naturalWidth){const lh=90,lw=lh*RID_LOGO.naturalWidth/RID_LOGO.naturalHeight;c.drawImage(RID_LOGO,26,10,lw,lh);tx=26+lw+20}
-   T(c,"กรมชลประทาน · โครงการชลประทานประจวบคีรีขันธ์",tx,32,{s:15,c:"#BFD3E6",w:500});
-   const nm=(r.type==="large"?"":"อ่างเก็บน้ำ")+r.name;const tw=T(c,nm,tx,72,{s:36,w:700,c:"#fff"});
-   T(c,`${r.type==="large"?"เขื่อนขนาดใหญ่":"อ่างขนาดกลาง"} · ${r.amp} · ระดับน้ำ ${fmt(r.lvl,2)} ม.รทก. · หน่วย ล้าน ลบ.ม.`,tx,98,{s:16,c:"#D6E4F0"});
-   c.font=`600 20px ${FF}`;const dw=c.measureText(DT).width;rr(c,W-36-dw-110,30,dw+110,48,24);c.fillStyle="rgba(255,255,255,.14)";c.fill();
-   T(c,"ข้อมูล ณ",W-36-dw-90,61,{s:16,c:"#BFD3E6"});T(c,DT,W-56,62,{s:20,w:600,c:"#fff",a:"right"})}
-  const [st,fg,bg]=statusOf(r),d=r.d;
-  // KPI row
-  const K=[["ปริมาณน้ำ",fmt(r.cur),"ล้าน ลบ.ม.",RP.ink],["ความจุ",fmt(r.pct,1)+"%",lvName(r.pct),lvC(r.pct)],["รับน้ำได้อีก",fmt(r.recv),"ล้าน ลบ.ม.",RP.ink],["Inflow วันนี้",fmt(r.inf),"ล้าน ลบ.ม.",RP.inA],["Outflow วันนี้",fmt(r.rel),"ล้าน ลบ.ม.",RP.outA]];
-  const note=r.status==="low"?`ต่ำกว่า LRC ${fmt(r.lrcNow-r.cur)}`:r.status==="high"?`เกิน URC ${fmt(r.cur-r.urcNow)}`:`สูงกว่า LRC ${fmt(r.cur-r.lrcNow)}`;
-  const kw=(W-60-5*12)/6;K.forEach((q,i)=>{const x=30+i*(kw+12);card(c,x,124,kw,84,14);T(c,q[0],x+18,150,{s:15,c:RP.muted,w:500});T(c,q[1],x+18,186,{s:30,w:700,c:q[3]});T(c,q[2],x+kw-16,186,{s:13,c:RP.muted,a:"right"})});
-  {const x=30+5*(kw+12);rr(c,x,124,kw,84,14);c.fillStyle=bg;c.fill();c.strokeStyle=fg+"55";c.lineWidth=1.5;c.stroke();T(c,"สถานะเทียบเกณฑ์",x+18,150,{s:15,c:fg,w:600});fitT(c,st,x+18,180,kw-30,{s:22,w:700,c:fg});T(c,note+" ล้าน ลบ.ม.",x+18,200,{s:13,c:fg,w:500})}
-  // RC chart card
-  const LX=30,LW=980,TY=222,BY=870;card(c,LX,TY,LW,BY-TY,18);
-  T(c,"โค้งปฏิบัติการ (Rule Curve) ปี 2569",LX+24,TY+38,{s:22,w:700});
-  {const lbcNow=d.lbc[TODAY],fcEnd=d.fcEnd!=null?d.fcEnd:d.fc[364];const B=[["URC",fmt(r.urcNow),RP.urc],["LBC",fmt(lbcNow),"#5B6B7A"],["LRC",fmt(r.lrcNow),RP.lrc],["คาดการณ์ 31 ธ.ค.",fcEnd==null?"–":fmt(fcEnd),RP.act]];
-   let bx=LX+LW-24;B.slice().reverse().forEach(([l,v,col])=>{c.font=`700 16px ${FF}`;const vw=c.measureText(v).width;c.font=`500 14px ${FF}`;const lw=c.measureText(l).width;const w=lw+vw+28;rr(c,bx-w,TY+18,w,28,14);c.fillStyle=col+"18";c.fill();T(c,l,bx-w+12,TY+37,{s:14,w:500,c:col});T(c,v,bx-12,TY+38,{s:16,w:700,c:RP.ink,a:"right"});bx-=w+8})}
-  const X0=LX+70,X1=LX+LW-30,Y0=TY+76,Y1=BY-70;
-  let hi=Math.max(...d.urc,d.nor,r.cur,...d.fc.filter(v=>v!=null));const stp=niceStep(hi*1.05),yM=Math.ceil(hi*1.05/stp)*stp;
-  const px=i=>X0+i/364*(X1-X0),py=v=>Y1-v/yM*(Y1-Y0);
-  for(let v=0;v<=yM+1e-9;v+=stp){c.strokeStyle=v?RP.line2:RP.line;c.lineWidth=v?1:1.5;c.beginPath();c.moveTo(X0,py(v));c.lineTo(X1,py(v));c.stroke();T(c,String(+v.toFixed(2)),X0-10,py(v)+5,{s:14,c:RP.muted,a:"right"})}
-  for(let m=0;m<12;m++){const i=Math.round((new Date(2026,m,1)-new Date(2026,0,1))/864e5);T(c,TH_M[m],px(i)+3,Y1+22,{s:14,c:RP.muted})}
-  c.beginPath();for(let i=0;i<365;i++)i?c.lineTo(px(i),py(d.urc[i])):c.moveTo(px(i),py(d.urc[i]));for(let i=364;i>=0;i--)c.lineTo(px(i),py(d.lrc[i]));c.closePath();c.fillStyle=RP.band;c.fill();
-  const ln=(arr,s,e,col,w,dash)=>{c.strokeStyle=col;c.lineWidth=w;c.setLineDash(dash||[]);c.beginPath();let f=true;for(let i=s;i<=e;i++){if(arr[i]==null)continue;f?c.moveTo(px(i),py(arr[i])):c.lineTo(px(i),py(arr[i]));f=false}c.stroke();c.setLineDash([])};
-  if(d.nor<=yM){ln(new Array(365).fill(d.nor),0,364,RP.muted,1.2,[3,5]);T(c,`ระดับเก็บกักปกติ ${fmt(d.nor,2)}`,X1-4,py(d.nor)-7,{s:13,c:RP.muted,a:"right"})}
-  ln(d.lbc,0,364,RP.lbc,1.6,[2,5]);ln(d.urc,0,364,RP.urc,2.6);ln(d.lrc,0,364,RP.lrc,2.6);
-  if(d.fc[TODAY+1]!=null)ln(d.fc,TODAY,364,RP.act,2.2,[4,5]);
-  ln(d.act,0,TODAY,RP.act,3.6);
-  c.strokeStyle=RP.muted;c.lineWidth=1;c.setLineDash([4,4]);c.beginPath();c.moveTo(px(TODAY),Y0);c.lineTo(px(TODAY),Y1);c.stroke();c.setLineDash([]);
-  c.beginPath();c.arc(px(TODAY),py(r.cur),8,0,7);c.fillStyle=RP.act;c.fill();c.lineWidth=3;c.strokeStyle="#fff";c.stroke();
-  {const lbl=`${DS} ${fmt(r.cur)}`;c.font=`700 17px ${FF}`;const lw=c.measureText(lbl).width+22;const lx=Math.max(X0,px(TODAY)-lw-12),ly=py(r.cur)-46;rr(c,lx,ly,lw,30,8);c.fillStyle=RP.act;c.fill();T(c,lbl,lx+lw/2,ly+21,{s:17,w:700,c:"#fff",a:"center"})}
-  {let lx=LX+24;const LG=[[RP.urc,"URC",0],[RP.lrc,"LRC",0],[RP.act,"ปริมาณน้ำจริง",0],[RP.lbc,"LBC",1]];if(d.fc[TODAY+1]!=null)LG.splice(3,0,[RP.act,"คาดการณ์",1]);
-   LG.forEach(([col,s,ds])=>{c.strokeStyle=col;c.lineWidth=3.5;c.setLineDash(ds?[5,4]:[]);c.beginPath();c.moveTo(lx,BY-24);c.lineTo(lx+26,BY-24);c.stroke();c.setLineDash([]);lx+=34+T(c,s,lx+34,BY-19,{s:15,c:RP.ink2})+24});
-   const A=(typeof rcAnalysis==="function"?rcAnalysis(r):[])[0];if(A){const KC={bad:RP.low,ok:RP.ok,warn:"#C9901F"};c.font=`600 15px ${FF}`;fitT(c,A.t,lx+10,BY-19,LX+LW-24-(lx+10),{s:15,w:600,c:KC[A.k]||RP.ink2})}}
-  // flow cards
-  const keep=range;range="all";const FI=flowItems(r,"inf"),FO=flowItems(r,"out");range=keep;
-  const RX=LX+LW+16,RW=W-30-RX,mN=new Date(2026,0,1+TODAY).getMonth(),lastM=TH_M[mN];
-  [[FI,"ปริมาณน้ำไหลลงอ่าง (Inflow)",RP.inP,RP.inA,"คาดการณ์","จริง"],[FO,"ปริมาณน้ำระบาย (Outflow)",RP.outP,RP.outA,"แผนระบาย","ระบายจริง"]].forEach(([it,tt,cp,ca,lp,la],k)=>{
-    const y=TY+k*((BY-TY+12)/2),h=(BY-TY-12)/2;card(c,RX,y,RW,h,18);
-    T(c,tt,RX+22,y+34,{s:19,w:700});T(c,"รายเดือน ปี 2569",RX+RW-22,y+34,{s:13,c:RP.muted,a:"right"});
-    const done=it.filter(t=>t.a!=null),sp=done.reduce((s,t)=>s+t.p,0),sa=done.reduce((s,t)=>s+t.a,0),pc=sp?sa/sp*100:0;
-    T(c,`รวม ม.ค.–${lastM}`,RX+22,y+60,{s:13,c:RP.muted});
-    const w1=T(c,fmt(sa),RX+22,y+88,{s:26,w:700,c:ca});T(c,la,RX+30+w1,y+88,{s:13,c:RP.muted});
-    T(c,`${lp} ${fmt(sp)}`,RX+RW-22,y+68,{s:14,c:RP.ink2,a:"right"});T(c,fmt(pc,0)+"% ของ"+lp,RX+RW-22,y+88,{s:15,w:700,c:pc>=100?(k?RP.low:RP.ok):(k?RP.ink2:RP.low),a:"right"});
-    const cx0=RX+46,cx1=RX+RW-16,cy0=y+104,cy1=y+h-44;const mx=Math.max(.01,...it.map(t=>Math.max(t.p,t.a||0)));const s2=niceStep(mx*1.05,3),tp=Math.ceil(mx*1.05/s2)*s2;const yy=v=>cy1-v/tp*(cy1-cy0);
-    for(let v=0;v<=tp+1e-9;v+=s2){c.fillStyle=v?RP.line2:RP.line;c.fillRect(cx0,yy(v),cx1-cx0,1);T(c,String(+v.toFixed(2)),cx0-6,yy(v)+4,{s:12,c:RP.muted,a:"right"})}
-    const sl=(cx1-cx0)/12,bw=sl*.36;
-    it.forEach((t,i)=>{const m0=cx0+sl*(i+.5);rr(c,m0-bw-1,yy(t.p),bw,Math.max(1,cy1-yy(t.p)),3);c.fillStyle=cp;c.fill();if(t.a!=null){rr(c,m0+1,yy(t.a),bw,Math.max(1,cy1-yy(t.a)),3);c.fillStyle=ca;c.fill()}T(c,TH_M[i],m0,cy1+16,{s:12,c:RP.muted,a:"center"})});
-    let lx=RX+22;[[cp,lp],[ca,la]].forEach(([col,s])=>{rr(c,lx,y+h-20,13,13,3);c.fillStyle=col;c.fill();lx+=20+T(c,s,lx+20,y+h-9,{s:13,c:RP.ink2})+20});
-  });
-  T(c,`ที่มา: รายงานสถานการณ์น้ำประจำวัน และไฟล์กราฟ Rule Curve · โครงการชลประทานประจวบคีรีขันธ์ · เดือน ${lastM} ผลจริงถึงวันที่ ${DS} ส่วนแผนเป็นทั้งเดือน`,30,H-10,{s:13,c:RP.muted});
-  T(c,"ข้อมูลน้ำประจวบฯ",W-30,H-10,{s:14,w:700,c:RP.navy2,a:"right"});
-  return cv}
-/*ONE169_END*/</script>
 </body></html></script>
         <style>
         .pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:16px}
@@ -2149,6 +2005,9 @@ function drawReservoir169(r){
           <div class="pr-card"><h3>ปริมาณน้ำไหลเข้า-ระบายออกสะสม 16:9</h3><p id="prFwSub">Inflow / Outflow สะสม เทียบแผน รายอ่าง</p>
             <div class="pr-img"><img id="prFwImg" alt="ภาพตัวอย่างปริมาณน้ำไหลเข้า-ระบายออกสะสม 16:9"></div>
             <div class="pr-act"><button class="btn-sec" id="prFwSave" type="button">บันทึกภาพ 16:9</button></div></div>
+          <div class="pr-card" id="prOneCard"><h3>รายงานอ่างเก็บน้ำรายอ่าง 16:9</h3><p id="prOneSub">โค้งปฏิบัติการ (Rule Curve) และ Inflow / Outflow รายเดือน ปีนี้ · เลือกอ่าง</p>
+            <div class="pr-img"><img id="prOneImg" alt="ภาพตัวอย่างรายงานอ่างเก็บน้ำรายอ่าง 16:9"></div>
+            <div class="pr-act"><select id="prOneSel" aria-label="เลือกอ่างเก็บน้ำ" style="margin-right:auto;font:inherit;font-size:13.5px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"></select><button class="btn-sec" id="prOneSave" type="button">บันทึกภาพ 16:9</button></div></div>
           <div class="pr-card"><h3>ข้อมูลฝนสะสม 16:9</h3><p id="prRainSub">ฝนรายเดือน ฝนสะสม และตารางข้อมูล</p>
             <div class="pr-img"><img id="prRainImg" alt="ภาพตัวอย่างข้อมูลฝนสะสม 16:9"></div>
             <div class="pr-act"><button class="btn-sec" id="prRainSave" type="button">บันทึกภาพ 16:9</button></div></div>
@@ -4927,3 +4786,154 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
   show((location.hash||"").slice(1)||null,false);
 })();
 </script>
+<script>/*EXEC_START*/
+function drawExec(){
+  const W=1600,H=Math.round(W*297/210),cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+  c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
+  const DT=(document.getElementById("datePill")||{}).textContent||"";
+  header(c,W,"รายงานสรุปสถานการณ์น้ำประจำวัน","จังหวัดประจวบคีรีขันธ์ · อ่างเก็บน้ำ 9 แห่ง · อ่างขนาดเล็ก · อ่างฯ ยางชุม · อุทกภัย · หน่วย ล้าน ลบ.ม.",DT);
+  const f3=v=>v==null?"–":Number(v).toLocaleString("th-TH",{minimumFractionDigits:3,maximumFractionDigits:3}),f1=v=>Number(v).toFixed(1);
+  const R=RES,sum=k=>R.reduce((a,r)=>a+(+r[k]||0),0),cap=sum("cap"),cur=sum("cur"),pct=cur/cap*100,inf=sum("inf"),rel=sum("rel");
+  const PB=R.find(r=>r.id==="pranburi"),MID=R.filter(r=>r.type!=="large"),mc=MID.reduce((a,r)=>a+r.cur,0),mk=MID.reduce((a,r)=>a+r.cap,0);
+  const HI=R.filter(r=>r.status==="high"),LO=R.filter(r=>r.status==="low"),OK=R.filter(r=>r.status!=="high"&&r.status!=="low");
+  const SI=typeof smInfo==="function"?smInfo():null;
+  // Yang Chum actual vs plan
+  let YC=null;if(typeof SPD!=="undefined"){const q=SPD.act.map((a,i)=>a?i:-1).filter(i=>i>=0).pop();if(q!=null){const a=SPD.act[q],F=SPD.fc[q];YC={d:F[0].replace(" 69",""),aIn:a[0],pIn:F[1],aSp:a[3]||0,pSp:F[11],aOut:a[1]-(a[3]||0),pOut:F[10],aSt:a[2],pSt:F[3],pct:a[4]*100,end:String(SPD.sum[6][2]).replace(" 69","")}}}
+  const FA=FLOOD.area||{},FS=FLOOD.sites||[],cnt=t=>FS.filter(s=>s.type===t).reduce((a,s)=>a+(s.count||1),0),act=FS.filter(s=>/กำลัง/.test(s.status)).length;
+  const ST=typeof STREAMS!=="undefined"?STREAMS:[],up=ST.filter(s=>/เพิ่ม/.test(s[7])),dn=ST.filter(s=>/ลด/.test(s[7]));
+  const nm=r=>(r.type==="large"?"":"อ่างฯ ")+r.name;
+  // ---- 1) key messages
+  let y=290;const B=[];{
+    B.push(["#1C86C0","ปริมาณน้ำรวมอ่างเก็บน้ำ 9 แห่ง "+f3(cur)+" ล้าน ลบ.ม. ("+f1(pct)+"% ของความจุ) · เขื่อนปราณบุรี "+f3(PB.cur)+" ("+f1(PB.pct)+"%) อยู่ในเกณฑ์"]);
+    if(YC)B.push(["#D93A3A","อ่างฯ ยางชุม "+f3(YC.aSt)+" ("+f1(YC.pct)+"%) "+(YC.aSt>41.1?"น้ำยังล้น Spillway "+f3(YC.aSp)+" ล้าน ลบ.ม./วัน (ล้นน้อยกว่าแผน)":"น้ำหยุดล้น Spillway แล้ว")+" · Inflow จริงต่ำกว่าแผน "+Math.abs((YC.aIn-YC.pIn)/YC.pIn*100).toFixed(0)+"% · ระบายผ่านอาคาร 5.90 ลบ.ม./วิ ตามแผน"]);
+    if(LO.length)B.push(["#D9A400","ต่ำกว่าเกณฑ์ควบคุมล่าง (LRC) "+LO.length+" แห่ง: "+LO.map(r=>nm(r)+" "+f1(r.pct)+"%").join(", ")+" · ต้องเก็บกักน้ำและใช้น้ำอย่างประหยัด"]);
+    B.push(["#1E9A52","อุทกภัย 3 อำเภอ (บางสะพาน บางสะพานน้อย ทับสะแก) ได้รับผลกระทบ "+(FA.hh||0)+" ครัวเรือน "+(FA.rai||0)+" ไร่ · โครงการฯ สนับสนุนเครื่องสูบน้ำ "+cnt("pump")+" เครื่อง รถขุด "+cnt("backhoe")+" คัน รวม "+FS.length+" จุด"+(act?" (กำลังสูบน้ำ "+act+" จุด)":"")]);
+    const c2=document.createElement("canvas").getContext("2d"),LH=30,GAP=14;let need=0;B.forEach(b=>{need+=wrapT(c2,b[1],0,0,W-80-108-36,LH,{s:21,w:500})*LH+GAP});
+    const h=Math.max(300,96+need+12);c.save();c.shadowColor="rgba(17,40,59,.14)";c.shadowBlur=22;c.shadowOffsetY=6;rr(c,40,y,W-80,h,22);c.fillStyle="#fff";c.fill();c.restore();rr(c,40,y,W-80,h,22);c.strokeStyle="#D5DEE7";c.lineWidth=1.5;c.stroke();c.save();rr(c,40,y,W-80,h,22);c.clip();c.fillStyle=RP.navy2;c.fillRect(40,y,10,h);c.restore();
+    T(c,"ประเด็นสำคัญวันนี้",76,y+56,{s:32,w:700,c:RP.ink});T(c,"สรุปจากรายงานประจำวัน "+DT,W-76,y+56,{s:19,c:RP.muted,a:"right"});
+    let by=y+104;B.forEach(b=>{c.beginPath();c.arc(86,by-8,8,0,7);c.fillStyle=b[0];c.fill();const n=wrapT(c,b[1],108,by,W-80-108-36,LH,{s:21,c:RP.ink,w:500});by+=n*LH+GAP});
+    y+=h+18}
+  // ---- 2) KPI tiles
+  {const K=[["อ่างเก็บน้ำ 9 แห่ง",f3(cur),f1(pct)+"% · ความจุ "+f3(cap),RP.act],["เขื่อนปราณบุรี",f3(PB.cur),f1(PB.pct)+"% · ระบาย "+f3(PB.rel)+" /วัน",RP.act],["อ่างขนาดกลาง 8 แห่ง",f3(mc),f1(mc/mk*100)+"% · ความจุ "+f3(mk),RP.act],SI?["อ่างขนาดเล็ก "+SI.n+" แห่ง",f3(SI.stor),f1(SI.p)+"% · ข้อมูล "+SMALL.date,RP.act]:["Inflow รวมวันนี้",f3(inf),"Outflow "+f3(rel),RP.act]];
+    const kw=(W-80-3*16)/4;K.forEach((k,i)=>{const x=40+i*(kw+16);card(c,x,y,kw,140,18);c.fillStyle=RP.sky;c.fillRect(x,y+20,5,100);T(c,k[0],x+26,y+40,{s:20,w:600,c:RP.ink2});fitT(c,k[1],x+26,y+90,kw-50,{s:44,w:700,c:RP.ink});T(c,"ล้าน ลบ.ม.",x+kw-22,y+90,{s:16,c:RP.muted,a:"right"});fitT(c,k[2],x+26,y+122,kw-50,{s:17,c:RP.muted})});y+=158}
+  // ---- 3) reservoir table with bars
+    const L=[];
+    if(YC)L.push("อ่างฯ ยางชุม: คงการระบาย 5.90 ลบ.ม./วิ จนน้ำหยุดล้น Spillway แล้วปรับลดตามแผน ควบคุมให้ต่ำกว่าเกณฑ์ URC 1 ล้าน ลบ.ม. ภายใน 30 พ.ย. · เฝ้าระวังพื้นที่ท้ายอ่างฯ");
+    if(LO.length)L.push(LO.map(nm).join(" และ ")+": ต่ำกว่าเกณฑ์ LRC งดการระบายที่ไม่จำเป็น เก็บกักน้ำไว้เป็นต้นทุนฤดูแล้ง");
+    L.push("พื้นที่อุทกภัย อ.บางสะพาน: คงเครื่องสูบน้ำเร่งระบายน้ำท่วมขัง และติดตามระดับน้ำในคลองบางสะพาน"+(ST.length?" · สถานีวัดน้ำท่า "+ST.length+" แห่ง: ลดลง "+dn.length+" แห่ง"+(up.length?" เพิ่มขึ้น "+up.length+" แห่ง ("+up.map(s=>s[1].replace(/\s*\(.*\)/,"")).join(", ")+")":""):""));
+  const c3=document.createElement("canvas").getContext("2d");let need4=86+10;L.forEach(t=>{need4+=wrapT(c3,t,0,0,W-80-110-30,28,{s:20})*28+12});
+  const RH=Math.max(42,Math.min(62,Math.floor((H-96-20-y-(96+58+52+20)-(440+20)-need4)/R.length)));
+  {const rh=RH,h=96+58+R.length*rh+52;card(c,40,y,W-80,h,20);
+    T(c,"1) สถานการณ์อ่างเก็บน้ำ 9 แห่ง เทียบเกณฑ์ควบคุม (Rule Curve)",70,y+50,{s:27,w:700});
+    const lg=[[RP.high,"สูงกว่า URC "+HI.length],[RP.ok,"อยู่ในเกณฑ์ "+OK.length],[RP.low,"ต่ำกว่า LRC "+LO.length]];let lx=W-70;lg.slice().reverse().forEach(q=>{c.font=`600 18px ${FF}`;const w=c.measureText(q[1]).width;T(c,q[1],lx,y+48,{s:18,w:600,c:q[0],a:"right"});c.beginPath();c.arc(lx-w-14,y+42,7,0,7);c.fillStyle=q[0];c.fill();lx-=w+44});
+    const X0=60,cols=[["อ่างเก็บน้ำ",X0,"left"],["ปริมาณน้ำ",470,"right"],["% ความจุ (แถบ = ปริมาณน้ำ · ขีด = LRC / URC)",510,"left"],["Inflow",1100,"right"],["Outflow",1215,"right"],["ฝน มม.",1310,"right"],["สถานะ",1430,"center"]];
+    const ty=y+78;rr(c,X0-6,ty,W-120+12,52,10);c.fillStyle=RP.thd;c.fill();cols.forEach(q=>T(c,q[0],q[1]+(q[2]==="left"?10:0),ty+33,{s:17,w:700,c:RP.ink2,a:q[2]}));
+    let ry=ty+58;const bx=520,bw=400;
+    R.forEach((r,k)=>{if(k%2){c.fillStyle=RP.zeb;c.fillRect(X0-6,ry,W-120+12,rh)}const [sl,sc,sb]=statusOf(r);
+      T(c,nm(r),X0+10,ry+22,{s:19,w:700});T(c,r.amp,X0+10,ry+40,{s:13,c:RP.muted});
+      T(c,f3(r.cur),470,ry+31,{s:20,w:600,a:"right"});
+      rr(c,bx,ry+13,bw,20,10);c.fillStyle=RP.line2;c.fill();const p=Math.min(100,r.pct);rr(c,bx,ry+13,Math.max(20,bw*p/100),20,10);c.fillStyle=lvC(r.pct);c.fill();
+      [[r.lrcT,RP.lrc],[r.urcT,RP.urc]].forEach(([v,col])=>{if(v==null)return;const tx=bx+bw*Math.min(1,v/r.cap);c.fillStyle=col;c.fillRect(tx-1.5,ry+7,3,32)});
+      T(c,f1(r.pct)+"%",bx+bw+14,ry+31,{s:20,w:700,c:r.pct>100?RP.low:RP.ink});
+      T(c,f3(r.inf),1100,ry+31,{s:19,a:"right",c:RP.inA});T(c,f3(r.rel),1215,ry+31,{s:19,a:"right",c:RP.outA});T(c,r.rain&&r.rain[0]!=null?f1(r.rain[0]):"–",1310,ry+31,{s:19,a:"right",c:RP.ink2});
+      c.font=`700 16px ${FF}`;const pw=c.measureText(sl).width+28;rr(c,1430-pw/2,ry+9,pw,28,14);c.fillStyle=sb;c.fill();T(c,sl,1430,ry+29,{s:16,w:700,c:sc,a:"center"});
+      c.fillStyle=RP.line;c.fillRect(X0-6,ry+rh-1,W-120+12,1);ry+=rh});
+    T(c,"รวม 9 แห่ง",X0+10,ry+32,{s:20,w:700});T(c,f3(cur),470,ry+32,{s:20,w:700,a:"right"});T(c,f1(pct)+"% ของความจุ "+f3(cap),bx,ry+32,{s:19,w:700,c:RP.ink2});T(c,f3(inf),1100,ry+32,{s:19,w:700,a:"right",c:RP.inA});T(c,f3(rel),1215,ry+32,{s:19,w:700,a:"right",c:RP.outA});
+    y+=h+20}
+  // ---- 4) two cards: Yang Chum + Flood
+  {const h=440,cw=(W-80-20)/2;
+    // Yang Chum
+    let x=40;card(c,x,y,cw,h,20);T(c,"2) อ่างฯ ยางชุม · น้ำล้น Spillway",x+30,y+48,{s:26,w:700});
+    if(YC){T(c,"ผลจริง "+YC.d+" เทียบแผน (ล้าน ลบ.ม.)",x+cw-30,y+48,{s:16,c:RP.muted,a:"right"});
+      T(c,"ปริมาณน้ำ",x+30,y+90,{s:18,c:RP.muted,w:600});T(c,f3(YC.aSt),x+30,y+142,{s:52,w:700,c:"#0A8F4E"});c.font=`700 52px ${FF}`;const w=c.measureText(f3(YC.aSt)).width;
+      T(c,f1(YC.pct)+"%",x+44+w,y+120,{s:24,w:700,c:RP.low});T(c,(YC.aSt>41.1?"สูงกว่าสันฝาย +":"ต่ำกว่าสันฝาย ")+Math.abs(YC.aSt-41.1).toFixed(3),x+44+w,y+144,{s:17,w:600,c:RP.ink2});
+      const rows=[["Inflow",YC.aIn,YC.pIn],["ระบายผ่านอาคาร",YC.aOut,YC.pOut],["ล้น Spillway",YC.aSp,YC.pSp]];
+      let ty=y+176;rr(c,x+24,ty,cw-48,40,8);c.fillStyle=RP.thd;c.fill();[["รายการ",x+40,"left"],["จริง",x+300,"right"],["แผน",x+430,"right"],["ส่วนต่าง",x+cw-44,"right"]].forEach(q=>T(c,q[0],q[1],ty+27,{s:17,w:700,c:RP.ink2,a:q[2]}));ty+=40;
+      rows.forEach(rw=>{const d=rw[1]-rw[2],pc=rw[2]?d/rw[2]*100:0,ok=Math.abs(pc)<=5,col=ok?"#0A8F4E":d>0?"#C0392B":"#1C6FB8";T(c,rw[0],x+40,ty+32,{s:19,w:600});T(c,f3(rw[1]),x+300,ty+32,{s:21,w:700,a:"right",c:"#0A8F4E"});T(c,f3(rw[2]),x+430,ty+32,{s:19,a:"right",c:RP.muted});T(c,(d>=0?"+":"")+d.toFixed(3)+" ("+(pc>=0?"+":"")+pc.toFixed(0)+"%)",x+cw-44,ty+32,{s:19,w:700,a:"right",c:col});c.fillStyle=RP.line;c.fillRect(x+24,ty+42,cw-48,1);ty+=43});
+      const P0=SPD.plan[0],P1=SPD.plan[1];
+      wrapT(c,"แผนระบาย: "+P0[0].replace(" 69","")+" คง "+P0[1].toFixed(2)+" ลบ.ม./วิ → "+P1[0].replace(" 69","")+" ลด "+P1[1].toFixed(2)+" ลบ.ม./วิ · คาดน้ำหยุดล้นตามแผน "+YC.end+(YC.aIn<YC.pIn?" (แนวโน้มเร็วกว่าแผน)":""),x+30,ty+34,cw-60,26,{s:18,w:600,c:RP.ink2})}
+    else T(c,"ยังไม่มีข้อมูลผลจริง",x+30,y+100,{s:20,c:RP.muted});
+    // Flood
+    x=40+cw+20;card(c,x,y,cw,h,20);T(c,"3) อุทกภัย 2569 · การช่วยเหลือ",x+30,y+48,{s:26,w:700});T(c,"ข้อมูล "+(FA.asof||FLOOD.date||"").replace(" 2569",""),x+cw-30,y+48,{s:15,c:RP.muted,a:"right"});
+    const S4=[["ครัวเรือน",FA.hh||0,"#C2531B"],["ไร่",FA.rai||0,"#C2531B"],["เครื่องสูบน้ำ",cnt("pump"),"#1E9A52"],["รถขุด (คัน)",cnt("backhoe"),"#E07A1F"]];const sw=(cw-60-3*12)/4;
+    S4.forEach((s,i)=>{const sx=x+30+i*(sw+12);rr(c,sx,y+68,sw,92,14);c.fillStyle="#F4F8FB";c.fill();T(c,String(s[1]),sx+sw/2,y+122,{s:42,w:700,c:s[2],a:"center"});T(c,s[0],sx+sw/2,y+148,{s:17,w:600,c:RP.ink2,a:"center"})});
+    let ty=y+178;rr(c,x+24,ty,cw-48,40,8);c.fillStyle=RP.thd;c.fill();[["อำเภอ",x+40,"left"],["หมู่บ้าน",x+260,"right"],["ครัวเรือน",x+370,"right"],["ไร่",x+450,"right"],["การดำเนินการ",x+480,"left"]].forEach(q=>T(c,q[0],q[1],ty+27,{s:17,w:700,c:RP.ink2,a:q[2]}));ty+=40;
+    (FA.rows||[]).forEach(rw=>{T(c,rw[0],x+40,ty+31,{s:19,w:600});T(c,String(rw[1]),x+260,ty+31,{s:19,a:"right"});T(c,String(rw[4]),x+370,ty+31,{s:19,a:"right",w:700,c:rw[4]?RP.low:RP.ink});T(c,String(rw[5]),x+450,ty+31,{s:19,a:"right"});fitT(c,rw[8]||"",x+480,ty+31,x+cw-40-(x+480),{s:17,c:RP.ink2});c.fillStyle=RP.line;c.fillRect(x+24,ty+42,cw-48,1);ty+=43});
+    fitT(c,"การดำเนินการล่าสุด: "+(FS.length?FS[FS.length-1].title+" "+(FS[FS.length-1].place||"")+" อ."+FS[FS.length-1].amphoe+" ("+FS[FS.length-1].status+")":"–"),x+30,y+h-22,cw-60,{s:17,w:600,c:RP.ink2});
+    y+=h+20}
+  // ---- 5) management & streams
+  {const h=H-96-20-y;card(c,40,y,W-80,h,20);T(c,"4) แนวทางบริหารจัดการน้ำ / ข้อเสนอ",70,y+46,{s:26,w:700});
+    let ly=y+86;L.forEach((t,i)=>{c.beginPath();c.arc(84,ly-8,14,0,7);c.fillStyle=RP.navy2;c.fill();T(c,String(i+1),84,ly-2,{s:16,w:700,c:"#fff",a:"center"});const n=wrapT(c,t,110,ly,W-80-110-30,28,{s:20,c:RP.ink});ly+=n*28+12})}
+  footer(c,W,H,"ผู้จัดทำ: ฝ่ายจัดสรรน้ำและปรับปรุงระบบชลประทาน · รายงานสรุปสถานการณ์น้ำประจำวัน","ที่มา: รายงานสถานการณ์น้ำประจำวัน · ไฟล์กราฟ Rule Curve · สรุปสถานการณ์อุทกภัย · โครงการชลประทานประจวบคีรีขันธ์ สำนักงานชลประทานที่ 14");
+  return cv}
+(function(){const b=document.getElementById("btnExec");if(b)b.onclick=()=>{expKind="exec";openExport()}})();
+/*EXEC_END*/</script>
+<script>/*ONE169_START*/
+function drawReservoir169(r){
+  const W=1600,H=900,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+  c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
+  const DT=(document.getElementById("datePill")||{}).textContent||"",DS=DT.replace(/\s*25\d\d$/,"");
+  // slim header
+  {const g=c.createLinearGradient(0,0,W,110);g.addColorStop(0,RP.navy);g.addColorStop(1,RP.navy2);c.fillStyle=g;c.fillRect(0,0,W,110);
+   c.save();c.globalAlpha=.08;c.strokeStyle="#fff";c.lineWidth=2;for(let k=0;k<3;k++){c.beginPath();for(let x=0;x<=W;x+=8){const y=80+k*12+Math.sin(x/80+k)*6;x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke()}c.restore();
+   let tx=36;if(RID_LOGO.complete&&RID_LOGO.naturalWidth){const lh=90,lw=lh*RID_LOGO.naturalWidth/RID_LOGO.naturalHeight;c.drawImage(RID_LOGO,26,10,lw,lh);tx=26+lw+20}
+   T(c,"กรมชลประทาน · โครงการชลประทานประจวบคีรีขันธ์",tx,32,{s:15,c:"#BFD3E6",w:500});
+   const nm=(r.type==="large"?"":"อ่างเก็บน้ำ")+r.name;const tw=T(c,nm,tx,72,{s:36,w:700,c:"#fff"});
+   T(c,`${r.type==="large"?"เขื่อนขนาดใหญ่":"อ่างขนาดกลาง"} · ${r.amp} · ระดับน้ำ ${fmt(r.lvl,2)} ม.รทก. · หน่วย ล้าน ลบ.ม.`,tx,98,{s:16,c:"#D6E4F0"});
+   c.font=`600 20px ${FF}`;const dw=c.measureText(DT).width;rr(c,W-36-dw-110,30,dw+110,48,24);c.fillStyle="rgba(255,255,255,.14)";c.fill();
+   T(c,"ข้อมูล ณ",W-36-dw-90,61,{s:16,c:"#BFD3E6"});T(c,DT,W-56,62,{s:20,w:600,c:"#fff",a:"right"})}
+  const [st,fg,bg]=statusOf(r),d=r.d;
+  // KPI row
+  const K=[["ปริมาณน้ำ",fmt(r.cur),"ล้าน ลบ.ม.",RP.ink],["ความจุ",fmt(r.pct,1)+"%",lvName(r.pct),lvC(r.pct)],["รับน้ำได้อีก",fmt(r.recv),"ล้าน ลบ.ม.",RP.ink],["Inflow วันนี้",fmt(r.inf),"ล้าน ลบ.ม.",RP.inA],["Outflow วันนี้",fmt(r.rel),"ล้าน ลบ.ม.",RP.outA]];
+  const note=r.status==="low"?`ต่ำกว่า LRC ${fmt(r.lrcNow-r.cur)}`:r.status==="high"?`เกิน URC ${fmt(r.cur-r.urcNow)}`:`สูงกว่า LRC ${fmt(r.cur-r.lrcNow)}`;
+  const kw=(W-60-5*12)/6;K.forEach((q,i)=>{const x=30+i*(kw+12);card(c,x,124,kw,84,14);T(c,q[0],x+18,150,{s:15,c:RP.muted,w:500});T(c,q[1],x+18,186,{s:30,w:700,c:q[3]});T(c,q[2],x+kw-16,186,{s:13,c:RP.muted,a:"right"})});
+  {const x=30+5*(kw+12);rr(c,x,124,kw,84,14);c.fillStyle=bg;c.fill();c.strokeStyle=fg+"55";c.lineWidth=1.5;c.stroke();T(c,"สถานะเทียบเกณฑ์",x+18,150,{s:15,c:fg,w:600});fitT(c,st,x+18,180,kw-30,{s:22,w:700,c:fg});T(c,note+" ล้าน ลบ.ม.",x+18,200,{s:13,c:fg,w:500})}
+  // RC chart card
+  const LX=30,LW=980,TY=222,BY=870;card(c,LX,TY,LW,BY-TY,18);
+  T(c,"โค้งปฏิบัติการ (Rule Curve) ปี 2569",LX+24,TY+38,{s:22,w:700});
+  {const lbcNow=d.lbc[TODAY],fcEnd=d.fcEnd!=null?d.fcEnd:d.fc[364];const B=[["URC",fmt(r.urcNow),RP.urc],["LBC",fmt(lbcNow),"#5B6B7A"],["LRC",fmt(r.lrcNow),RP.lrc],["คาดการณ์ 31 ธ.ค.",fcEnd==null?"–":fmt(fcEnd),RP.act]];
+   let bx=LX+LW-24;B.slice().reverse().forEach(([l,v,col])=>{c.font=`700 16px ${FF}`;const vw=c.measureText(v).width;c.font=`500 14px ${FF}`;const lw=c.measureText(l).width;const w=lw+vw+28;rr(c,bx-w,TY+18,w,28,14);c.fillStyle=col+"18";c.fill();T(c,l,bx-w+12,TY+37,{s:14,w:500,c:col});T(c,v,bx-12,TY+38,{s:16,w:700,c:RP.ink,a:"right"});bx-=w+8})}
+  const X0=LX+70,X1=LX+LW-30,Y0=TY+76,Y1=BY-70;
+  let hi=Math.max(...d.urc,d.nor,r.cur,...d.fc.filter(v=>v!=null));const stp=niceStep(hi*1.05),yM=Math.ceil(hi*1.05/stp)*stp;
+  const px=i=>X0+i/364*(X1-X0),py=v=>Y1-v/yM*(Y1-Y0);
+  for(let v=0;v<=yM+1e-9;v+=stp){c.strokeStyle=v?RP.line2:RP.line;c.lineWidth=v?1:1.5;c.beginPath();c.moveTo(X0,py(v));c.lineTo(X1,py(v));c.stroke();T(c,String(+v.toFixed(2)),X0-10,py(v)+5,{s:14,c:RP.muted,a:"right"})}
+  for(let m=0;m<12;m++){const i=Math.round((new Date(2026,m,1)-new Date(2026,0,1))/864e5);T(c,TH_M[m],px(i)+3,Y1+22,{s:14,c:RP.muted})}
+  c.beginPath();for(let i=0;i<365;i++)i?c.lineTo(px(i),py(d.urc[i])):c.moveTo(px(i),py(d.urc[i]));for(let i=364;i>=0;i--)c.lineTo(px(i),py(d.lrc[i]));c.closePath();c.fillStyle=RP.band;c.fill();
+  const ln=(arr,s,e,col,w,dash)=>{c.strokeStyle=col;c.lineWidth=w;c.setLineDash(dash||[]);c.beginPath();let f=true;for(let i=s;i<=e;i++){if(arr[i]==null)continue;f?c.moveTo(px(i),py(arr[i])):c.lineTo(px(i),py(arr[i]));f=false}c.stroke();c.setLineDash([])};
+  if(d.nor<=yM){ln(new Array(365).fill(d.nor),0,364,RP.muted,1.2,[3,5]);T(c,`ระดับเก็บกักปกติ ${fmt(d.nor,2)}`,X1-4,py(d.nor)-7,{s:13,c:RP.muted,a:"right"})}
+  ln(d.lbc,0,364,RP.lbc,1.6,[2,5]);ln(d.urc,0,364,RP.urc,2.6);ln(d.lrc,0,364,RP.lrc,2.6);
+  if(d.fc[TODAY+1]!=null)ln(d.fc,TODAY,364,RP.act,2.2,[4,5]);
+  ln(d.act,0,TODAY,RP.act,3.6);
+  c.strokeStyle=RP.muted;c.lineWidth=1;c.setLineDash([4,4]);c.beginPath();c.moveTo(px(TODAY),Y0);c.lineTo(px(TODAY),Y1);c.stroke();c.setLineDash([]);
+  c.beginPath();c.arc(px(TODAY),py(r.cur),8,0,7);c.fillStyle=RP.act;c.fill();c.lineWidth=3;c.strokeStyle="#fff";c.stroke();
+  {const lbl=`${DS} ${fmt(r.cur)}`;c.font=`700 17px ${FF}`;const lw=c.measureText(lbl).width+22;const lx=Math.max(X0,px(TODAY)-lw-12),ly=py(r.cur)-46;rr(c,lx,ly,lw,30,8);c.fillStyle=RP.act;c.fill();T(c,lbl,lx+lw/2,ly+21,{s:17,w:700,c:"#fff",a:"center"})}
+  {let lx=LX+24;const LG=[[RP.urc,"URC",0],[RP.lrc,"LRC",0],[RP.act,"ปริมาณน้ำจริง",0],[RP.lbc,"LBC",1]];if(d.fc[TODAY+1]!=null)LG.splice(3,0,[RP.act,"คาดการณ์",1]);
+   LG.forEach(([col,s,ds])=>{c.strokeStyle=col;c.lineWidth=3.5;c.setLineDash(ds?[5,4]:[]);c.beginPath();c.moveTo(lx,BY-24);c.lineTo(lx+26,BY-24);c.stroke();c.setLineDash([]);lx+=34+T(c,s,lx+34,BY-19,{s:15,c:RP.ink2})+24});
+   const A=(typeof rcAnalysis==="function"?rcAnalysis(r):[])[0];if(A){const KC={bad:RP.low,ok:RP.ok,warn:"#C9901F"};c.font=`600 15px ${FF}`;fitT(c,A.t,lx+10,BY-19,LX+LW-24-(lx+10),{s:15,w:600,c:KC[A.k]||RP.ink2})}}
+  // flow cards
+  const keep=range;range="all";const FI=flowItems(r,"inf"),FO=flowItems(r,"out");range=keep;
+  const RX=LX+LW+16,RW=W-30-RX,mN=new Date(2026,0,1+TODAY).getMonth(),lastM=TH_M[mN];
+  [[FI,"ปริมาณน้ำไหลลงอ่าง (Inflow)",RP.inP,RP.inA,"คาดการณ์","จริง"],[FO,"ปริมาณน้ำระบาย (Outflow)",RP.outP,RP.outA,"แผนระบาย","ระบายจริง"]].forEach(([it,tt,cp,ca,lp,la],k)=>{
+    const y=TY+k*((BY-TY+12)/2),h=(BY-TY-12)/2;card(c,RX,y,RW,h,18);
+    T(c,tt,RX+22,y+34,{s:19,w:700});T(c,"รายเดือน ปี 2569",RX+RW-22,y+34,{s:13,c:RP.muted,a:"right"});
+    const done=it.filter(t=>t.a!=null),sp=done.reduce((s,t)=>s+t.p,0),sa=done.reduce((s,t)=>s+t.a,0),pc=sp?sa/sp*100:0;
+    T(c,`รวม ม.ค.–${lastM}`,RX+22,y+60,{s:13,c:RP.muted});
+    const w1=T(c,fmt(sa),RX+22,y+88,{s:26,w:700,c:ca});T(c,la,RX+30+w1,y+88,{s:13,c:RP.muted});
+    T(c,`${lp} ${fmt(sp)}`,RX+RW-22,y+68,{s:14,c:RP.ink2,a:"right"});T(c,fmt(pc,0)+"% ของ"+lp,RX+RW-22,y+88,{s:15,w:700,c:pc>=100?(k?RP.low:RP.ok):(k?RP.ink2:RP.low),a:"right"});
+    const cx0=RX+46,cx1=RX+RW-16,cy0=y+104,cy1=y+h-44;const mx=Math.max(.01,...it.map(t=>Math.max(t.p,t.a||0)));const s2=niceStep(mx*1.05,3),tp=Math.ceil(mx*1.05/s2)*s2;const yy=v=>cy1-v/tp*(cy1-cy0);
+    for(let v=0;v<=tp+1e-9;v+=s2){c.fillStyle=v?RP.line2:RP.line;c.fillRect(cx0,yy(v),cx1-cx0,1);T(c,String(+v.toFixed(2)),cx0-6,yy(v)+4,{s:12,c:RP.muted,a:"right"})}
+    const sl=(cx1-cx0)/12,bw=sl*.36;
+    it.forEach((t,i)=>{const m0=cx0+sl*(i+.5);rr(c,m0-bw-1,yy(t.p),bw,Math.max(1,cy1-yy(t.p)),3);c.fillStyle=cp;c.fill();if(t.a!=null){rr(c,m0+1,yy(t.a),bw,Math.max(1,cy1-yy(t.a)),3);c.fillStyle=ca;c.fill()}T(c,TH_M[i],m0,cy1+16,{s:12,c:RP.muted,a:"center"})});
+    let lx=RX+22;[[cp,lp],[ca,la]].forEach(([col,s])=>{rr(c,lx,y+h-20,13,13,3);c.fillStyle=col;c.fill();lx+=20+T(c,s,lx+20,y+h-9,{s:13,c:RP.ink2})+20});
+  });
+  T(c,`ที่มา: รายงานสถานการณ์น้ำประจำวัน และไฟล์กราฟ Rule Curve · โครงการชลประทานประจวบคีรีขันธ์ · เดือน ${lastM} ผลจริงถึงวันที่ ${DS} ส่วนแผนเป็นทั้งเดือน`,30,H-10,{s:13,c:RP.muted});
+  T(c,"ข้อมูลน้ำประจวบฯ",W-30,H-10,{s:14,w:700,c:RP.navy2,a:"right"});
+  return cv}
+(function(){const S=document.getElementById("prOneSel"),im=document.getElementById("prOneImg");if(!S)return;
+  RES.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=(r.type==="large"?"":"อ่างฯ ")+r.name;S.appendChild(o)});
+  try{S.value=localStorage.getItem("prOneSel")||RES[0].id}catch(e){S.value=RES[0].id}if(!S.value)S.value=RES[0].id;
+  const go=()=>{const r=RES.find(x=>x.id===S.value);if(!r)return;try{localStorage.setItem("prOneSel",r.id)}catch(e){}try{drawReservoir169(r).toBlob(b=>{if(b){if(im.dataset.u)URL.revokeObjectURL(im.dataset.u);const u=URL.createObjectURL(b);im.src=u;im.dataset.u=u}})}catch(e){console.error(e)}
+    const sub=document.getElementById("prOneSub");if(sub)sub.textContent=`โค้งปฏิบัติการ (Rule Curve) และ Inflow / Outflow รายเดือน · ${(r.type==="large"?"":"อ่างฯ ")+r.name} · ข้อมูล ณ ${window.PR_DATE||""}`};
+  S.onchange=go;(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(go,300));
+  document.getElementById("prOneSave").onclick=()=>{sel=S.value;expKind="one169";openExport()};})();
+/*ONE169_END*/</script>
