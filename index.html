@@ -3,6 +3,21 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="dkcss">
+#dkBg{display:none}
+@media (min-width:701px){
+ #dkBg{display:block;position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050506}
+ #dkBg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity 1.8s ease;filter:saturate(1.15) brightness(.75)}
+ #dkBg img.on{opacity:1;animation:dkZ 9s ease-out forwards}
+ @keyframes dkZ{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+ #dkBg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 25%,rgba(5,5,6,.05),rgba(5,5,6,.55) 75%,rgba(5,5,6,.85)),linear-gradient(180deg,rgba(5,5,6,.3),rgba(5,5,6,0) 30%,rgba(5,5,6,.7) 90%)}
+ #heroK .c-net.nk,#heroK .c-dk,#dkRes{background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2)}
+ #heroK .c-net .kp{background:rgba(255,255,255,.04)!important}
+ #dkBg .cr{position:absolute;right:20px;bottom:12px;z-index:1;font:400 11px "IBM Plex Sans Thai",sans-serif;color:rgba(255,255,255,.55)}
+ html body.dash .app,html body.dash .main{position:relative;z-index:1;background:transparent!important;background-color:transparent!important}
+ body.dash{background:#050506!important}
+ body.dash .content,body.dash #hub,body.dash #hub>.hero{background:transparent!important}
+ body.dash .main>.top{background:rgba(5,5,6,.55)!important;backdrop-filter:blur(14px)}
+}
 #heroK .c-dk.fk>*:not(.fk2){display:none!important}
 #heroK .c-dk .fk2{display:flex;flex-direction:column;height:100%;gap:8px}
 #heroK .c-dk .fh{display:flex;justify-content:space-between;font-size:13px;color:#A1A1A6;font-weight:600}
@@ -5796,4 +5811,9 @@ function flowCard(){const c=[...document.querySelectorAll("#heroK .c-dk")].find(
  box.innerHTML=`<div class="fh"><span>น้ำไหลลง / ระบาย วันนี้</span><span class="nt ${net>=0?"u":"d"}">สุทธิ ${net>=0?"+":"−"}${f(Math.abs(net))}</span></div>
  <div class="fv"><div><em><i class="bi"></i>ไหลลง</em><b>${f(I[N-1])}</b></div><div><em><i class="bo"></i>ระบาย</em><b>${f(O[N-1])}</b></div><small>ล้าน ลบ.ม.</small></div>
  <div class="fb">${bars}</div><div class="fx"><span>${N} วันก่อน</span><span>วันนี้</span></div>`}
-const go=()=>{try{build()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
+
+function dkBg(){if(document.getElementById("dkBg")||!matchMedia("(min-width:701px)").matches)return;const d=document.createElement("div");d.id="dkBg";d.setAttribute("aria-hidden","true");
+ const CR=["ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม"];
+ d.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" ${k>1?'loading="lazy" ':''}src="prm/mh/hero${k}w.jpg?v=20261103p"${k===1?' class="on"':''}>`).join("")+`<span class="cr">${CR[0]}</span>`;document.body.prepend(d);
+ const im=[...d.querySelectorAll("img")],cr=d.querySelector(".cr");let k=0;setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
+const go=()=>{try{build()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
