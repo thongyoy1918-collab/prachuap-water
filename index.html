@@ -2,9 +2,33 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
+<style id="wxcss">
+#wxCv{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+#wxFl{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 80% at 60% 0%,rgba(220,230,255,.85),rgba(160,180,255,.25) 60%,transparent);opacity:0}
+#wxFl.on{animation:wxF .9s ease-out}
+@keyframes wxF{0%{opacity:0}6%{opacity:.75}12%{opacity:.1}20%{opacity:.55}100%{opacity:0}}
+#wxTint{position:absolute;inset:0;z-index:1;pointer-events:none;transition:background 2s,opacity 2s;opacity:0}
+body.wx-rain #dkBg img,body.wx-storm #dkBg img{filter:saturate(.8) brightness(.55) contrast(1.05)!important}
+body.wx-rain #wxTint,body.wx-storm #wxTint{opacity:1;background:linear-gradient(180deg,rgba(30,45,70,.35),rgba(10,15,25,.25))}
+body.wx-cloud #wxTint{opacity:1;background:linear-gradient(180deg,rgba(60,70,85,.25),transparent 60%)}
+#wxM{position:fixed;inset:0;z-index:60;pointer-events:none;display:none}
+#wxChip{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px 0 9px;margin-right:10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#E8ECF2;font:500 13px/1 "IBM Plex Sans Thai",sans-serif;cursor:pointer;white-space:nowrap}
+#wxChip:hover{background:rgba(255,255,255,.12)}
+#wxChip svg{width:18px;height:18px;flex:none}
+#wxChip b{font-weight:600}
+#wxChip em{font-style:normal;color:#F7C873;font-size:11px}
+@media (max-width:700px){#wxChip{display:none}#wxM{display:block;opacity:.55}}
+</style>
 <style id="rvcss">.rvN{font-variant-numeric:tabular-nums}</style>
 <style id="dkcss">
 /*tiles-v2*/@media (min-width:701px){
+html body.dash #hub .tiles{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
+html body.dash #hub .tiles>.tile{grid-column:auto!important;grid-row:auto!important;width:auto!important}
+html body.dash #hub .tiles>.tile:nth-child(4n+1):nth-last-child(2),html body.dash #hub .tiles>.tile:nth-child(4n+1):nth-last-child(2)+.tile{grid-column:span 2!important}
+html body.dash #hub .tiles>.tile:nth-child(4n+1):nth-last-child(1){grid-column:1/-1!important}
+html body.dash #hub .tile .fig>svg{width:76px!important;max-height:64px}
+html body.dash #hub .tile .fig .n{font-size:38px}
+
 html body.dash #hub .tile{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:stretch;text-align:left;min-height:300px;padding:22px 22px 18px;border-radius:28px!important;background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)!important;cursor:pointer;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,background .35s;font-family:"IBM Plex Sans Thai",sans-serif;color:#fff}
 html body.dash #hub .tile::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(420px 220px at 100% 0%,color-mix(in srgb,var(--tc) 22%,transparent),transparent 70%);opacity:.9}
 html body.dash #hub .tile::after{content:none!important}
@@ -6013,3 +6037,53 @@ function init(){const seen=new WeakSet,list=[...new Set(document.querySelectorAl
   const io=new IntersectionObserver(es=>es.forEach(en=>{const c=en.target;if(en.isIntersecting&&en.intersectionRatio>.25){if(!seen.has(c)){seen.add(c);run(c)}}else if(!en.isIntersecting)seen.delete(c)}),{threshold:[0,.25]});
   list.forEach(c=>io.observe(c))}
 const st=()=>setTimeout(init,700);if(document.readyState==="complete")st();else addEventListener("load",st)})();</script>
+<script id="wxjs">(()=>{
+const LAT=11.81,LON=99.80,URL_=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,precipitation,rain,showers,weather_code,cloud_cover,is_day&timezone=Asia%2FBangkok`;
+const red=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TH={0:"ท้องฟ้าแจ่มใส",1:"มีเมฆบางส่วน",2:"มีเมฆบางส่วน",3:"เมฆมาก",45:"มีหมอก",48:"มีหมอก",51:"ฝนปรอย",53:"ฝนปรอย",55:"ฝนปรอยหนาแน่น",56:"ฝนปรอย",57:"ฝนปรอย",61:"ฝนเล็กน้อย",63:"ฝนปานกลาง",65:"ฝนหนัก",66:"ฝนเล็กน้อย",67:"ฝนหนัก",80:"ฝนซู่เล็กน้อย",81:"ฝนซู่ปานกลาง",82:"ฝนซู่หนัก",95:"พายุฝนฟ้าคะนอง",96:"พายุฝนฟ้าคะนอง",99:"พายุฝนฟ้าคะนองรุนแรง"};
+const IC={rain:'<svg viewBox="0 0 24 24" fill="none" stroke="#7FB8FF" stroke-width="2" stroke-linecap="round"><path d="M17.5 15a4.5 4.5 0 0 0-1-8.9A6 6 0 0 0 5 8.5 3.5 3.5 0 0 0 6.5 15"/><path d="M8 18l-1 3M12 17l-1 4M16 18l-1 3"/></svg>',
+ storm:'<svg viewBox="0 0 24 24" fill="none" stroke="#F7C873" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 14a4.5 4.5 0 0 0-1-8.9A6 6 0 0 0 5 7.5 3.5 3.5 0 0 0 6.5 14"/><path d="M12 12l-3 5h4l-2 5"/></svg>',
+ cloud:'<svg viewBox="0 0 24 24" fill="none" stroke="#C9D3E0" stroke-width="2" stroke-linecap="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.5 1.5A3.75 3.75 0 0 0 6.5 19z"/></svg>',
+ clear:'<svg viewBox="0 0 24 24" fill="none" stroke="#FFD166" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+ night:'<svg viewBox="0 0 24 24" fill="none" stroke="#C9D3FF" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>'};
+let mode="none",inten=0,day=1,cv,ctx,W=0,H=0,P=[],S=[],raf=0,live=null,demo=-1,nextFlash=0;
+const DEMO=[["rain",.55],["storm",1],["cloud",0],["clear",0],["night",0]];
+function host(){const bg=document.getElementById("dkBg");if(bg&&getComputedStyle(bg).display!=="none")return bg;let m=document.getElementById("wxM");if(!m){m=document.createElement("div");m.id="wxM";document.body.appendChild(m)}return m}
+function mount(){const h=host();if(cv&&cv.parentElement===h)return;["wxCv","wxFl","wxTint"].forEach(id=>{const o=document.getElementById(id);o&&o.remove()});
+ const t=document.createElement("div");t.id="wxTint";h.appendChild(t);cv=document.createElement("canvas");cv.id="wxCv";h.appendChild(cv);const f=document.createElement("div");f.id="wxFl";h.appendChild(f);ctx=cv.getContext("2d");size()}
+function size(){if(!cv)return;const r=devicePixelRatio>1?1.5:1;W=cv.clientWidth;H=cv.clientHeight;cv.width=W*r;cv.height=H*r;ctx.setTransform(r,0,0,r,0,0);seed()}
+function seed(){P=[];S=[];const wet=mode==="rain"||mode==="storm";
+ if(wet){const n=Math.round((W*H/1e6)*(120+inten*520));for(let i=0;i<n;i++)P.push(drop(true))}
+ else if(mode==="cloud"){for(let i=0;i<7;i++)P.push({x:Math.random()*W,y:Math.random()*H*.55,r:220+Math.random()*320,v:.08+Math.random()*.18,a:.05+Math.random()*.06})}
+ else if(mode==="night"){for(let i=0;i<140;i++)P.push({x:Math.random()*W,y:Math.random()*H*.6,r:Math.random()*1.3+.3,p:Math.random()*6.28,s:.6+Math.random()*1.6})}
+ else if(mode==="clear"){for(let i=0;i<18;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.2,vy:-.08-Math.random()*.15,vx:.05+Math.random()*.1,a:Math.random()*.35})}}
+function drop(any){const z=Math.random();return{x:Math.random()*(W+200)-100,y:any?Math.random()*H:-20-Math.random()*H*.3,z,l:10+z*22,v:(9+z*12)*(.8+inten*.5),w:.6+z*1.1}}
+const WIND=()=>mode==="storm"?.32:.16;
+function frame(t){raf=requestAnimationFrame(frame);if(document.hidden||!ctx)return;ctx.clearRect(0,0,W,H);
+ if(mode==="rain"||mode==="storm"){const wd=WIND();ctx.lineCap="round";
+  for(const d of P){d.y+=d.v;d.x+=d.v*wd;ctx.strokeStyle=`rgba(190,215,255,${.12+d.z*.33})`;ctx.lineWidth=d.w;ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.l*wd,d.y-d.l);ctx.stroke();
+   if(d.y>H-4){if(d.z>.55&&S.length<160)S.push({x:d.x,y:H-2-Math.random()*H*.04,r:1,a:.5});Object.assign(d,drop(false))}}
+  for(let i=S.length-1;i>=0;i--){const s=S[i];s.r+=.9;s.a-=.025;if(s.a<=0){S.splice(i,1);continue}ctx.strokeStyle=`rgba(200,225,255,${s.a})`;ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(s.x,s.y,s.r*1.8,s.r*.45,0,0,6.283);ctx.stroke()}
+  if(mode==="storm"&&t>nextFlash){nextFlash=t+5000+Math.random()*9000;const f=document.getElementById("wxFl");if(f){f.classList.remove("on");void f.offsetWidth;f.classList.add("on")}bolt()}}
+ else if(mode==="cloud"){for(const c of P){c.x+=c.v;if(c.x-c.r>W)c.x=-c.r;const g=ctx.createRadialGradient(c.x,c.y,0,c.x,c.y,c.r);g.addColorStop(0,`rgba(225,232,242,${c.a})`);g.addColorStop(1,"rgba(225,232,242,0)");ctx.fillStyle=g;ctx.fillRect(c.x-c.r,c.y-c.r,c.r*2,c.r*2)}}
+ else if(mode==="night"){for(const s of P){const a=.25+.55*(.5+.5*Math.sin(t/1000*s.s+s.p));ctx.fillStyle=`rgba(235,240,255,${a})`;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.283);ctx.fill()}}
+ else if(mode==="clear"){const k=.5+.5*Math.sin(t/2600),sx=W*.86,sy=-H*.05,g=ctx.createRadialGradient(sx,sy,0,sx,sy,H*.9);g.addColorStop(0,`rgba(255,226,160,${.22+.06*k})`);g.addColorStop(.35,`rgba(255,200,120,${.07+.03*k})`);g.addColorStop(1,"rgba(255,200,120,0)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.y<-5){p.y=H+5;p.x=Math.random()*W}ctx.fillStyle=`rgba(255,240,210,${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill()}}}
+let boltT=0;function bolt(){const x0=W*(.2+Math.random()*.6);let x=x0,y=0;const pts=[[x,y]];while(y<H*.55){y+=18+Math.random()*30;x+=(Math.random()-.5)*50;pts.push([x,y])}
+ const draw=()=>{ctx.save();ctx.strokeStyle="rgba(235,240,255,.9)";ctx.shadowColor="rgba(170,190,255,.9)";ctx.shadowBlur=18;ctx.lineWidth=2.2;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore()};
+ boltT=performance.now();const k=()=>{if(performance.now()-boltT<220){draw();requestAnimationFrame(k)}};requestAnimationFrame(k)}
+function apply(m,i,label,temp,src){mode=m;inten=i;document.body.classList.remove("wx-rain","wx-storm","wx-cloud","wx-clear","wx-night");if(m!=="none")document.body.classList.add("wx-"+m);
+ mount();seed();if(!raf&&!red)raf=requestAnimationFrame(frame);chip(m,label,temp,src)}
+function chip(m,label,temp,src){const top=document.querySelector(".top-r");if(!top)return;let c=document.getElementById("wxChip");
+ if(!c){c=document.createElement("button");c.type="button";c.id="wxChip";c.title="สภาพอากาศขณะนี้ อ.เมืองประจวบฯ · คลิกเพื่อดูเอฟเฟกต์แบบต่างๆ";top.insertBefore(c,top.firstChild);c.onclick=cycle}
+ c.innerHTML=(IC[m]||IC.cloud)+`<span><b>${label}</b>${temp!=null?` · ${Math.round(temp)}°C`:""}</span>`+(src==="demo"?" <em>ตัวอย่าง</em>":"")}
+function cycle(){demo++;if(demo>=DEMO.length){demo=-1;if(live)return apply(...live);return apply("none",0,"ไม่มีข้อมูลอากาศ",null,"")}const [m,i]=DEMO[demo];
+ const L={rain:"ฝนตก",storm:"พายุฝนฟ้าคะนอง",cloud:"เมฆมาก",clear:"ท้องฟ้าแจ่มใส",night:"ท้องฟ้าโปร่ง (กลางคืน)"};apply(m,i,L[m],live?live[3]:null,"demo")}
+function classify(c){const w=c.weather_code,pr=Math.max(c.precipitation||0,(c.rain||0)+(c.showers||0));day=c.is_day;
+ if(w>=95)return["storm",1];if((w>=51&&w<=67)||(w>=80&&w<=82)||pr>0.05){const i=pr>=4?1:pr>=1.5?.7:pr>=.4?.45:.25;return["rain",w===65||w===82?Math.max(i,.9):i]}
+ if(w===3||w===45||w===48||c.cloud_cover>=75)return["cloud",0];return[day?"clear":"night",0]}
+async function load(){try{const r=await fetch(URL_,{cache:"no-store"});if(!r.ok)throw 0;const j=await r.json(),c=j.current;const [m,i]=classify(c);
+ live=[m,i,TH[c.weather_code]||(m==="rain"?"ฝนตก":"—"),c.temperature_2m,"live"];if(demo<0)apply(...live)}catch(e){if(!live&&demo<0)apply("none",0,"ไม่มีข้อมูลอากาศ",null,"")}}
+function start(){const q=new URLSearchParams(location.search).get("wx");if(q){const k=DEMO.findIndex(d=>d[0]===q);if(k>=0){demo=k-1;cycle()}}else apply("none",0,"กำลังโหลดอากาศ…",null,"");load();setInterval(load,15*60*1000)}
+addEventListener("resize",()=>{clearTimeout(size.t);size.t=setTimeout(()=>{mount();size()},200)});
+if(document.readyState==="complete")setTimeout(start,400);else addEventListener("load",()=>setTimeout(start,400))})();</script>
