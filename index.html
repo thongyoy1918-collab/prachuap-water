@@ -2,6 +2,7 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
+<style id="rvcss">.rvN{font-variant-numeric:tabular-nums}</style>
 <style id="dkcss">
 html body #heroK .c-lime.rb{background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);color:#F4F4F6!important;padding:16px 20px!important}
 #heroK .c-lime.rb::before{display:none!important}#heroK .c-lime.rb>*:not(.rb2){display:none!important}
@@ -5935,3 +5936,23 @@ function resBars(){const c=document.querySelector("#heroK .c-lime");if(!c||typeo
   return `<button type="button" class="ri" data-r="${r.id}" title="${r.name} ${(+r.cur).toFixed(3)} / ${(+r.cap).toFixed(2)} ล้าน ลบ.ม."><span class="nm">${r.name.replace("เขื่อน","")}</span><span class="br"><span class="sg"><i class="${cls}" style="width:${p}%"></i></span>${u!=null?`<s style="left:${u}%"></s>`:""}</span><span class="pv ${cls}">${p.toFixed(1)}%</span></button>`}).join("")+`</div>`;
  box.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{try{sel=b.dataset.r;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}})}
 const go=()=>{try{build()}catch(e){console.warn(e)}try{resBars()}catch(e){console.warn(e)}try{watchTxt()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
+<script id="rvjs">(()=>{
+const CARDS="#dkHero,#dkRes,#heroK .dh>*,#heroK .dg>*,#mhome .card,.app .card";
+const NUM=/^([^\d\-−+]*?)([\-−+]?)(\d[\d,]*)(\.\d+)?(\s*%?[^\d]*)$/;
+const ease=t=>t>=1?1:1-Math.pow(2,-10*t);
+const red=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function bars(card){let i=0;card.querySelectorAll("[style]").forEach(e=>{if(e.closest(".kp svg"))return;const st=e.style;["width","height"].forEach(k=>{const v=st[k];if(!/%$/.test(v)||parseFloat(v)<=0)return;
+  const d=Math.min(i++,30)*28;st.transition="none";st[k]="0%";void e.offsetWidth;st.transition=k+" 1.15s cubic-bezier(.2,.85,.25,1) "+d+"ms";st[k]=v;
+  setTimeout(()=>{if(st[k]===v)st.transition=""},1300+d)})})}
+function nums(card){card.querySelectorAll("*").forEach(e=>{if(e.children.length&&![...e.children].every(c=>c.tagName==="SMALL"||c.tagName==="SUP"))return;
+  const tn=[...e.childNodes].find(n=>n.nodeType===3&&/\d/.test(n.nodeValue));if(!tn||e.closest("svg,button.lk,.kn,[data-go],nav,[role=tab]"))return;
+  const raw=tn.nodeValue,m=raw.trim().match(NUM);if(!m||m[1].length>3||m[5].replace(/[\s%]/g,"").length>6)return;
+  const to=parseFloat(m[3].replace(/,/g,"")+(m[4]||"")),dec=m[4]?m[4].length-1:0,com=/,/.test(m[3]);if(!(to>0))return;
+  const lead=raw.match(/^\s*/)[0],trail=raw.match(/\s*$/)[0],fmt=v=>lead+m[1]+m[2]+(com?v.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec}):v.toFixed(dec))+m[5]+trail;
+  e.classList.add("rvN");const t0=performance.now(),D=1400;let last=fmt(0);tn.nodeValue=last;
+  const step=t=>{if(tn.nodeValue!==last||!tn.isConnected)return;const k=ease((t-t0)/D);last=k>=1?raw:fmt(to*k);tn.nodeValue=last;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
+function run(c){if(red)return;try{bars(c)}catch(_){}try{nums(c)}catch(_){}}
+function init(){const seen=new WeakSet,list=[...new Set(document.querySelectorAll(CARDS))].filter(c=>!c.parentElement.closest(CARDS));
+  const io=new IntersectionObserver(es=>es.forEach(en=>{const c=en.target;if(en.isIntersecting&&en.intersectionRatio>.25){if(!seen.has(c)){seen.add(c);run(c)}}else if(!en.isIntersecting)seen.delete(c)}),{threshold:[0,.25]});
+  list.forEach(c=>io.observe(c))}
+const st=()=>setTimeout(init,700);if(document.readyState==="complete")st();else addEventListener("load",st)})();</script>
