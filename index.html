@@ -4,6 +4,30 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="rvcss">.rvN{font-variant-numeric:tabular-nums}</style>
 <style id="dkcss">
+/*tiles-v2*/@media (min-width:701px){
+html body.dash #hub .tile{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:stretch;text-align:left;min-height:300px;padding:22px 22px 18px;border-radius:28px!important;background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)!important;cursor:pointer;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,background .35s;font-family:"IBM Plex Sans Thai",sans-serif;color:#fff}
+html body.dash #hub .tile::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(420px 220px at 100% 0%,color-mix(in srgb,var(--tc) 22%,transparent),transparent 70%);opacity:.9}
+html body.dash #hub .tile::after{content:none!important}
+html body.dash #hub .tile:hover{transform:translateY(-4px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc) 60%,rgba(255,255,255,.2)),0 18px 40px -18px color-mix(in srgb,var(--tc) 70%,transparent)!important;background:rgba(22,22,26,.78)!important}
+html body.dash #hub .tile:focus-visible{outline:2px solid color-mix(in srgb,var(--tc) 80%,#fff);outline-offset:3px}
+html body.dash #hub .tile>*{position:relative}
+html body.dash #hub .tile .ey{order:1;display:flex;align-items:center;gap:8px;font:600 12px/1 "IBM Plex Sans Thai",sans-serif;letter-spacing:.02em;color:color-mix(in srgb,var(--tc) 55%,#fff);margin:0 0 10px}
+html body.dash #hub .tile .ey::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tc);box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 25%,transparent);flex:none}
+html body.dash #hub .tile h4{order:2;margin:0 0 6px;font:600 19px/1.25 Kanit,sans-serif;color:#fff;text-align:left}
+html body.dash #hub .tile .d{order:3;margin:0;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.55);text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:37px}
+html body.dash #hub .tile .chip2{order:3;align-self:flex-start;margin:12px 0 0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 11px/1 "IBM Plex Sans Thai",sans-serif;padding:6px 10px;border-radius:999px}
+html body.dash #hub .tile .fig{order:4;margin:auto 0 0;padding-top:16px;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:end;column-gap:10px;text-align:left}
+html body.dash #hub .tile .fig>svg,html body.dash #hub .tile .fig>canvas,html body.dash #hub .tile .fig>i,html body.dash #hub .tile .fig>div:not(.n):not(.u){grid-column:2;grid-row:1/3;align-self:center;width:64px!important;height:auto!important;max-height:56px;margin:0!important}
+html body.dash #hub .tile .fig .n{grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:6px;margin:0;font:600 34px/1 Kanit,sans-serif;color:#fff!important;letter-spacing:-.01em;justify-content:flex-start}
+html body.dash #hub .tile .fig .n small{white-space:nowrap;font:500 13px/1 "IBM Plex Sans Thai",sans-serif;color:rgba(255,255,255,.55)}
+html body.dash #hub .tile .fig .u{grid-column:1;grid-row:2;margin:6px 0 0;font-size:12px;color:rgba(255,255,255,.5);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body.dash #hub .tile .lnk{order:5;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:rgba(255,255,255,.6)}
+html body.dash #hub .tile .lnk .apbtn{background:rgba(255,255,255,.09)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)!important;color:#fff!important;transition:background .3s;border-radius:999px;padding:7px 14px;font:600 12.5px/1 "IBM Plex Sans Thai",sans-serif;box-shadow:none}
+html body.dash #hub .tile .lnk>span:last-child{color:rgba(255,255,255,.6)}
+html body.dash #hub .tile:hover .lnk>span:last-child{color:#fff}
+html body.dash #hub .tile:hover .lnk .apbtn{background:var(--tc)!important;box-shadow:none!important}
+}
+
 #dkRes{display:none!important}
 @media (min-width:701px){#rvVw .rv-sc img{max-width:860px;margin:0 auto}}
 #rvVw .gl-fr{background:#0B0D12}
