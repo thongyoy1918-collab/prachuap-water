@@ -2,6 +2,53 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
+<style id="mhcss">
+#mhome{display:none}
+@media (max-width:700px){
+ body.dash:not(.in-topic) .main>.top{display:none!important}
+ body.dash:not(.in-topic) #tiles{display:none!important}
+ body.dash:not(.in-topic) #mhome{display:block}
+ body.dash:not(.in-topic) .content{padding-top:0!important}
+ #mhome{width:100vw;margin:0 0 8px calc(50% - 50vw);background:#050607;color:#F4F4F6;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;position:relative}
+ #mhome .mh-hero{position:relative;height:min(118vw,560px);overflow:hidden}
+ #mhome .mh-hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;transform:scale(1.04);animation:mhZoom 14s ease-out forwards}
+ @keyframes mhZoom{to{transform:scale(1.12)}}
+ #mhome .mh-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,7,.55) 0%,rgba(5,6,7,0) 22%,rgba(5,6,7,0) 48%,rgba(5,6,7,.85) 80%,#050607 100%)}
+ #mhome .mh-tb{position:absolute;z-index:2;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:14px 16px}
+ #mhome .mh-tb img{width:34px;height:34px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+ #mhome .mh-tb b{font:600 13px/1.25 Kanit,sans-serif;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+ #mhome .mh-tb b small{display:block;font:400 11px "IBM Plex Sans Thai",sans-serif;opacity:.85}
+ #mhome .mh-ib{margin-left:auto;display:flex;gap:8px}
+ #mhome .mh-ib button{width:40px;height:40px;border-radius:50%;border:0;background:rgba(10,10,12,.45);backdrop-filter:blur(10px);color:#fff;display:grid;place-items:center}
+ #mhome .mh-ib svg{width:19px;height:19px}
+ #mhome .mh-ttl{position:absolute;z-index:2;left:0;right:0;bottom:18px;text-align:center;padding:0 16px}
+ #mhome .mh-ttl h1{margin:0;padding-top:.22em;font:800 clamp(44px,13vw,62px)/1.02 Kanit,sans-serif;letter-spacing:-.01em;
+  background:linear-gradient(180deg,#FFF3C8 0%,#E9C46A 45%,#B98A2E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.65))}
+ #mhome .mh-ttl h1 span{display:block;font-size:.62em;letter-spacing:.02em}
+ #mhome .mh-ttl p{margin:10px 0 0;font-size:13px;color:#D8D8DE}
+ #mhome .mh-ttl p b{color:#fff;font-weight:600}
+ #mhome .mh-al{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+ #mhome .mh-al span{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(229,72,77,.18);color:#FF8A8D;border:1px solid rgba(229,72,77,.35)}
+ #mhome .mh-al span.w{background:rgba(245,166,35,.16);color:#FFC46B;border-color:rgba(245,166,35,.35)}
+ #mhome .mh-pn{position:relative;margin-top:-6px;background:#1D2424;border-radius:50% 50% 0 0/26px 26px 0 0;padding:22px 18px 26px}
+ #mhome .mh-pn h2{margin:0 0 16px;text-align:center;font:400 16px "IBM Plex Sans Thai",sans-serif;color:#C9CED0}
+ #mhome .mh-gr{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 16px}
+ #mhome .mh-it{all:unset;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+ #mhome .mh-fc{position:relative;width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;box-shadow:0 8px 18px -8px rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(120% 90% at 30% 15%,color-mix(in srgb,var(--c) 75%,#fff 25%),var(--c) 45%,color-mix(in srgb,var(--c) 55%,#000) 100%);transition:transform .18s ease}
+ #mhome .mh-it:active .mh-fc{transform:scale(.94)}
+ #mhome .mh-fc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+ #mhome .mh-fc img+i{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.6))}
+ #mhome .mh-n{position:relative;font:700 clamp(20px,6.4vw,28px)/1 Kanit,sans-serif;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.35);font-variant-numeric:tabular-nums}
+ #mhome .mh-u{position:relative;font-size:11px;color:rgba(255,255,255,.85);margin-top:4px}
+ #mhome .mh-fc.ph .mh-n{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:18px}
+ #mhome .mh-fc.ph .mh-u{display:none}
+ #mhome .mh-dot{position:absolute;top:8px;right:8px;width:10px;height:10px;border-radius:50%;background:#34C759;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+ #mhome .mh-dot.bad{background:#FF453A}#mhome .mh-dot.warn{background:#FFB020}#mhome .mh-dot.info{background:#64D2FF}
+ #mhome .mh-lb{font:600 14px/1.25 Kanit,sans-serif;color:#fff;text-align:center}
+ #mhome .mh-cr{position:absolute;z-index:2;right:10px;bottom:4px;font-size:9px;color:rgba(255,255,255,.45)}
+}
+</style>
 <style id="galcss">
 #gallery .gl-stage{position:relative;background:#0A0A0B;border-radius:24px;overflow:hidden;padding:28px 0 22px;color:#F4F4F6}
 #gallery .gl-track{position:relative;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 6vw}
@@ -1022,7 +1069,13 @@ body.dash .tile .fig{padding:16px 0 22px}
 
     <div class="content">
       <div class="tswitch" id="tswitch" role="navigation" aria-label="เปลี่ยนหัวข้อ"></div>
-      <div id="hub">
+      <div id="hub"><div id="mhome" aria-label="หน้าหลัก"><div class="mh-hero"><img class="bg" src="prm/mh/hero.jpg?v=20261103k" alt="ทางระบายน้ำล้นอ่างเก็บน้ำยางชุมยามค่ำคืน">
+<div class="mh-tb"><img id="mhLogo" alt="กรมชลประทาน"><b>กรมชลประทาน<small>โครงการชลประทานประจวบคีรีขันธ์</small></b><div class="mh-ib">
+<button type="button" id="mhExec" aria-label="รายงานผู้บริหาร 1 หน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button>
+<button type="button" id="mhExp" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div></div>
+<div class="mh-ttl"><h1>ข้อมูลน้ำ<span>ประจวบฯ</span></h1><p id="mhSum"></p><div class="mh-al" id="mhAl"></div></div><div class="mh-cr">ภาพ: Prasobchok Jitchaichan · อ่างฯ ยางชุม</div></div>
+<div class="mh-pn"><h2>เลือกหัวข้อ</h2><div class="mh-gr" id="mhGr"></div></div></div><!--/mhome-->
+
         <div class="hero">
           <div class="hero-top">
             <div class="hero-id"><img id="heroLogo" alt="ตรากรมชลประทาน"><div><div class="eyebrow">กรมชลประทาน · โครงการชลประทานประจวบคีรีขันธ์</div><h2>สถานการณ์น้ำ<br><span class="gx">ประจวบคีรีขันธ์</span></h2></div></div>
@@ -5464,3 +5517,24 @@ document.addEventListener("keydown",e=>{if(!$("glVw").classList.contains("on"))r
 let tx=null;$("glFr").addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});$("glFr").addEventListener("touchend",e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>45)shw(si+(dx<0?1:-1));tx=null});
 const ro=()=>{try{rope()}catch(e){}};addEventListener("resize",ro);new MutationObserver(ro).observe($("gallery"),{attributes:true,attributeFilter:["class"]});
 document.querySelectorAll("#glLine img").forEach(i=>i.addEventListener("load",ro));setTimeout(ro,300);sel(0,false)})();</script>
+<script id="mhjs">(()=>{const SH={overview:"สถานการณ์",pranburi:"ปราณบุรี",manage:"อ่างเกิน 80%",urc7:"URC 7 วัน",trend:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",small:"อ่างขนาดเล็ก",reservoirs:"รายอ่าง",spill:"น้ำล้นยางชุม",streams:"น้ำท่า",flood:"อุทกภัย 69",present:"Present",maps:"แผนที่",gallery:"รูปภาพอ่าง"};
+const IMG={gallery:"prm/mh/gallery.jpg",maps:"prm/mh/maps.jpg",present:"prm/mh/present.jpg",spill:"prm/mh/spill.jpg"},V="?v=20261103k";
+function build(){const g=document.getElementById("mhGr");if(!g)return;const ts=[...document.querySelectorAll("#tiles .tile")];if(!ts.length)return;
+ try{const L=document.getElementById("mhLogo");if(typeof RID_LOGO!=="undefined"&&!L.src)L.src=RID_LOGO.src}catch(e){}
+ const al=[];g.innerHTML="";
+ ts.forEach(t=>{const id=t.dataset.t,c=t.style.getPropertyValue("--tc")||"#1674A8",nEl=t.querySelector(".fig .n"),ch=t.querySelector(".chip2");
+  let num="",unit="";if(nEl){const sm=nEl.querySelector("small");unit=sm?sm.textContent.trim():"";num=(nEl.textContent||"").replace(unit,"").trim()}
+  const st=ch?(/\bbad\b/.test(ch.className)?"bad":/\bwarn\b/.test(ch.className)?"warn":/\binfo\b/.test(ch.className)?"info":"ok"):"ok";
+  if(ch&&(st==="bad"||st==="warn")&&!/ปลอดภัย|ปกติ/.test(ch.textContent))al.push([st,(SH[id]||"")+": "+ch.textContent.trim()]);
+  const b=document.createElement("button");b.type="button";b.className="mh-it";b.setAttribute("aria-label",(t.querySelector("h4")||{}).textContent||id);
+  const im=IMG[id];b.innerHTML=`<span class="mh-fc${im?" ph":""}" style="--c:${c}">${im?`<img src="${im}${V}" alt="" loading="lazy"><i></i>`:""}<span class="mh-dot ${st}"></span><span class="mh-n">${num}</span><span class="mh-u">${unit}</span></span><span class="mh-lb">${SH[id]||((t.querySelector("h4")||{}).textContent||id)}</span>`;
+  b.addEventListener("click",()=>t.click());g.appendChild(b)});
+ const f=id=>{const t=document.querySelector(`#tiles .tile[data-t="${id}"] .fig .n`);return t?t.textContent.trim():""};
+ const dt=(document.querySelector(".content")||document.body).textContent.match(/อัปเดตข้อมูลวันที่\s*([^\n]{3,20}?\d{4})/);
+ document.getElementById("mhSum").innerHTML=`น้ำรวม 9 อ่าง <b>${f("overview").replace("ล้าน"," ล้าน")}</b> · ปราณบุรี <b>${f("pranburi")}</b>${dt?"<br>ข้อมูล "+dt[1]:""}`;
+ document.getElementById("mhAl").innerHTML=al.slice(0,3).map(a=>`<span class="${a[0]==="warn"?"w":""}">${a[1]}</span>`).join("")}
+const go=()=>{try{build()}catch(e){}};
+document.getElementById("mhExec").onclick=()=>{const b=document.getElementById("btnExec");b&&b.click()};
+document.getElementById("mhExp").onclick=()=>{const b=document.getElementById("btnExport");b&&b.click()};
+if(document.readyState!=="loading")setTimeout(go,50);else addEventListener("DOMContentLoaded",()=>setTimeout(go,50));
+const tl=document.getElementById("tiles");if(tl)new MutationObserver(()=>{clearTimeout(window.__mhT);window.__mhT=setTimeout(go,120)}).observe(tl,{childList:true,subtree:true,characterData:true})})();</script>
