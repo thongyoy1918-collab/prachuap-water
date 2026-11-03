@@ -1921,7 +1921,7 @@ addEventListener("DOMContentLoaded",function(){try{
     <div class="st"><span class="l">ระบายขั้นต่ำ/วัน</span><span class="v">${fmt(a.mr,3)} <small style="color:var(--muted)">≈ ${fmt(a.mr*1e6/86400,2)} ลบ.ม./วิ</small></span></div>
     <span class="bdg ${a.st[0]}">${a.st[1]}</span>`}
   let u7u="vol";
-  function chart(r,a){const H=14,F=7,N=H+F+1,d=a.d,W=720,Hh=330,PL=18,PR=52,PT=34,PB=44,iw=W-PL-PR,ih=Hh-PT-PB;
+  function chart(r,a){const H=14,F=7,N=H+F+1,d=a.d,W=Math.max(720,Math.round($("u7Chart").clientWidth||720)),Hh=330,PL=18,PR=52,PT=34,PB=44,iw=W-PL-PR,ih=Hh-PT-PB;
     const PC=u7u==="pct",K=PC?100/r.cap:1,cv=v=>v==null?null:v*K,U2=PC?"%":"",cap=r.cap*K,cur=r.cur*K;
     const idx=k=>T0-H+k,act=Array.from({length:H+1},(_,k)=>{const i=idx(k);return cv(i===T0?r.cur:(d.act[i]??null))}),fc=Array.from({length:F+1},(_,k)=>cv(a.f(k)));
     const ur=Array.from({length:N},(_,k)=>cv(d.urc[Math.min(364,idx(k))])),lr=Array.from({length:N},(_,k)=>cv(d.lrc[Math.min(364,idx(k))]));
