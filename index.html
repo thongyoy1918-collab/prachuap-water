@@ -5846,7 +5846,7 @@ function dkBg(){if(document.getElementById("dkBg")||!matchMedia("(min-width:701p
 
 
 function dkHero(){const g=document.querySelector("#heroK>.dg"),al=document.querySelector("#heroK>.dg>.c-alloc");if(!g||!al)return;
- let h=document.getElementById("dkHero");if(!h){h=document.createElement("div");h.id="dkHero";h.setAttribute("aria-label","ข้อมูลน้ำ ประจวบฯ");al.after(h)}
+ let h=document.getElementById("dkHero");if(!h){h=document.createElement("div");h.id="dkHero";h.setAttribute("aria-label","ข้อมูลน้ำ ประจวบฯ");}const nt=document.querySelector("#heroK>.dg>.c-net");if(nt&&h.nextElementSibling!==nt)nt.before(h);
  const T=[...document.querySelectorAll("#tiles .tile")],num=id=>{const n=document.querySelector(`#tiles .tile[data-t="${id}"] .fig .n`);return n?n.textContent.replace(/\s+/g," ").replace("ล้าน"," ล้าน").trim():""};
  const A=T.map(t=>t.querySelector(".chip2")).filter(c=>c&&/\b(bad|warn)\b/.test(c.className)&&!/ปลอดภัย|ปกติ/.test(c.textContent)).slice(0,3);
  const dt=(document.querySelector(".content")||document.body).textContent.match(/อัปเดตข้อมูลวันที่\s*([^\n]{3,20}?\d{4})/);
