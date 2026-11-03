@@ -5585,7 +5585,7 @@ const TK={overview:["all","sit169","ov169","daily","dw","exec"],manage:["hi","hi
 const RC={};let RV=null,ri=0,busy=Promise.resolve();
 const kindsFor=(id,rid)=>{if(rid)return ["one"];if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
 function renderKind(k,rid){const key=k+"|"+(rid||(typeof sel!=="undefined"?sel:""));if(RC[key])return Promise.resolve(RC[key]);
- const run=async()=>{if(RC[key])return RC[key];try{if(rid&&typeof sel!=="undefined"&&sel!==rid){sel=rid}}catch(e){}
+ const run=async()=>{if(RC[key])return RC[key];try{if(rid&&typeof sel!=="undefined"&&sel!==rid){sel=rid}}catch(e){}try{if(k==="u7"&&rid&&window.U7&&window.U7.cur!==rid){const b=document.querySelector(`#u7Tick [data-u7="${rid}"]`);b&&b.click()}}catch(e){}
   const img=$("expImg"),old=img.src;expKind=k;try{await buildExport()}catch(e){console.warn(e);return null}
   for(let i=0;i<300&&img.src===old;i++)await new Promise(r=>setTimeout(r,100));if(img.src===old)return null;
   const bl=await (await fetch(img.src)).blob();const u=URL.createObjectURL(bl);const im=new Image();im.src=u;try{await im.decode()}catch(e){}
@@ -5599,15 +5599,16 @@ function rvShow(i){if(!RV)return;ri=(i+RV.items.length)%RV.items.length;const it
   const a=$("rvSv");a.href=r.u;a.setAttribute("download",r.name)};
  if(it.photo){set({u:it.src,w:4,h:3,name:RV.title+"_"+(ri+1)+".jpg"});return}
  $("rvLd").style.display="grid";$("rvLd").firstChild.lastChild.textContent="กำลังสร้างรายงาน…";im.classList.add("out");
- renderKind(it.k,RV.rid).then(r=>{set(r);thumb(ri,r)})}
+ renderKind(it.k,it.rid||RV.rid).then(r=>{set(r);thumb(ri,r)})}
 function thumb(j,r){const b=$("rvTh").querySelectorAll("button")[j];if(b&&r&&!b.querySelector("img")){const i=document.createElement("img");i.src=r.u;i.alt="";b.prepend(i)}}
 function openRV(id,rid){const ks=kindsFor(id,rid);if(!ks){const t=tile(id);t&&t.click();return}
  const R=(typeof RES!=="undefined"?RES:[]).find(r=>r.id===rid);
- const items=ks.map(k=>({k,t:KL[k]||k}));
+ let items=ks.map(k=>({k,t:KL[k]||k}));
+ if(!rid&&id==="urc7"){try{items=(window.U7&&window.U7.A?window.U7.A.map(z=>z.r):RES).map(r=>({k:"u7",rid:r.id,t:"URC "+r.name}))}catch(e){}}
  RV={rid,items,title:R?R.name:(SH[id]||id)};
  $("rvTh").innerHTML=items.map(it=>`<button type="button">${it.photo?`<img src="${it.th}" alt="">`:""}<span>${it.photo?"ภาพถ่าย":it.t}</span></button>`).join("");
  $("rvVw").classList.toggle("one",items.length<2); $("rvVw").classList.add("on");document.body.style.overflow="hidden";rvShow(0);
- items.forEach((it,j)=>{if(!it.photo)renderKind(it.k,rid).then(r=>thumb(j,r))})}
+ items.forEach((it,j)=>{if(!it.photo)renderKind(it.k,it.rid||rid).then(r=>thumb(j,r))})}
 const rvClose=()=>{$("rvVw").classList.remove("on");document.body.style.overflow="";RV=null};
 $("rvX").onclick=rvClose;$("rvL").onclick=()=>rvShow(ri-1);$("rvR").onclick=()=>rvShow(ri+1);
 $("rvTh").addEventListener("click",e=>{const b=e.target.closest("button");if(b)rvShow([...b.parentNode.children].indexOf(b))});
