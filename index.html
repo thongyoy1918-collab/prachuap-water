@@ -2,6 +2,51 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
+<style id="dkcss">
+#heroK .c-net svg.flow,#heroK .c-net .mk,#heroK .c-net .xl{display:none!important}
+#heroK .c-net .nc{position:relative;width:100%;height:190px;margin-top:6px}
+#heroK .c-net .nc svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#heroK .c-net .nc .tip{position:absolute;pointer-events:none;transform:translate(-50%,-115%);background:rgba(8,10,28,.92);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:5px 9px;font:500 12px "IBM Plex Sans Thai",sans-serif;color:#fff;white-space:nowrap;width:max-content;opacity:0;transition:opacity .15s}
+#heroK .c-net .nc .tip b{display:inline!important;font:600 14px Kanit,sans-serif!important;margin:0 2px}
+#heroK .dc .rows .rw,#heroK .dc .plist .pi{text-align:left!important;justify-content:flex-start!important}
+#heroK .dc .rows .rw span,#heroK .dc .plist .pi>span:not(.n){flex:1 1 auto!important;text-align:left!important;margin-left:10px}
+#heroK .dc .rows .rw em{margin-left:auto}
+#dkRes{display:none}
+@media (min-width:1100px){
+ body.dash .content{max-width:none!important;width:100%;padding:14px 28px 48px!important;box-sizing:border-box}
+ body.dash:not(.in-topic) #hub>.hero{padding:10px 0 18px!important;background:none!important}
+ body.dash:not(.in-topic) #hub>.hero>.hero-top{display:none!important}
+ body.dash #heroK{max-width:none!important;width:100%;margin-top:0!important;padding-top:0!important}
+ body.dash #heroK>.dh{margin-bottom:14px}
+ body.dash #heroK>.dg{gap:16px!important}
+ body.dash #heroK>.dg>.c-pink,body.dash #heroK>.dg>.c-orange,body.dash #heroK>.dg>.c-green{display:none!important}
+ body.dash .hub-h{padding:18px 4px 12px!important}
+ body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important;gap:16px!important}
+ body.dash .tile,body.dash .tile.wide{min-height:280px}
+ #dkRes{display:block;grid-column:1/-1;border-radius:24px;background:#0E1013;border:1px solid rgba(255,255,255,.07);padding:18px 26px 14px;color:#F4F4F6;font-family:"IBM Plex Sans Thai",system-ui,sans-serif}
+ #dkRes .hd{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+ #dkRes .hd h3{margin:0;font:600 18px Kanit,sans-serif}
+ #dkRes .hd small{color:#8E8E96;font-size:13px}
+ #dkRes .lg{margin-left:auto;display:flex;gap:16px;font-size:12px;color:#A1A1A6}
+ #dkRes .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+ #dkRes .gr{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:14px;align-items:end}
+ #dkRes .it{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 4px;border-radius:14px;transition:background .2s}
+ #dkRes .it:hover,#dkRes .it:focus-visible{background:rgba(255,255,255,.05)}
+ #dkRes .pc{font:600 19px Kanit,sans-serif;font-variant-numeric:tabular-nums}
+ #dkRes .tb{position:relative;width:58%;max-width:74px;height:120px;border-radius:12px;background:rgba(255,255,255,.06);overflow:hidden}
+ #dkRes .fl{position:absolute;left:0;right:0;bottom:0;border-radius:10px 10px 0 0;background:linear-gradient(180deg,#5AC8FA,#0A6CD6);transition:height .8s cubic-bezier(.2,.8,.2,1)}
+ #dkRes .fl.lo{background:linear-gradient(180deg,#FF8A80,#C62828)}
+ #dkRes .fl.hi{background:linear-gradient(180deg,#FFD27A,#E07A1F)}
+ #dkRes .tk{position:absolute;left:-2px;right:-2px;height:0;border-top:2px dashed rgba(255,255,255,.85)}
+ #dkRes .tk.l{border-top-color:#FF8A80}
+ #dkRes .nm{font:600 14px Kanit,sans-serif;text-align:center;line-height:1.2}
+ #dkRes .sb{font-size:11.5px;color:#8E8E96;text-align:center;line-height:1.35}
+ #dkRes .st{font:600 11px Kanit,sans-serif;padding:2px 9px;border-radius:999px;background:rgba(52,199,89,.16);color:#6EE7A0}
+ #dkRes .st.lo{background:rgba(229,72,77,.18);color:#FF8A8D}
+ #dkRes .st.hi{background:rgba(245,166,35,.18);color:#FFC46B}
+}
+@media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
+</style>
 <style id="mhcss">
 #mhome,#mhTop,#mhNav,#ovBar{display:none}
 @media (max-width:700px){
@@ -118,46 +163,6 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #mhome .ar:hover{background:rgba(20,20,20,.8)}
 #mhome .rw:hover .ar{opacity:1}
 #mhome .ar svg{width:34px;height:34px;transition:transform .2s}#mhome .ar:hover svg{transform:scale(1.25)}
-</style>
-<style id="dkcss">
-#heroK .dc .rows .rw,#heroK .dc .plist .pi{text-align:left!important;justify-content:flex-start!important}
-#heroK .dc .rows .rw span,#heroK .dc .plist .pi>span:not(.n){flex:1 1 auto!important;text-align:left!important;margin-left:10px}
-#heroK .dc .rows .rw em{margin-left:auto}
-#dkRes{display:none}
-@media (min-width:1100px){
- body.dash .content{max-width:none!important;width:100%;padding:14px 28px 48px!important;box-sizing:border-box}
- body.dash:not(.in-topic) #hub>.hero{padding:10px 0 18px!important;background:none!important}
- body.dash:not(.in-topic) #hub>.hero>.hero-top{display:none!important}
- body.dash #heroK{max-width:none!important;width:100%;margin-top:0!important;padding-top:0!important}
- body.dash #heroK>.dh{margin-bottom:14px}
- body.dash #heroK>.dg{gap:16px!important}
- body.dash #heroK>.dg>.c-pink,body.dash #heroK>.dg>.c-orange,body.dash #heroK>.dg>.c-green{display:none!important}
- body.dash .hub-h{padding:18px 4px 12px!important}
- body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important;gap:16px!important}
- body.dash .tile,body.dash .tile.wide{min-height:280px}
- #dkRes{display:block;grid-column:1/-1;border-radius:24px;background:#0E1013;border:1px solid rgba(255,255,255,.07);padding:18px 26px 14px;color:#F4F4F6;font-family:"IBM Plex Sans Thai",system-ui,sans-serif}
- #dkRes .hd{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
- #dkRes .hd h3{margin:0;font:600 18px Kanit,sans-serif}
- #dkRes .hd small{color:#8E8E96;font-size:13px}
- #dkRes .lg{margin-left:auto;display:flex;gap:16px;font-size:12px;color:#A1A1A6}
- #dkRes .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
- #dkRes .gr{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:14px;align-items:end}
- #dkRes .it{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 4px;border-radius:14px;transition:background .2s}
- #dkRes .it:hover,#dkRes .it:focus-visible{background:rgba(255,255,255,.05)}
- #dkRes .pc{font:600 19px Kanit,sans-serif;font-variant-numeric:tabular-nums}
- #dkRes .tb{position:relative;width:58%;max-width:74px;height:120px;border-radius:12px;background:rgba(255,255,255,.06);overflow:hidden}
- #dkRes .fl{position:absolute;left:0;right:0;bottom:0;border-radius:10px 10px 0 0;background:linear-gradient(180deg,#5AC8FA,#0A6CD6);transition:height .8s cubic-bezier(.2,.8,.2,1)}
- #dkRes .fl.lo{background:linear-gradient(180deg,#FF8A80,#C62828)}
- #dkRes .fl.hi{background:linear-gradient(180deg,#FFD27A,#E07A1F)}
- #dkRes .tk{position:absolute;left:-2px;right:-2px;height:0;border-top:2px dashed rgba(255,255,255,.85)}
- #dkRes .tk.l{border-top-color:#FF8A80}
- #dkRes .nm{font:600 14px Kanit,sans-serif;text-align:center;line-height:1.2}
- #dkRes .sb{font-size:11.5px;color:#8E8E96;text-align:center;line-height:1.35}
- #dkRes .st{font:600 11px Kanit,sans-serif;padding:2px 9px;border-radius:999px;background:rgba(52,199,89,.16);color:#6EE7A0}
- #dkRes .st.lo{background:rgba(229,72,77,.18);color:#FF8A8D}
- #dkRes .st.hi{background:rgba(245,166,35,.18);color:#FFC46B}
-}
-@media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
 </style>
 <style id="galcss">
 #gallery .gl-stage{position:relative;background:#0A0A0B;border-radius:24px;overflow:hidden;padding:28px 0 22px;color:#F4F4F6}
@@ -5630,17 +5635,6 @@ let tx=null;$("glFr").addEventListener("touchstart",e=>{tx=e.touches[0].clientX}
 const ro=()=>{try{rope()}catch(e){}};addEventListener("resize",ro);new MutationObserver(ro).observe($("gallery"),{attributes:true,attributeFilter:["class"]});
 document.querySelectorAll("#glLine img").forEach(i=>i.addEventListener("load",ro));setTimeout(ro,300);sel(0,false)})();</script>
 
-<script id="dkjs">(()=>{function build(){const g=document.querySelector("#heroK>.dg");if(!g||typeof RES==="undefined")return;
- let el=document.getElementById("dkRes");if(!el){el=document.createElement("div");el.id="dkRes";g.appendChild(el)}
- const R=RES.filter(r=>r&&r.pct!=null);
- el.innerHTML=`<div class="hd"><h3>อ่างเก็บน้ำ 9 แห่ง เทียบเกณฑ์</h3><small>% ความจุวันนี้ · คลิกอ่างเพื่อดูรายงาน Rule Curve</small><div class="lg"><span><i style="background:#2F8FE6"></i>อยู่ในเกณฑ์</span><span><i style="background:#E07A1F"></i>ใกล้/เกิน URC</span><span><i style="background:#C62828"></i>ต่ำกว่า LRC</span><span><i style="background:none;border-top:2px dashed #fff;border-radius:0;height:0;width:14px"></i>URC</span><span><i style="background:none;border-top:2px dashed #FF8A80;border-radius:0;height:0;width:14px"></i>LRC</span></div></div><div class="gr">`+
- R.map(r=>{const p=Math.max(0,Math.min(100,+r.pct)),u=r.urcNow&&r.cap?Math.min(100,r.urcNow/r.cap*100):null,l=r.lrcNow&&r.cap?Math.min(100,r.lrcNow/r.cap*100):null;
-  const lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),hi=!lo&&(r.status==="high"||(r.urcNow!=null&&r.cur>=r.urcNow*.97));
-  const cls=lo?"lo":hi?"hi":"",st=lo?"ต่ำกว่า LRC":hi?(r.cur>r.urcNow?"เกิน URC":"ใกล้ URC"):"อยู่ในเกณฑ์";
-  return `<button type="button" class="it" data-r="${r.id}" aria-label="${r.name} ${p.toFixed(1)}% ${st}"><span class="pc">${p.toFixed(1)}%</span><span class="tb"><span class="fl ${cls}" style="height:${p}%"></span>${u!=null?`<span class="tk" style="bottom:${u}%"></span>`:""}${l!=null?`<span class="tk l" style="bottom:${l}%"></span>`:""}</span><span class="nm">${r.name}</span><span class="sb">${(+r.cur).toFixed(r.cap>=100?1:2)} / ${(+r.cap).toFixed(r.cap>=100?0:2)}<br>ล้าน ลบ.ม.</span><span class="st ${cls}">${st}</span></button>`}).join("")+`</div>`}
- document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#dkRes .it");if(!b)return;const id=b.dataset.r;
-  try{sel=id;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}});
- const go=()=>{try{build()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
 <div id="ovBar"><button type="button" id="ovX" aria-label="กลับ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>สถานการณ์น้ำวันนี้</b><button type="button" class="r" id="ovSv" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div><nav id="mhNav" aria-label="เมนูหลัก"><button type="button" data-n="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9.5 16.5h5"/></svg>หน้าหลัก</button><button type="button" data-n="reservoirs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/></svg>อ่างฯ</button><button type="button" data-n="rain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 1 1 .8-7.9A5 5 0 0 1 17.5 8 3.5 3.5 0 0 1 17 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg>ฝน</button><button type="button" data-n="maps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>แผนที่</button><button type="button" data-n="gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>รูปภาพ</button></nav><!--rvvw--><div class="gl-vw" id="rvVw" role="dialog" aria-modal="true" aria-label="รายงาน"><div class="gl-fr"><div class="rv-sc" id="rvSc"><img id="rvImg" alt=""></div><div class="rv-ld" id="rvLd"><div><i></i>กำลังสร้างรายงาน…</div></div><div class="gl-cap"><b id="rvT"></b><span id="rvD"></span></div><a class="gl-sv" id="rvSv" download>บันทึก</a><button class="gl-btn gl-x" id="rvX" type="button" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="gl-btn gl-l" id="rvL" type="button" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gl-btn gl-r" id="rvR" type="button" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><div class="gl-th" id="rvTh"></div></div></div><!--/rvvw-->
 <script id="mhjs">(()=>{const $=i=>document.getElementById(i),V="?v=20261103p";
 const DK=matchMedia("(min-width:1100px)").matches;if(DK)document.querySelectorAll("#mhome .card img.bg").forEach(i=>{i.src=i.getAttribute("src").replace(/hero(\d)\.jpg/,"hero$1w.jpg");i.loading="eager"});
@@ -5730,3 +5724,39 @@ const go=()=>{try{build();navOn();addAr()}catch(e){console.warn(e)}};
   if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)})();
 if(document.readyState!=="loading")setTimeout(go,60);else addEventListener("DOMContentLoaded",()=>setTimeout(go,60));
 const tl=$("tiles");if(tl)new MutationObserver(()=>{clearTimeout(window.__mhT);window.__mhT=setTimeout(go,150)}).observe(tl,{childList:true,subtree:true,characterData:true})})();</script>
+<script id="dkjs">(()=>{function build(){const g=document.querySelector("#heroK>.dg");if(!g||typeof RES==="undefined")return;
+ let el=document.getElementById("dkRes");if(!el){el=document.createElement("div");el.id="dkRes";g.appendChild(el)}
+ const R=RES.filter(r=>r&&r.pct!=null);
+ el.innerHTML=`<div class="hd"><h3>อ่างเก็บน้ำ 9 แห่ง เทียบเกณฑ์</h3><small>% ความจุวันนี้ · คลิกอ่างเพื่อดูรายงาน Rule Curve</small><div class="lg"><span><i style="background:#2F8FE6"></i>อยู่ในเกณฑ์</span><span><i style="background:#E07A1F"></i>ใกล้/เกิน URC</span><span><i style="background:#C62828"></i>ต่ำกว่า LRC</span><span><i style="background:none;border-top:2px dashed #fff;border-radius:0;height:0;width:14px"></i>URC</span><span><i style="background:none;border-top:2px dashed #FF8A80;border-radius:0;height:0;width:14px"></i>LRC</span></div></div><div class="gr">`+
+ R.map(r=>{const p=Math.max(0,Math.min(100,+r.pct)),u=r.urcNow&&r.cap?Math.min(100,r.urcNow/r.cap*100):null,l=r.lrcNow&&r.cap?Math.min(100,r.lrcNow/r.cap*100):null;
+  const lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),hi=!lo&&(r.status==="high"||(r.urcNow!=null&&r.cur>=r.urcNow*.97));
+  const cls=lo?"lo":hi?"hi":"",st=lo?"ต่ำกว่า LRC":hi?(r.cur>r.urcNow?"เกิน URC":"ใกล้ URC"):"อยู่ในเกณฑ์";
+  return `<button type="button" class="it" data-r="${r.id}" aria-label="${r.name} ${p.toFixed(1)}% ${st}"><span class="pc">${p.toFixed(1)}%</span><span class="tb"><span class="fl ${cls}" style="height:${p}%"></span>${u!=null?`<span class="tk" style="bottom:${u}%"></span>`:""}${l!=null?`<span class="tk l" style="bottom:${l}%"></span>`:""}</span><span class="nm">${r.name}</span><span class="sb">${(+r.cur).toFixed(r.cap>=100?1:2)} / ${(+r.cap).toFixed(r.cap>=100?0:2)}<br>ล้าน ลบ.ม.</span><span class="st ${cls}">${st}</span></button>`}).join("")+`</div>`}
+ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#dkRes .it");if(!b)return;const id=b.dataset.r;
+  try{sel=id;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}});
+ 
+function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeof RES==="undefined"||typeof TODAY==="undefined")return;
+ let box=c.querySelector(".nc");if(!box){box=document.createElement("div");box.className="nc";c.appendChild(box)}
+ const N=30,T0=TODAY,idx=[...Array(N)].map((_,i)=>T0-N+1+i),R=RES.filter(r=>r.d&&r.d.act);
+ const sum=k=>idx.map(i=>R.reduce((t,r)=>{const a=r.d[k];const v=a?a[i]:null;return t+(v==null?(k==="act"?(r.d.act[i-1]??0):0):+v)},0));
+ const A=sum("act"),U=sum("urc"),L=sum("lrc"),cap=R.reduce((t,r)=>t+(+r.cap||0),0);
+ const W=1000,H=190,PL=8,PR=70,PT=16,PB=26;const all=[...A,...U.filter(v=>v>0),...L.filter(v=>v>0)];
+ let lo=Math.min(...A),hi=Math.max(...A);const pd=Math.max(4,(hi-lo)*.25);lo=Math.floor((lo-pd)/5)*5;hi=Math.ceil((hi+pd)/5)*5;
+ const X=i=>PL+i*(W-PL-PR)/(N-1),Y=v=>PT+(hi-v)/(hi-lo)*(H-PT-PB);
+ const sm=a=>a.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("");
+ const d0=new Date(2026,0,1),dt=i=>{const d=new Date(d0);d.setDate(d.getDate()+i);return d},TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."],lab=i=>{const d=dt(i);return d.getDate()+" "+TM[d.getMonth()]};
+ const step=(hi-lo)>60?20:(hi-lo)>25?10:5;let g="";for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step)g+=`<line x1="${PL}" x2="${W-PR}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.12)" stroke-dasharray="3 5"/><text x="${W-PR+10}" y="${Y(v)+4}" fill="rgba(255,255,255,.6)" font-size="12">${v}</text>`;
+ let xl="";for(let i=N-1;i>=0;i-=7)xl+=`<text x="${X(i)}" y="${H-6}" fill="rgba(255,255,255,.7)" font-size="12" text-anchor="middle">${lab(idx[i])}</text>`;
+ const hasU=false;const last=A[N-1];
+ box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="ncF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>${g}
+ ${hasU?`<path d="${sm(U)}" fill="none" stroke="#FFB4A8" stroke-width="2" stroke-dasharray="7 6" vector-effect="non-scaling-stroke"/><text x="${W-PR+10}" y="${Y(U[N-1])-8}" fill="#FFB4A8" font-size="12" font-weight="600">URC ${U[N-1].toFixed(0)}</text>`:""}
+ <path d="${sm(A)}L${X(N-1)} ${H-PB}L${X(0)} ${H-PB}Z" fill="url(#ncF)"/><path d="${sm(A)}" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+ ${[N-1-21,N-1-14,N-1-7].map(i=>`<circle cx="${X(i)}" cy="${Y(A[i])}" r="4" fill="#fff"/><text x="${X(i)}" y="${Y(A[i])-12}" fill="#fff" font-size="13" font-weight="600" text-anchor="middle">${A[i].toFixed(1)}</text>`).join("")}<circle cx="${X(N-1)}" cy="${Y(last)}" r="6" fill="#fff" stroke="#2C3BE8" stroke-width="3"/><text x="${X(N-1)-10}" y="${Y(last)-14}" fill="#fff" font-size="14" font-weight="700" text-anchor="end">${last.toFixed(1)}</text>${xl}
+ <rect x="${PL}" y="0" width="${W-PL-PR}" height="${H}" fill="transparent" class="hit"/><line class="cur" x1="0" x2="0" y1="${PT}" y2="${H-PB}" stroke="#fff" stroke-opacity="0" stroke-width="1"/></svg><div class="tip"></div>`;
+ const sv=box.querySelector("svg"),tp=box.querySelector(".tip"),cl=sv.querySelector(".cur");
+ sv.addEventListener("mousemove",e=>{const r=sv.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(N-1,Math.round((fx-PL)/((W-PL-PR)/(N-1)))));
+  cl.setAttribute("x1",X(i));cl.setAttribute("x2",X(i));cl.setAttribute("stroke-opacity",".6");tp.style.left=(X(i)/W*100)+"%";tp.style.top=(Y(A[i])/H*100)+"%";tp.style.opacity=1;
+  tp.innerHTML=`${lab(idx[i])} · <b>${A[i].toFixed(2)}</b> ล้าน ลบ.ม. · ${(A[i]/cap*100).toFixed(1)}%`});
+ sv.addEventListener("mouseleave",()=>{tp.style.opacity=0;cl.setAttribute("stroke-opacity","0")});
+ const lg=c.querySelector(".leg");if(lg)lg.innerHTML=`<span><i style="background:#fff"></i>ปริมาณน้ำรวม 9 อ่าง (30 วัน)</span>${hasU?'<span><i style="background:#FFB4A8"></i>ผลรวม URC</span>':""}`}
+const go=()=>{try{build()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
