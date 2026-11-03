@@ -95,6 +95,7 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #rvVw .gl-th img{object-position:50% 0}
  #rvVw .gl-sv{display:flex!important;right:74px}
  #rvVw .gl-fr{height:88vh}
+ #rvVw.one .gl-l,#rvVw.one .gl-r,#rvVw.one .gl-th,#rvVw.one .gl-cap{display:none}
  body:has(#rvVw.on) #mhTop,body:has(#rvVw.on) #mhNav{display:none!important}
  body:has(#exp:not([hidden])) #mhTop,body:has(#exp:not([hidden])) #mhNav,body:has(.gl-vw.on) #mhNav,body:has(.prm-lb.on) #mhNav{display:none!important}
  #mhNav{position:fixed;z-index:960;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(92vw,420px);height:66px;border-radius:33px;background:rgba(32,32,34,.88);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.6);align-items:center;justify-content:space-around;padding:0 6px}
@@ -5579,10 +5580,10 @@ const SH={overview:"สถานการณ์รายวัน",pranburi:"เ
 const IMG={spill:"prm/mh/spill.jpg"},MEDIA={maps:"prm/mh/maps.jpg",gallery:"prm/mh/gallery.jpg",present:"prm/mh/present.jpg",flood:""};
 const tile=id=>document.querySelector(`#tiles .tile[data-t="${id}"]`);const open=id=>{const t=tile(id);t&&t.click()};
 const REP=new Set(["overview","pranburi","manage","urc7","flood","present","trend","rain","small","reservoirs","streams"]);
-const KL={exec:"รายงานผู้บริหาร 1 หน้า",all:"ภาพรวม 9 แห่ง",daily:"รายงานประจำวัน",dw:"ประจำวัน · พื้นขาว",hi:"อ่างเกิน 80%",hi169:"อ่างเกิน 80% · 16:9",u7:"รายงาน URC",fl:"ช่วยเหลืออุทกภัย 69",flL:"อุทกภัย 69 · แนวนอน",fl169:"อุทกภัย 69 · 16:9",tr:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",rain169:"ฝนสะสม · 16:9",small:"อ่างขนาดเล็ก 33 แห่ง",one:"รายงานรายอ่าง",one169:"รายอ่าง · 16:9",pr:"เขื่อนปราณบุรี",spill:"น้ำล้น · หน้า 1",spill2:"น้ำล้น · หน้า 2",spill3:"กราฟน้ำล้น ต.ค.–ธ.ค.",sit169:"สถานการณ์ · 16:9",ov169:"ภาพรวม · 16:9",risk169:"จุดเสี่ยง · 16:9",flow169:"น้ำไหลลง/ระบาย · 16:9",water:"แหล่งน้ำ 16:9"};
+const KL={one:"รายงาน Rule Curve",exec:"รายงานผู้บริหาร 1 หน้า",all:"ภาพรวม 9 แห่ง",daily:"รายงานประจำวัน",dw:"ประจำวัน · พื้นขาว",hi:"อ่างเกิน 80%",hi169:"อ่างเกิน 80% · 16:9",u7:"รายงาน URC",fl:"ช่วยเหลืออุทกภัย 69",flL:"อุทกภัย 69 · แนวนอน",fl169:"อุทกภัย 69 · 16:9",tr:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",rain169:"ฝนสะสม · 16:9",small:"อ่างขนาดเล็ก 33 แห่ง",one:"รายงาน Rule Curve",one169:"รายอ่าง · 16:9",pr:"เขื่อนปราณบุรี",spill:"น้ำล้น · หน้า 1",spill2:"น้ำล้น · หน้า 2",spill3:"กราฟน้ำล้น ต.ค.–ธ.ค.",sit169:"สถานการณ์ · 16:9",ov169:"ภาพรวม · 16:9",risk169:"จุดเสี่ยง · 16:9",flow169:"น้ำไหลลง/ระบาย · 16:9",water:"แหล่งน้ำ 16:9"};
 const TK={overview:["all","sit169","ov169","daily","dw","exec"],manage:["hi","hi169"],urc7:["u7"],trend:["tr"],rain:["rain","rain169"],small:["small"],reservoirs:["one","one169","u7"],streams:["daily","flow169"],flood:["fl","flL","fl169"],present:["sit169","ov169","risk169","hi169","rain169","flow169","fl169","water"],spill:["spill","spill2","spill3"]};
 const RC={};let RV=null,ri=0,busy=Promise.resolve();
-const kindsFor=(id,rid)=>{if(rid){const k=rid==="pranburi"?["pr","one","one169"]:["one","one169","u7"];if(rid==="yangchum")k.push("spill","spill2","spill3");return k}if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
+const kindsFor=(id,rid)=>{if(rid)return ["one"];if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
 function renderKind(k,rid){const key=k+"|"+(rid||(typeof sel!=="undefined"?sel:""));if(RC[key])return Promise.resolve(RC[key]);
  const run=async()=>{if(RC[key])return RC[key];try{if(rid&&typeof sel!=="undefined"&&sel!==rid){sel=rid}}catch(e){}
   const img=$("expImg"),old=img.src;expKind=k;try{await buildExport()}catch(e){console.warn(e);return null}
@@ -5603,10 +5604,9 @@ function thumb(j,r){const b=$("rvTh").querySelectorAll("button")[j];if(b&&r&&!b.
 function openRV(id,rid){const ks=kindsFor(id,rid);if(!ks){const t=tile(id);t&&t.click();return}
  const R=(typeof RES!=="undefined"?RES:[]).find(r=>r.id===rid);
  const items=ks.map(k=>({k,t:KL[k]||k}));
- if(rid&&window.GAL){const g=window.GAL.find(x=>x.id===rid);if(g)g.s.forEach(p=>items.push({photo:1,src:p.src,th:p.th,t:p.t}))}
  RV={rid,items,title:R?R.name:(SH[id]||id)};
  $("rvTh").innerHTML=items.map(it=>`<button type="button">${it.photo?`<img src="${it.th}" alt="">`:""}<span>${it.photo?"ภาพถ่าย":it.t}</span></button>`).join("");
- $("rvVw").classList.add("on");document.body.style.overflow="hidden";rvShow(0);
+ $("rvVw").classList.toggle("one",items.length<2); $("rvVw").classList.add("on");document.body.style.overflow="hidden";rvShow(0);
  items.forEach((it,j)=>{if(!it.photo)renderKind(it.k,rid).then(r=>thumb(j,r))})}
 const rvClose=()=>{$("rvVw").classList.remove("on");document.body.style.overflow="";RV=null};
 $("rvX").onclick=rvClose;$("rvL").onclick=()=>rvShow(ri-1);$("rvR").onclick=()=>rvShow(ri+1);
