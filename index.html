@@ -2,8 +2,22 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
+<style id="dkcss">
+@media (min-width:1100px){
+ body.dash .content{max-width:none!important;width:100%;padding:14px 28px 48px!important;box-sizing:border-box}
+ body.dash:not(.in-topic) #hub>.hero{padding:10px 0 18px!important;background:none!important}
+ body.dash:not(.in-topic) #hub>.hero>.hero-top{display:none!important}
+ body.dash #heroK{max-width:none!important;width:100%;margin-top:0!important;padding-top:0!important}
+ body.dash #heroK>.dh{margin-bottom:14px}
+ body.dash #heroK>.dg{gap:16px!important}
+ body.dash .hub-h{padding:18px 4px 12px!important}
+ body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important;gap:16px!important}
+ body.dash .tile,body.dash .tile.wide{min-height:280px}
+}
+@media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
+</style>
 <style id="mhcss">
-#mhome,#mhTop,#mhNav{display:none}
+#mhome,#mhTop,#mhNav,#ovBar{display:none}
 @media (max-width:700px){
  body.dash{padding-bottom:96px}
  body.dash:not(.in-topic) .main>.top{display:none!important}
@@ -102,7 +116,6 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  @keyframes ovIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
  body.mh-ov #hub>.hero>.hero-top{display:none}
  body.mh-ov #mhNav,body.mh-ov #mhTop{display:none!important}
- #ovBar{display:none}
  body.mh-ov #ovBar{display:flex;position:fixed;z-index:995;left:0;right:0;top:0;height:58px;align-items:center;gap:12px;padding:0 14px;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
  #ovBar b{font:700 20px Kanit,sans-serif;color:#fff}
  #ovBar button{all:unset;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
