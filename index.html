@@ -5783,6 +5783,8 @@ document.querySelectorAll("#glLine img").forEach(i=>i.addEventListener("load",ro
 
 
 
+
+
 <div id="ovBar"><button type="button" id="ovX" aria-label="กลับ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>สถานการณ์น้ำวันนี้</b><button type="button" class="r" id="ovSv" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div><nav id="mhNav" aria-label="เมนูหลัก"><button type="button" data-n="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9.5 16.5h5"/></svg>หน้าหลัก</button><button type="button" data-n="reservoirs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/></svg>อ่างฯ</button><button type="button" data-n="rain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 1 1 .8-7.9A5 5 0 0 1 17.5 8 3.5 3.5 0 0 1 17 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg>ฝน</button><button type="button" data-n="maps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>แผนที่</button><button type="button" data-n="gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>รูปภาพ</button></nav><!--rvvw--><div class="gl-vw" id="rvVw" role="dialog" aria-modal="true" aria-label="รายงาน"><div class="gl-fr"><div class="rv-sc" id="rvSc"><img id="rvImg" alt=""></div><div class="rv-ld" id="rvLd"><div><i></i>กำลังสร้างรายงาน…</div></div><div class="gl-cap"><b id="rvT"></b><span id="rvD"></span></div><a class="gl-sv" id="rvSv" download>บันทึก</a><button class="gl-btn gl-x" id="rvX" type="button" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="gl-btn gl-l" id="rvL" type="button" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gl-btn gl-r" id="rvR" type="button" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><div class="gl-th" id="rvTh"></div></div></div><!--/rvvw-->
 <script id="mhjs">(()=>{const $=i=>document.getElementById(i),V="?v=20261103p";
 const DK=matchMedia("(min-width:1100px)").matches;if(DK)document.querySelectorAll("#mhome .card img.bg").forEach(i=>{i.src=i.getAttribute("src").replace(/hero(\d)\.jpg/,"hero$1w.jpg");i.loading="eager"});
@@ -5795,7 +5797,7 @@ const REP=new Set(["overview","pranburi","manage","urc7","flood","present","tren
 const KL={one:"รายงาน Rule Curve",exec:"รายงานผู้บริหาร 1 หน้า",all:"ภาพรวม 9 แห่ง",daily:"รายงานประจำวัน",dw:"ประจำวัน · พื้นขาว",hi:"อ่างเกิน 80%",hi169:"อ่างเกิน 80% · 16:9",u7:"รายงาน URC",fl:"ช่วยเหลืออุทกภัย 69",flL:"อุทกภัย 69 · แนวนอน",fl169:"อุทกภัย 69 · 16:9",tr:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",rain169:"ฝนสะสม · 16:9",small:"อ่างขนาดเล็ก 33 แห่ง",one:"รายงาน Rule Curve",one169:"รายอ่าง · 16:9",pr:"เขื่อนปราณบุรี",spill:"น้ำล้น · หน้า 1",spill2:"น้ำล้น · หน้า 2",spill3:"กราฟน้ำล้น ต.ค.–ธ.ค.",sit169:"สถานการณ์ · 16:9",ov169:"ภาพรวม · 16:9",risk169:"จุดเสี่ยง · 16:9",flow169:"น้ำไหลลง/ระบาย · 16:9",water:"แหล่งน้ำ 16:9"};
 const TK={overview:["all","sit169","ov169","daily","dw","exec"],manage:["hi","hi169"],urc7:["u7"],trend:["tr"],rain:["rain","rain169"],small:["small"],reservoirs:["one","one169","u7"],streams:["daily","flow169"],flood:["fl","flL","fl169"],present:["sit169","ov169","risk169","hi169","rain169","flow169","fl169","water"],spill:["spill","spill2","spill3"]};
 const RC={};let RVback=null,RV=null,ri=0,busy=Promise.resolve();
-const kindsFor=(id,rid)=>{if(rid)return ["one"];if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
+const kindsFor=(id,rid)=>{if(rid)return ["one"];if(id&&id.slice(0,2)==="k:")return [id.slice(2)];if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
 function renderKind(k,rid){const key=k+"|"+(rid||(typeof sel!=="undefined"?sel:""));if(RC[key])return Promise.resolve(RC[key]);
  const run=async()=>{if(RC[key])return RC[key];try{if(rid&&typeof sel!=="undefined"&&sel!==rid){sel=rid}}catch(e){}try{if(k==="u7"&&rid&&window.U7&&window.U7.cur!==rid){const b=document.querySelector(`#u7Tick [data-u7="${rid}"]`);b&&b.click()}}catch(e){}
   const img=$("expImg"),old=img.src;expKind=k;try{await buildExport()}catch(e){console.warn(e);return null}
@@ -5806,7 +5808,7 @@ function renderKind(k,rid){const key=k+"|"+(rid||(typeof sel!=="undefined"?sel:"
 function rvShow(i){if(!RV)return;ri=(i+RV.items.length)%RV.items.length;const it=RV.items[ri],im=$("rvImg"),sc=$("rvSc");
  $("rvT").textContent=RV.title;$("rvD").textContent=it.t+` (${ri+1}/${RV.items.length})`;
  $("rvTh").querySelectorAll("button").forEach((b,j)=>b.classList.toggle("on",j===ri));
- const set=r=>{if(RV.items[ri]!==it)return;if(!r){$("rvLd").firstChild.lastChild.textContent="สร้างรายงานไม่สำเร็จ";return}
+ const set=r=>{if(!RV||RV.items[ri]!==it)return;if(!r){$("rvLd").firstChild.lastChild.textContent="สร้างรายงานไม่สำเร็จ";return}
   im.classList.add("out");im.onload=()=>im.classList.remove("out");im.src=r.u;sc.classList.toggle("ls",r.w>r.h);sc.scrollTop=0;$("rvLd").style.display="none";
   const a=$("rvSv");a.href=r.u;a.setAttribute("download",r.name)};
  if(it.photo){set({u:it.src,w:4,h:3,name:RV.title+"_"+(ri+1)+".jpg"});return}
@@ -5818,7 +5820,7 @@ function openRV(id,rid){const ks=kindsFor(id,rid);if(!ks){const t=tile(id);t&&t.
  const R=(typeof RES!=="undefined"?RES:[]).find(r=>r.id===rid);
  let items=ks.map(k=>({k,t:KL[k]||k}));
  if(!rid&&id==="urc7"){try{items=(window.U7&&window.U7.A?window.U7.A.map(z=>z.r):RES).map(r=>({k:"u7",rid:r.id,t:"URC "+r.name}))}catch(e){}}
- RV={rid,items,title:R?R.name:(SH[id]||id)};
+ RV={rid,items,title:R?R.name:(SH[id]||(id&&id.slice(0,2)==="k:"?(KL[id.slice(2)]||id):id))};
  $("rvTh").innerHTML=items.map(it=>`<button type="button">${it.photo?`<img src="${it.th}" alt="">`:""}<span>${it.photo?"ภาพถ่าย":it.t}</span></button>`).join("");
  $("rvVw").classList.toggle("one",items.length<2); $("rvVw").classList.add("on");document.body.style.overflow="hidden";rvShow(0);
  items.forEach((it,j)=>{if(!it.photo)renderKind(it.k,it.rid||rid).then(r=>thumb(j,r))})}
@@ -5912,7 +5914,7 @@ function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeo
   tp.style.left=(X(i)/W*100)+"%";tp.style.top=(Y(A[i])/H*100)+"%";tp.style.opacity=1;tp.innerHTML=`${dt.getDate()} ${TM[dt.getMonth()]} · <b>${f(A[i])}</b>`});
  kp.addEventListener("mouseleave",()=>tp.style.opacity=0)}
 
-function flowCard(){const c=[...document.querySelectorAll("#heroK .c-dk")].find(x=>/น้ำไหลลงวันนี้/.test(x.textContent));if(!c||typeof RES==="undefined")return;
+function flowCard(){const c=[...document.querySelectorAll("#heroK .c-dk")].find(x=>/น้ำไหลลงวันนี้/.test(x.textContent));if(!c||typeof RES==="undefined")return;if(!c.dataset.rv){c.dataset.rv=1;c.style.cursor="pointer";c.title="ดูรายงานประจำวัน";c.addEventListener("click",e=>{if(!window.openRV)return;e.preventDefault();e.stopPropagation();window.openRV("k:daily")},true)}
  c.classList.add("fk");let box=c.querySelector(".fk2");if(!box){box=document.createElement("div");box.className="fk2";c.appendChild(box)}
  const N=21,T0=TODAY,idx=[...Array(N)].map((_,i)=>T0-N+1+i),sum=k=>idx.map(i=>RES.reduce((t,r)=>t+(+((r.d&&r.d[k])||[])[i]||0),0));
  const I=sum("inf"),O=sum("out"),mx=Math.max(...I,...O,.001),f=v=>v.toFixed(3);
