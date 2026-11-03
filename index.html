@@ -3,6 +3,24 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="dkcss">
+#dkHero{display:none}
+@media (min-width:1100px){
+ html body.dash #heroK>.dg>.c-net{grid-column:span 6!important}
+ html body.dash #heroK>.dg>.c-alloc{grid-column:span 3!important}
+ #dkHero{display:block;grid-column:span 3;position:relative;border-radius:28px;overflow:hidden;min-height:340px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 18px 40px -18px rgba(0,0,0,.8);background:#000}
+ #dkHero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;opacity:0;transition:opacity 1.6s ease;transform:scale(1.03)}
+ #dkHero img.on{opacity:1;animation:dkZ 9s ease-out forwards}
+ #dkHero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 58%,rgba(0,0,0,.92) 100%)}
+ #dkHero .ct{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 18px 18px;text-align:center}
+ #dkHero h2{margin:0;padding-top:.2em;font:800 clamp(38px,2.9vw,56px)/1.02 Kanit,sans-serif;background:linear-gradient(180deg,#FFF3C8,#E9C46A 45%,#B98A2E);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.7))}
+ #dkHero h2 span{display:block;font-size:.6em}
+ #dkHero .tg{margin:8px 0 0;font:400 13px/1.5 "IBM Plex Sans Thai",sans-serif;color:#E6E6EA}
+ #dkHero .tg b{color:#fff}
+ #dkHero .al{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+ #dkHero .al span{font:600 11.5px "IBM Plex Sans Thai",sans-serif;padding:3px 9px;border-radius:4px;background:#E50914;color:#fff}
+ #dkHero .al span.w{background:#F5A623;color:#1A1200}
+ #dkHero .cr{position:absolute;z-index:2;right:12px;top:10px;font-size:9.5px;color:rgba(255,255,255,.55)}
+}
 #dkBg{display:none}
 @media (min-width:701px){
  #dkBg{display:block;position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050506}
@@ -34,15 +52,15 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #heroK .c-dk .fb .g i{flex:1;border-radius:2px 2px 0 0;opacity:.55}
 #heroK .c-dk .fb .g.now i{opacity:1}
 #heroK .c-dk .fx{display:flex;justify-content:space-between;font-size:11px;color:#6E6E73}
-#heroK .c-net.nk{background:#141416!important;border:1px solid rgba(255,255,255,.08)!important;display:grid!important;grid-template-columns:minmax(220px,34%) 1fr;align-items:stretch;padding:24px!important;gap:24px;min-height:0!important}
+#heroK .c-net.nk{background:#141416!important;border:1px solid rgba(255,255,255,.08)!important;display:grid!important;grid-template-columns:minmax(190px,32%) 1fr;align-items:stretch;padding:20px!important;gap:18px;min-height:0!important}
 #heroK .c-net.nk::before,#heroK .c-net.nk::after{display:none!important}
 #heroK .c-net.nk>*:not(.nk2){display:none!important}
 #heroK .c-net .nk2{display:contents}
 #heroK .c-net .kl{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left!important;color:#F4F4F6;font-family:"IBM Plex Sans Thai",sans-serif}
 #heroK .c-net .kt{font-size:15px;color:#C9C9CF;margin-bottom:14px}
 #heroK .c-net .kv{display:flex;align-items:flex-start;gap:10px}
-#heroK .c-net .kv b{font:500 clamp(44px,3.6vw,64px)/1 "Geist Mono","JetBrains Mono",ui-monospace,monospace;letter-spacing:-.02em;color:#fff}
-#heroK .c-net .kv span{font:600 15px "Geist Mono",ui-monospace,monospace;margin-top:12px}
+#heroK .c-net .kv b{font:500 clamp(36px,2.7vw,52px)/1 "Geist Mono","JetBrains Mono",ui-monospace,monospace;letter-spacing:-.02em;color:#fff}
+#heroK .c-net .kv{flex-wrap:nowrap}#heroK .c-net .kv span{white-space:nowrap;font:600 14px "Geist Mono",ui-monospace,monospace;margin-top:10px}
 #heroK .c-net .kv .u{color:#4ADE80}#heroK .c-net .kv .d{color:#F87171}
 #heroK .c-net .ks{margin-top:16px;font-size:14px;line-height:1.7;color:#A1A1A6}
 #heroK .c-net .ks b{display:inline!important;color:#fff;font-weight:600}
@@ -5826,4 +5844,13 @@ function dkBg(){if(document.getElementById("dkBg")||!matchMedia("(min-width:701p
  d.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" ${k>1?'loading="lazy" ':''}src="prm/mh/hero${k}w.jpg?v=20261103p"${k===1?' class="on"':''}>`).join("")+`<span class="cr">${CR[0]}</span>`;document.body.prepend(d);
  const im=[...d.querySelectorAll("img")],cr=d.querySelector(".cr");let k=0;setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
 
-const go=()=>{try{build()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
+
+function dkHero(){const g=document.querySelector("#heroK>.dg"),al=document.querySelector("#heroK>.dg>.c-alloc");if(!g||!al)return;
+ let h=document.getElementById("dkHero");if(!h){h=document.createElement("div");h.id="dkHero";h.setAttribute("aria-label","ข้อมูลน้ำ ประจวบฯ");al.after(h)}
+ const T=[...document.querySelectorAll("#tiles .tile")],num=id=>{const n=document.querySelector(`#tiles .tile[data-t="${id}"] .fig .n`);return n?n.textContent.replace(/\s+/g," ").replace("ล้าน"," ล้าน").trim():""};
+ const A=T.map(t=>t.querySelector(".chip2")).filter(c=>c&&/\b(bad|warn)\b/.test(c.className)&&!/ปลอดภัย|ปกติ/.test(c.textContent)).slice(0,3);
+ const dt=(document.querySelector(".content")||document.body).textContent.match(/อัปเดตข้อมูลวันที่\s*([^\n]{3,20}?\d{4})/);
+ const CR=["ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม"];
+ h.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" src="prm/mh/hero${k}.jpg?v=20261103p"${k===1?' class="on"':' loading="lazy"'}>`).join("")+`<span class="cr">${CR[0]}</span><div class="ct"><h2>ข้อมูลน้ำ<span>ประจวบฯ</span></h2><p class="tg">น้ำรวม 9 อ่าง <b>${num("overview")}</b> · ปราณบุรี <b>${num("pranburi")}</b>${dt?"<br>"+dt[1]:""}</p><div class="al">${A.map(c=>`<span class="${/\bwarn\b/.test(c.className)?"w":""}">${c.textContent.trim()}</span>`).join("")}</div></div>`;
+ const im=[...h.querySelectorAll("img")],cr=h.querySelector(".cr");let k=0;clearInterval(window.__dkH);window.__dkH=setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
+const go=()=>{try{build()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
