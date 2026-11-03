@@ -3,6 +3,23 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="dkcss">
+html body #heroK .c-lime.rb{background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);color:#F4F4F6!important;padding:16px 20px!important}
+#heroK .c-lime.rb::before{display:none!important}#heroK .c-lime.rb>*:not(.rb2){display:none!important}
+#heroK .c-lime .rb2{display:flex;flex-direction:column;gap:6px;height:100%;font-family:"IBM Plex Sans Thai",sans-serif}
+#heroK .c-lime .rh{display:flex;flex-wrap:wrap;row-gap:2px;justify-content:space-between;align-items:center;white-space:nowrap;font-size:13px;font-weight:600;color:#C9C9CF}
+#heroK .c-lime .rh .lg{font-size:10px;font-weight:400;color:#8E8E96;display:flex;align-items:center;gap:4px;white-space:nowrap}
+#heroK .c-lime .rh .lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-left:5px}
+#heroK .c-lime .rh .lg .h{background:#FF2D3D}#heroK .c-lime .rh .lg .n{background:#2F9BFF}#heroK .c-lime .rh .lg .l{background:#F5A623}#heroK .c-lime .rh .lg .u{width:2px;height:10px;background:#fff;border-radius:0}
+#heroK .c-lime .rl{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+#heroK .c-lime .ri{all:unset;cursor:pointer;display:grid;grid-template-columns:72px 1fr 44px;align-items:center;gap:8px;font-size:11.5px;color:#E5E5EA;border-radius:5px;padding:0 2px}
+#heroK .c-lime .ri:hover{background:rgba(255,255,255,.06)}
+#heroK .c-lime .ri .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left!important}
+#heroK .c-lime .ri .br{position:relative;height:7px;border-radius:4px;background:rgba(255,255,255,.09)}
+#heroK .c-lime .ri .br i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+#heroK .c-lime .ri .br i.h{background:#FF2D3D;box-shadow:0 0 6px rgba(255,45,61,.5)}#heroK .c-lime .ri .br i.n{background:#2F9BFF}#heroK .c-lime .ri .br i.l{background:#F5A623}
+#heroK .c-lime .ri .br s{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#fff;border-radius:1px}
+#heroK .c-lime .ri .pv{text-align:right;font:600 12px "Geist Mono",monospace}
+#heroK .c-lime .ri .pv.h{color:#FF6B76}#heroK .c-lime .ri .pv.n{color:#7FC4FF}#heroK .c-lime .ri .pv.l{color:#FFC46B}
 #heroK .c-dk .plist .pi em.wt{font-style:normal;font-weight:600;font-size:12px;margin-left:8px;padding:1px 8px;border-radius:999px}
 #heroK .c-dk .plist .pi em.wt.ok{color:#FFC46B;background:rgba(245,166,35,.14)}
 #heroK .c-dk .plist .pi em.wt.bad{color:#FF8A8D;background:rgba(229,72,77,.16)}
@@ -5905,4 +5922,12 @@ function watchTxt(){document.querySelectorAll("#heroK .c-dk .plist .pi").forEach
  const k=/LRC/.test(em.textContent)?"LRC":"URC",v=parseFloat(b.textContent.replace("−","-").replace(/[^\d.\-]/g,""));if(isNaN(v))return;const up=v>0;
  em.textContent=(up?"สูงกว่า ":"ต่ำกว่า ")+k;em.className="wt "+(k==="URC"?(up?"bad":"ok"):(up?"ok":"bad"));
  b.innerHTML=`${up?"+":"−"}${Math.abs(v).toFixed(2)}<small> ล้าน ลบ.ม.</small>`;p.dataset.wt=1})}
-const go=()=>{try{build()}catch(e){console.warn(e)}try{watchTxt()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
+
+function resBars(){const c=document.querySelector("#heroK .c-lime");if(!c||typeof RES==="undefined")return;
+ c.classList.add("rb");let box=c.querySelector(".rb2");if(!box){box=document.createElement("div");box.className="rb2";c.appendChild(box)}
+ const R=RES.filter(r=>r.cap&&r.cur!=null);
+ box.innerHTML=`<div class="rh"><span>ปริมาณน้ำรายอ่าง</span><span class="lg"><i class="h"></i>เกิน 80% <i class="n"></i>ปกติ <i class="l"></i>ต่ำกว่า LRC <i class="u"></i>URC</span></div><div class="rl">`+
+ R.map(r=>{const p=Math.max(0,Math.min(100,r.cur/r.cap*100)),u=r.urcNow?Math.min(100,r.urcNow/r.cap*100):null,lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),cls=p>80?"h":lo?"l":"n";
+  return `<button type="button" class="ri" data-r="${r.id}" title="${r.name} ${(+r.cur).toFixed(3)} / ${(+r.cap).toFixed(2)} ล้าน ลบ.ม."><span class="nm">${r.name.replace("เขื่อน","")}</span><span class="br"><i class="${cls}" style="width:${p}%"></i>${u!=null?`<s style="left:${u}%"></s>`:""}</span><span class="pv ${cls}">${p.toFixed(1)}%</span></button>`}).join("")+`</div>`;
+ box.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{try{sel=b.dataset.r;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}})}
+const go=()=>{try{build()}catch(e){console.warn(e)}try{resBars()}catch(e){console.warn(e)}try{watchTxt()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
