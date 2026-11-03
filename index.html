@@ -10,8 +10,10 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #dkBg img.on{opacity:1;animation:dkZ 9s ease-out forwards}
  @keyframes dkZ{from{transform:scale(1.04)}to{transform:scale(1.12)}}
  #dkBg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 25%,rgba(5,5,6,.05),rgba(5,5,6,.55) 75%,rgba(5,5,6,.85)),linear-gradient(180deg,rgba(5,5,6,.3),rgba(5,5,6,0) 30%,rgba(5,5,6,.7) 90%)}
- #heroK .c-net.nk,#heroK .c-dk,#dkRes{background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2)}
- #heroK .c-net .kp{background:rgba(255,255,255,.04)!important}
+ html body #heroK .c-net.nk,html body #heroK .c-dk,html body #dkRes{background:radial-gradient(72% 62% at 50% 58%,rgba(6,6,8,.97) 30%,rgba(6,6,8,0) 100%),linear-gradient(180deg,#80808E 0%,#3A3A44 30%,#33333C 74%,#55555F 100%)!important;border:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.06),0 18px 40px -18px rgba(0,0,0,.7)!important}
+ #heroK .c-dk::before{display:none!important}
+ #heroK .c-net .kp{background:rgba(0,0,0,.35)!important;border-color:rgba(255,255,255,.1)!important}
+ html body.dash #tiles.tiles .tile{background:radial-gradient(380px circle at var(--mx) var(--my),color-mix(in srgb,var(--tc) calc(var(--ga)*16%),transparent),transparent 65%),radial-gradient(72% 62% at 50% 58%,rgba(6,6,8,.97) 30%,rgba(6,6,8,0) 100%),linear-gradient(180deg,#80808E 0%,#3A3A44 30%,#33333C 74%,#55555F 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.06),0 18px 40px -18px rgba(0,0,0,.7)!important}
  #dkBg .cr{position:absolute;right:20px;bottom:12px;z-index:1;font:400 11px "IBM Plex Sans Thai",sans-serif;color:rgba(255,255,255,.55)}
  html body.dash .app,html body.dash .main{position:relative;z-index:1;background:transparent!important;background-color:transparent!important}
  body.dash{background:#050506!important}
@@ -46,7 +48,7 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #heroK .c-net .kv .u{color:#4ADE80}#heroK .c-net .kv .d{color:#F87171}
 #heroK .c-net .ks{margin-top:16px;font-size:14px;line-height:1.7;color:#A1A1A6}
 #heroK .c-net .ks b{display:inline!important;color:#fff;font-weight:600}
-#heroK .c-net .kp{position:relative;border-radius:18px;background:#1B1B1E;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:200px}
+#heroK .c-net .kp{position:relative;min-height:290px!important;border-radius:18px;background:#1B1B1E;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:200px}
 #heroK .c-net .kp svg{position:absolute;inset:0;width:100%;height:100%}
 #heroK .c-net .kc{position:absolute;left:16px;top:12px;font-size:13px;color:#A1A1A6;z-index:1}
 #heroK .c-net .kd{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 14px #4ADE80}
@@ -5790,13 +5792,22 @@ function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeo
  const N=31,T0=TODAY,idx=[...Array(N)].map((_,i)=>T0-N+1+i),R=RES.filter(r=>r.d&&r.d.act);
  const A=idx.map(i=>R.reduce((t,r)=>{const v=r.d.act[i];return t+(v==null?(+r.d.act[i-1]||0):+v)},0)),cap=R.reduce((t,r)=>t+(+r.cap||0),0);
  const last=A[N-1],ch=(last-A[0])/A[0]*100,avg=(last-A[0])/(N-1),up=ch>=0;
- const W=600,H=230,PL=18,PR=56,PT=40,PB=18;let lo=Math.min(...A),hi=Math.max(...A);const pd=(hi-lo)*.18+1;lo-=pd;hi+=pd;
+ const W=760,H=300,PL=16,PR=52,PT=96,PB=40;let lo=Math.min(...A),hi=Math.max(...A);const pd=(hi-lo)*.18+1;lo-=pd;hi+=pd;
  const X=i=>PL+i*(W-PL-PR)/(N-1),Y=v=>PT+(hi-v)/(hi-lo)*(H-PT-PB);
  const pts=A.map((v,i)=>[X(i),Y(v)]);let d=`M${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<N;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i],mx=(x0+x1)/2;d+=` C${mx} ${y0} ${mx} ${y1} ${x1} ${y1}`}
  const st=(hi-lo)>60?20:(hi-lo)>25?20:10;let g="";for(let v=Math.ceil(lo/st)*st;v<hi;v+=st)g+=`<line x1="${PL}" x2="${W-PR+6}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.08)"/><text x="${W-12}" y="${Y(v)+4}" fill="rgba(255,255,255,.55)" font-size="12" text-anchor="end" font-family="Geist,monospace">${v}</text>`;
  const f=v=>v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+ const D0=new Date(2026,0,1),TMs=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."],dOf=i=>{const x=new Date(D0);x.setDate(x.getDate()+idx[i]);return x};
+ const dayAx=()=>{let o=`<line x1="${PL}" x2="${X(N-1)}" y1="${H-PB}" y2="${H-PB}" stroke="rgba(255,255,255,.25)"/>`;
+  for(let i=0;i<N;i++){const x=X(i),dt=dOf(i),y=Y(A[i]),last=i===N-1;
+   o+=`<line x1="${x}" x2="${x}" y1="${H-PB}" y2="${H-PB+(dt.getDate()===1||i%5===0?7:4)}" stroke="rgba(255,255,255,.45)"/>`;
+   o+=`<text x="${x}" y="${H-PB+18}" fill="${dt.getDate()===1?"#4ADE80":"rgba(255,255,255,.6)"}" font-size="10.5" text-anchor="middle" font-family="Geist,sans-serif">${dt.getDate()}</text>`;
+   if(dt.getDate()===1||i===0)o+=`<text x="${x}" y="${H-PB+33}" fill="rgba(255,255,255,.75)" font-size="11" text-anchor="${i===0?"start":"middle"}">${TMs[dt.getMonth()]}</text>`;
+   if(!last)o+=`<circle cx="${x}" cy="${y}" r="2.4" fill="${i/(N-1)<.5?"#22D3EE":"#4ADE80"}"/>`;
+   o+=`<text transform="translate(${x+3.5} ${y-9}) rotate(-90)" fill="${last?"#fff":"rgba(255,255,255,.78)"}" font-size="${last?12:10}" font-weight="${last?700:500}" font-family="Geist Mono,monospace">${A[i].toFixed(1)}</text>`}
+  return o};
  box.innerHTML=`<div class="kl"><div class="kt">ปริมาณน้ำรวม 9 แห่ง</div><div class="kv"><b>${f(last)}</b><span class="${up?"u":"d"}">${up?"↑":"↓"} ${Math.abs(ch).toFixed(1)}%</span></div><div class="ks">ล้าน ลบ.ม. · เทียบ 30 วันก่อน<br>เฉลี่ยต่อวัน <b>${avg>=0?"+":"−"}${Math.abs(avg).toFixed(3)}</b><br>${(last/cap*100).toFixed(2)}% ของความจุ ${cap.toFixed(0)}</div></div>
- <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i><div class="tip"></div></div>`;
+ <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/>${dayAx()}</svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i><div class="tip"></div></div>`;
  const kp=box.querySelector(".kp"),tp=box.querySelector(".tip"),d0=new Date(2026,0,1),TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
  kp.addEventListener("mousemove",e=>{const r=kp.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(N-1,Math.round((fx-PL)/((W-PL-PR)/(N-1)))));const dt=new Date(d0);dt.setDate(dt.getDate()+idx[i]);
   tp.style.left=(X(i)/W*100)+"%";tp.style.top=(Y(A[i])/H*100)+"%";tp.style.opacity=1;tp.innerHTML=`${dt.getDate()} ${TM[dt.getMonth()]} · <b>${f(A[i])}</b>`});
