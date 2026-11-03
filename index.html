@@ -80,7 +80,7 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #mhome .rn{position:absolute;left:6px;right:6px;top:8px;text-align:center;font:700 13px/1.15 Kanit,sans-serif;color:#fff}
  #mhome .rn small{display:block;font:400 10px "IBM Plex Sans Thai",sans-serif;opacity:.75}
  #mhome .tn .nm{top:34%}
- #mhome .tn .nm .un{display:inline-block;margin-top:6px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.35);font-size:10px;white-space:nowrap;position:relative;z-index:2}
+ #mhome .tn .nm .un{display:inline-block;margin-top:6px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.55);font-size:9.5px;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:2}
  #mhome .tn .nm{z-index:2}
  #rvVw .gl-fr{background:#0B0D12}
  #rvVw .rv-sc{position:absolute;inset:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center}
@@ -5635,7 +5635,7 @@ function build(){const ts=[...document.querySelectorAll("#tiles .tile")];if(!ts.
   const lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),hi=r.status==="high"||(r.urcNow!=null&&r.cur>=r.urcNow*.97);
   const bd=lo?`<span class="bd bad">ต่ำกว่า LRC</span>`:hi?`<span class="bd warn">${r.cur>r.urcNow?"เกิน URC":"ใกล้ URC"}</span>`:`<span class="bd">อยู่ในเกณฑ์</span>`;
   const nm=(r.name||"").replace(/^อ่างเก็บน้ำ/,"");
-  return `<div class="tn"><span class="rk" aria-hidden="true">${i+1}</span><button type="button" class="po" data-o="reservoirs" data-r="${r.id}" aria-label="${r.name} ${p.toFixed(1)}%"><span class="wt ${lo?"lo":hi?"hi":""}" style="height:${p}%"></span>${u!=null?`<span class="ln" style="bottom:${u}%"><i>URC</i></span>`:""}${l!=null?`<span class="ln" style="bottom:${l}%;border-color:rgba(255,140,130,.8)"><i>LRC</i></span>`:""}<span class="rn">${nm}<small>${r.amp||""}</small></span><span class="nm">${p.toFixed(1)}%<span class="un">${(+r.cur).toFixed(2)} / ${(+r.cap).toFixed(2)} ล้าน ลบ.ม.</span></span>${bd}</button></div>`}).join("");
+  return `<div class="tn"><span class="rk" aria-hidden="true">${i+1}</span><button type="button" class="po" data-o="reservoirs" data-r="${r.id}" aria-label="${r.name} ${p.toFixed(1)}%"><span class="wt ${lo?"lo":hi?"hi":""}" style="height:${p}%"></span>${u!=null?`<span class="ln" style="bottom:${u}%">${u>36&&u<60?"":"<i>URC</i>"}</span>`:""}${l!=null?`<span class="ln" style="bottom:${l}%;border-color:rgba(255,140,130,.8)">${l>36&&l<60?"":"<i>LRC</i>"}</span>`:""}<span class="rn">${nm}<small>${r.amp||""}</small></span><span class="nm">${p.toFixed(1)}%<span class="un">${(+r.cur).toFixed(r.cap>=100?1:2)}/${(+r.cap).toFixed(r.cap>=100?0:2)} ล้าน ลบ.ม.</span></span>${bd}</button></div>`}).join("");
  // topics
  const TP=T.filter(x=>!(x.id in MEDIA));
  $("mhTp").innerHTML=TP.map((x,i)=>`<button type="button" class="po" data-o="${x.id}" style="--c:${x.c}" aria-label="${SH[x.id]||x.id}">${IMG[x.id]?`<img src="${IMG[x.id]}${V}" alt=""><span class="sh"></span>`:`<span class="sh" style="opacity:.6"></span>`}${x.st!=="ok"?`<span class="tp">ด่วน<b>!</b></span>`:""}<span class="nm">${x.num}<span class="un">${x.unit}</span></span><span class="tt">${SH[x.id]||x.id}</span><span class="bd ${x.st}">${x.chip||"ดูรายละเอียด"}</span></button>`).join("");
