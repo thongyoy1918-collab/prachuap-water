@@ -65,10 +65,10 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #heroK .c-dk .fv em i{width:10px;height:10px;border-radius:2px}
 #heroK .c-dk .fv b{display:block!important;font:300 clamp(26px,2.1vw,36px)/1.1 Geist,"IBM Plex Sans Thai",sans-serif;color:#fff}
 #heroK .c-dk .fv small{color:#A1A1A6;font-size:12px;margin-bottom:5px}
-#heroK .c-dk .bi{background:#D4F21C}#heroK .c-dk .bo{background:#FF8A3D}
+#heroK .c-dk .bi{background:#E5FF1F}#heroK .c-dk .bo{background:#FF2D3D}#heroK .c-dk .fb .g .bo{box-shadow:0 0 6px rgba(255,45,61,.5)}
 #heroK .c-dk .fb{flex:1;min-height:56px;display:flex;align-items:flex-end;gap:3px}
 #heroK .c-dk .fb .g{flex:1;height:100%;display:flex;align-items:flex-end;gap:1px}
-#heroK .c-dk .fb .g i{flex:1;border-radius:2px 2px 0 0;opacity:.55}
+#heroK .c-dk .fb .g i{flex:1;border-radius:2px 2px 0 0;opacity:.85}#heroK .c-dk .fb .g .bi{box-shadow:0 0 6px rgba(229,255,31,.35)}
 #heroK .c-dk .fb .g.now i{opacity:1}
 #heroK .c-dk .fx{display:flex;justify-content:space-between;font-size:11px;color:#6E6E73}
 #heroK .c-net.nk{background:#141416!important;border:1px solid rgba(255,255,255,.08)!important;display:grid!important;grid-template-columns:minmax(190px,32%) 1fr;align-items:stretch;padding:20px!important;gap:18px;min-height:0!important}
@@ -86,6 +86,13 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #heroK .c-net .kp{position:relative;border-radius:18px;background:#1B1B1E;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:200px}
 #heroK .c-net .kp svg{position:absolute;inset:0;width:100%;height:100%}
 #heroK .c-net .kc{position:absolute;left:16px;top:12px;font-size:13px;color:#A1A1A6;z-index:1}
+#heroK .c-net .kd::before,#heroK .c-net .kd::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #4ADE80;animation:kdP 1.8s ease-out infinite}#heroK .c-net .kd::after{animation-delay:.9s}
+@keyframes kdP{from{transform:scale(1);opacity:.9}to{transform:scale(3.4);opacity:0}}
+#heroK .c-net .kd{animation:kdB 1.2s ease-in-out infinite}@keyframes kdB{50%{filter:brightness(1.6);box-shadow:0 0 0 4px rgba(74,222,128,.35),0 0 22px #4ADE80}}
+#heroK .c-net .kn{position:absolute;z-index:2;transform:translate(-100%,-50%);margin-left:-18px;padding:7px 11px;border-radius:10px;background:rgba(8,10,12,.88);border:1px solid rgba(74,222,128,.45);box-shadow:0 8px 24px rgba(0,0,0,.5);font:500 11.5px/1.45 "IBM Plex Sans Thai",sans-serif;color:#C9C9CF;white-space:nowrap;pointer-events:none}
+#heroK .c-net .kn b{display:inline!important;color:#fff;font:600 15px "Geist Mono",monospace}
+#heroK .c-net .kn .h{color:#4ADE80;font-weight:600}#heroK .c-net .kn .dn{color:#F87171}#heroK .c-net .kn .up{color:#4ADE80}
+@media (prefers-reduced-motion:reduce){#heroK .c-net .kd,#heroK .c-net .kd::before,#heroK .c-net .kd::after{animation:none}}
 #heroK .c-net .kd{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 14px #4ADE80}
 #heroK .c-net .kp .tip{position:absolute;pointer-events:none;transform:translate(-50%,-130%);background:#0B0B0D;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:4px 9px;font:500 12px "IBM Plex Sans Thai",sans-serif;color:#ddd;white-space:nowrap;opacity:0;transition:opacity .15s}
 #heroK .c-net .kp .tip b{display:inline!important;color:#fff;font:600 13px "Geist Mono",monospace!important}
@@ -5851,7 +5858,7 @@ function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeo
    o+=`<text transform="translate(${x+3.5} ${y-9}) rotate(-90)" fill="${last?"#fff":"rgba(255,255,255,.78)"}" font-size="${last?12:10}" font-weight="${last?700:500}" font-family="Geist Mono,monospace">${A[i].toFixed(1)}</text>`}
   return o};
  box.innerHTML=`<div class="kl"><div class="kt">ปริมาณน้ำรวม 9 แห่ง</div><div class="kv"><b>${f(last)}</b><span class="${up?"u":"d"}">${up?"↑":"↓"} ${Math.abs(ch).toFixed(1)}%</span></div><div class="ks">ล้าน ลบ.ม. · เทียบ 30 วันก่อน<br>เฉลี่ยต่อวัน <b>${avg>=0?"+":"−"}${Math.abs(avg).toFixed(3)}</b><br>${(last/cap*100).toFixed(2)}% ของความจุ ${cap.toFixed(0)}</div></div>
- <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i><div class="tip"></div></div>`;
+ <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i>${(()=>{const dd=last-A[N-2],dt=new Date(2026,0,1);dt.setDate(dt.getDate()+idx[N-1]);const TT=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];const ty=Math.max(22,Math.min(78,Y(last)/H*100+16));return `<div class="kn" style="left:${X(N-1)/W*100}%;top:${ty}%"><span class="h">● วันนี้ ${dt.getDate()} ${TT[dt.getMonth()]}</span><br><b>${f(last)}</b> ล้าน ลบ.ม. · ${(last/cap*100).toFixed(1)}%<br>เทียบเมื่อวาน <span class="${dd<0?"dn":"up"}">${dd<0?"−":"+"}${Math.abs(dd).toFixed(3)}</span> · ว่างอีก ${(cap-last).toFixed(1)}</div>`})()}<div class="tip"></div></div>`;
  const kp=box.querySelector(".kp"),tp=box.querySelector(".tip"),d0=new Date(2026,0,1),TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
  kp.addEventListener("mousemove",e=>{const r=kp.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(N-1,Math.round((fx-PL)/((W-PL-PR)/(N-1)))));const dt=new Date(d0);dt.setDate(dt.getDate()+idx[i]);
   tp.style.left=(X(i)/W*100)+"%";tp.style.top=(Y(A[i])/H*100)+"%";tp.style.opacity=1;tp.innerHTML=`${dt.getDate()} ${TM[dt.getMonth()]} · <b>${f(A[i])}</b>`});
