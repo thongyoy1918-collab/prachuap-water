@@ -4,6 +4,23 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="rvcss">.rvN{font-variant-numeric:tabular-nums}</style>
 <style id="dkcss">
+#dkRes{display:none!important}
+@media (min-width:701px){#rvVw .rv-sc img{max-width:860px;margin:0 auto}}
+#rvVw .gl-fr{background:#0B0D12}
+#rvVw .rv-sc{position:absolute;inset:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center}
+#rvVw .rv-sc.ls{align-items:center}
+#rvVw .rv-sc img{display:block;width:100%;height:auto;transition:opacity .35s}
+#rvVw .rv-sc img.out{opacity:0}
+#rvVw .rv-ld{position:absolute;inset:0;display:grid;place-items:center;color:#9AA3AE;font:500 14px Kanit,sans-serif;pointer-events:none}
+#rvVw .rv-ld i{display:block;width:34px;height:34px;margin:0 auto 10px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:#4FA3FF;animation:rvSp 1s linear infinite}
+#rvVw .gl-th button{position:relative}
+#rvVw .gl-th button span{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:3px;font:600 9.5px/1.15 Kanit,sans-serif;color:#fff;text-align:center;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.8))}
+#rvVw .gl-th img{object-position:50% 0}
+#rvVw .gl-sv{display:flex!important;right:74px}
+#rvVw .gl-fr{height:88vh}
+#rvVw.one .gl-l,#rvVw.one .gl-r,#rvVw.one .gl-th,#rvVw.one .gl-cap{display:none}
+#rvVw.on) #mhTop,body:has(#rvVw.on) #mhNav{display:none!important}
+
 html body #heroK .c-lime.rb{background:rgba(16,16,19,.66)!important;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);color:#F4F4F6!important;padding:16px 20px!important}
 #heroK .c-lime.rb::before{display:none!important}#heroK .c-lime.rb>*:not(.rb2){display:none!important}
 #heroK .c-lime .rb2{display:flex;flex-direction:column;gap:6px;height:100%;font-family:"IBM Plex Sans Thai",sans-serif}
@@ -5764,6 +5781,7 @@ let tx=null;$("glFr").addEventListener("touchstart",e=>{tx=e.touches[0].clientX}
 const ro=()=>{try{rope()}catch(e){}};addEventListener("resize",ro);new MutationObserver(ro).observe($("gallery"),{attributes:true,attributeFilter:["class"]});
 document.querySelectorAll("#glLine img").forEach(i=>i.addEventListener("load",ro));setTimeout(ro,300);sel(0,false)})();</script>
 
+
 <div id="ovBar"><button type="button" id="ovX" aria-label="กลับ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>สถานการณ์น้ำวันนี้</b><button type="button" class="r" id="ovSv" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div><nav id="mhNav" aria-label="เมนูหลัก"><button type="button" data-n="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9.5 16.5h5"/></svg>หน้าหลัก</button><button type="button" data-n="reservoirs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/></svg>อ่างฯ</button><button type="button" data-n="rain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 1 1 .8-7.9A5 5 0 0 1 17.5 8 3.5 3.5 0 0 1 17 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg>ฝน</button><button type="button" data-n="maps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>แผนที่</button><button type="button" data-n="gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>รูปภาพ</button></nav><!--rvvw--><div class="gl-vw" id="rvVw" role="dialog" aria-modal="true" aria-label="รายงาน"><div class="gl-fr"><div class="rv-sc" id="rvSc"><img id="rvImg" alt=""></div><div class="rv-ld" id="rvLd"><div><i></i>กำลังสร้างรายงาน…</div></div><div class="gl-cap"><b id="rvT"></b><span id="rvD"></span></div><a class="gl-sv" id="rvSv" download>บันทึก</a><button class="gl-btn gl-x" id="rvX" type="button" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="gl-btn gl-l" id="rvL" type="button" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gl-btn gl-r" id="rvR" type="button" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><div class="gl-th" id="rvTh"></div></div></div><!--/rvvw-->
 <script id="mhjs">(()=>{const $=i=>document.getElementById(i),V="?v=20261103p";
 const DK=matchMedia("(min-width:1100px)").matches;if(DK)document.querySelectorAll("#mhome .card img.bg").forEach(i=>{i.src=i.getAttribute("src").replace(/hero(\d)\.jpg/,"hero$1w.jpg");i.loading="eager"});
@@ -5802,6 +5820,7 @@ function openRV(id,rid){const ks=kindsFor(id,rid);if(!ks){const t=tile(id);t&&t.
  $("rvTh").innerHTML=items.map(it=>`<button type="button">${it.photo?`<img src="${it.th}" alt="">`:""}<span>${it.photo?"ภาพถ่าย":it.t}</span></button>`).join("");
  $("rvVw").classList.toggle("one",items.length<2); $("rvVw").classList.add("on");document.body.style.overflow="hidden";rvShow(0);
  items.forEach((it,j)=>{if(!it.photo)renderKind(it.k,it.rid||rid).then(r=>thumb(j,r))})}
+window.openRV=openRV;
 const rvClose=()=>{$("rvVw").classList.remove("on");document.body.style.overflow="";RV=null};
 $("rvX").onclick=rvClose;$("rvL").onclick=()=>rvShow(ri-1);$("rvR").onclick=()=>rvShow(ri+1);
 $("rvTh").addEventListener("click",e=>{const b=e.target.closest("button");if(b)rvShow([...b.parentNode.children].indexOf(b))});
@@ -5934,7 +5953,7 @@ function resBars(){const c=document.querySelector("#heroK .c-lime");if(!c||typeo
  box.innerHTML=`<div class="rh"><span>ปริมาณน้ำรายอ่าง</span><span class="lg"><i class="h"></i>&gt;80% <i class="g"></i>50–80% <i class="n"></i>&lt;50% <i class="l"></i>ต่ำกว่า LRC <i class="u"></i>URC</span></div><div class="rl">`+
  R.map(r=>{const p=Math.max(0,Math.min(100,r.cur/r.cap*100)),u=r.urcNow?Math.min(100,r.urcNow/r.cap*100):null,lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),cls=p>80?"h":lo?"l":p>=50?"g":"n";
   return `<button type="button" class="ri" data-r="${r.id}" title="${r.name} ${(+r.cur).toFixed(3)} / ${(+r.cap).toFixed(2)} ล้าน ลบ.ม."><span class="nm">${r.name.replace("เขื่อน","")}</span><span class="br"><span class="sg"><i class="${cls}" style="width:${p}%"></i></span>${u!=null?`<s style="left:${u}%"></s>`:""}</span><span class="pv ${cls}">${p.toFixed(1)}%</span></button>`}).join("")+`</div>`;
- box.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{try{sel=b.dataset.r;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}})}
+ box.querySelectorAll(".ri").forEach(b=>b.onclick=()=>{if(window.openRV){window.openRV(null,b.dataset.r);return}try{sel=b.dataset.r;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}})}
 const go=()=>{try{build()}catch(e){console.warn(e)}try{resBars()}catch(e){console.warn(e)}try{watchTxt()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
 <script id="rvjs">(()=>{
 const CARDS="#dkHero,#dkRes,#heroK .dh>*,#heroK .dg>*,#mhome .card,.app .card";
