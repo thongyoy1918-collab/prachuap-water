@@ -11,8 +11,8 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #dkHero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;opacity:0;transition:opacity 1.6s ease;transform:scale(1.03)}
  #dkHero img.on{opacity:1;animation:dkZ 9s ease-out forwards}
  #dkHero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 58%,rgba(0,0,0,.92) 100%)}
- #dkHero .ct{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 18px 18px;text-align:center}
- #dkHero .lg{position:relative;width:clamp(78px,6vw,108px);aspect-ratio:1;margin:0 auto 8px}
+ #dkHero .ct{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 16px 14px;text-align:center}
+ #dkHero .lg{position:relative;width:clamp(60px,4.2vw,84px);aspect-ratio:1;margin:0 auto 4px}
  #dkHero .lg img{position:absolute;inset:14%;width:72%;height:72%;object-fit:contain;opacity:1!important;transform:none;animation:lgFloat 7s ease-in-out infinite;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(233,196,106,.45))}
  #dkHero .lg::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#FFF3C8,#E9C46A,rgba(233,196,106,0) 35%,#5AC8FA 55%,rgba(90,200,250,0) 75%,#FFF3C8);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:lgSpin 6s linear infinite}
  #dkHero .lg::after{content:"";position:absolute;inset:7%;border-radius:50%;border:1.5px dashed rgba(255,243,200,.55);animation:lgSpin 18s linear infinite reverse}
@@ -21,11 +21,17 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  @keyframes lgFloat{0%,62%{transform:translateY(0) rotateY(0)}31%{transform:translateY(-4px) rotateY(0)}81%{transform:translateY(-2px) rotateY(180deg)}100%{transform:translateY(0) rotateY(360deg)}}
  @keyframes lgPulse{0%,100%{opacity:.4;transform:scale(.92)}50%{opacity:1;transform:scale(1.05)}}
  @media (prefers-reduced-motion:reduce){#dkHero .lg *,#dkHero .lg::before,#dkHero .lg::after{animation:none!important}}
- #dkHero h2{margin:0;padding-top:.2em;font:800 clamp(38px,2.9vw,56px)/1.02 Kanit,sans-serif;background:linear-gradient(180deg,#FFF3C8,#E9C46A 45%,#B98A2E);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.7))}
+ #dkHero .sm{display:grid;grid-template-columns:repeat(4,1fr);margin-top:10px;border-radius:12px;background:rgba(10,10,12,.55);backdrop-filter:blur(8px);border:1px solid rgba(233,196,106,.28);overflow:hidden}
+ #dkHero .sm div{padding:7px 4px;text-align:center;border-left:1px solid rgba(233,196,106,.18)}
+ #dkHero .sm div:first-child{border-left:0}
+ #dkHero .sm em{display:block;font:500 10.5px "IBM Plex Sans Thai",sans-serif;font-style:normal;color:#E9C46A;white-space:nowrap}
+ #dkHero .sm b{display:block;font:600 clamp(13px,1vw,16px)/1.25 Kanit,sans-serif;color:#fff;white-space:nowrap}
+ #dkHero .sm small{font:400 10px "IBM Plex Sans Thai",sans-serif;color:#C9C9CF}
+ #dkHero h2{margin:0;padding-top:.2em;font:800 clamp(32px,2.3vw,46px)/1.02 Kanit,sans-serif;background:linear-gradient(180deg,#FFF3C8,#E9C46A 45%,#B98A2E);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(0,0,0,.7))}
  #dkHero h2 span{display:block;font-size:.6em}
- #dkHero .tg{margin:8px 0 0;font:400 13px/1.5 "IBM Plex Sans Thai",sans-serif;color:#E6E6EA}
+ #dkHero .tg{margin:4px 0 0;font:400 13px/1.5 "IBM Plex Sans Thai",sans-serif;color:#E6E6EA}
  #dkHero .tg b{color:#fff}
- #dkHero .al{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+ #dkHero .al{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px}
  #dkHero .al span{font:600 11.5px "IBM Plex Sans Thai",sans-serif;padding:3px 9px;border-radius:4px;background:#E50914;color:#fff}
  #dkHero .al span.w{background:#F5A623;color:#1A1200}
  #dkHero .cr{position:absolute;z-index:2;right:12px;top:10px;font-size:9.5px;color:rgba(255,255,255,.55)}
@@ -5854,13 +5860,17 @@ function dkBg(){if(document.getElementById("dkBg")||!matchMedia("(min-width:701p
  const im=[...d.querySelectorAll("img")],cr=d.querySelector(".cr");let k=0;setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
 
 
-function dkHero(){const g=document.querySelector("#heroK>.dg"),al=document.querySelector("#heroK>.dg>.c-alloc");if(!g||!al)return;
+function dkHero(){const smRow=()=>{let inf=0,rel=0,hi=0,rain="";try{RES.forEach(r=>{inf+=+r.inf||0;rel+=+r.rel||0;if(r.pct>=80)hi++})}catch(e){}
+ const rn=document.querySelector('#tiles .tile[data-t="rain"] .fig .n');if(rn)rain=rn.textContent.replace(/\s+/g," ").trim();
+ const c=(l,v,u)=>`<div><em>${l}</em><b>${v}</b><small>${u}</small></div>`;
+ return `<div class="sm">${c("ไหลลง",inf.toFixed(3),"ล้าน ลบ.ม.")}${c("ระบาย",rel.toFixed(3),"ล้าน ลบ.ม.")}${c("ฝนสะสมปีนี้",rain.replace(/มม\.?/,"").trim()||"–","มม.")}${c("อ่างเกิน 80%",hi,"แห่ง")}</div>`};
+const g=document.querySelector("#heroK>.dg"),al=document.querySelector("#heroK>.dg>.c-alloc");if(!g||!al)return;
  let h=document.getElementById("dkHero");if(!h){h=document.createElement("div");h.id="dkHero";h.setAttribute("aria-label","ข้อมูลน้ำ ประจวบฯ");}const nt=document.querySelector("#heroK>.dg>.c-net");if(nt&&h.nextElementSibling!==nt)nt.before(h);
  const T=[...document.querySelectorAll("#tiles .tile")],num=id=>{const n=document.querySelector(`#tiles .tile[data-t="${id}"] .fig .n`);return n?n.textContent.replace(/\s+/g," ").replace("ล้าน"," ล้าน").trim():""};
  const A=T.map(t=>t.querySelector(".chip2")).filter(c=>c&&/\b(bad|warn)\b/.test(c.className)&&!/ปลอดภัย|ปกติ/.test(c.textContent)).slice(0,3);
  const dt=(document.querySelector(".content")||document.body).textContent.match(/อัปเดตข้อมูลวันที่\s*([^\n]{3,20}?\d{4})/);
  const CR=["ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม"];
- h.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" src="prm/mh/hero${k}.jpg?v=20261103p"${k===1?' class="on"':' loading="lazy"'}>`).join("")+`<span class="cr">${CR[0]}</span><div class="ct"><div class="lg"><i></i><img class="rl" alt="กรมชลประทาน"></div><h2>ข้อมูลน้ำ<span>ประจวบฯ</span></h2><p class="tg">น้ำรวม 9 อ่าง <b>${num("overview")}</b> · ปราณบุรี <b>${num("pranburi")}</b>${dt?"<br>"+dt[1]:""}</p><div class="al">${A.map(c=>`<span class="${/\bwarn\b/.test(c.className)?"w":""}">${c.textContent.trim()}</span>`).join("")}</div></div>`;
+ h.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" src="prm/mh/hero${k}.jpg?v=20261103p"${k===1?' class="on"':' loading="lazy"'}>`).join("")+`<span class="cr">${CR[0]}</span><div class="ct"><div class="lg"><i></i><img class="rl" alt="กรมชลประทาน"></div><h2>ข้อมูลน้ำ<span>ประจวบฯ</span></h2><p class="tg">น้ำรวม 9 อ่าง <b>${num("overview")}</b> · ปราณบุรี <b>${num("pranburi")}</b>${dt?"<br>"+dt[1]:""}</p><div class="al">${A.map(c=>`<span class="${/\bwarn\b/.test(c.className)?"w":""}">${c.textContent.trim()}</span>`).join("")}</div>${smRow()}</div></div>`;
  try{const L=h.querySelector(".lg img");if(typeof RID_LOGO!=="undefined")L.src=RID_LOGO.src}catch(e){}
  const im=[...h.querySelectorAll(":scope>img")],cr=h.querySelector(".cr");let k=0;clearInterval(window.__dkH);window.__dkH=setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
 const go=()=>{try{build()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
