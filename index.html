@@ -4,7 +4,7 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="mhcss">
 #mhome,#mhTop,#mhNav,#ovBar{display:none}
-@media all{
+@media (max-width:700px){
  body.dash{padding-bottom:96px}
  body.dash:not(.in-topic) .main>.top{display:none!important}
  body.dash:not(.in-topic) #tiles{display:none!important}
@@ -112,58 +112,6 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #mhNav button{all:unset;flex:1;height:54px;border-radius:27px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#A3A3A8;font:500 11px Kanit,sans-serif;cursor:pointer}
  #mhNav button svg{width:23px;height:23px}
  #mhNav button.on{color:#fff;background:rgba(255,255,255,.1)}
-}
-@media (min-width:1100px){
- html,body{overflow-x:hidden}
- body.dash{padding-bottom:0}
- body.dash #mhNav{display:none!important}
- #mhome{background:#141414}
- #mhome .amb{display:none}
- #mhTop{display:flex!important;align-items:center;gap:26px;height:68px;padding:0 4%;background:linear-gradient(180deg,rgba(0,0,0,.75) 10%,rgba(0,0,0,0))!important;transition:background .4s}
- body.dash.in-topic #mhTop,body.mh-ov #mhTop{display:none!important}
- #mhTop.sc{background:#141414!important}
- #mhTop .in{display:contents}
- #mhTop img{order:0;width:40px;height:40px}
- #mhTop h1{order:1;font-size:22px;text-shadow:none}
- #mhTop .ch{order:2;margin:0;padding:0;gap:22px;overflow:visible}
- #mhTop .ch button{padding:0;border:0;background:none;backdrop-filter:none;border-radius:0;font:400 15px "IBM Plex Sans Thai",sans-serif;color:#E5E5E5;transition:color .3s}
- #mhTop .ch button:hover{color:#B3B3B3}
- #mhTop .ib{order:3;margin-left:auto;gap:22px}
- #mhome .hero{padding:0}
- #mhome .card{border-radius:0;border:0;box-shadow:none;height:min(56.25vw,92vh)}
- #mhome .card::after{background:linear-gradient(77deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.35) 38%,rgba(0,0,0,0) 62%),linear-gradient(180deg,rgba(20,20,20,0) 62%,rgba(20,20,20,.75) 84%,#141414 100%)}
- #mhome .ct{left:4%;right:auto;bottom:32%;width:min(46%,760px);padding:0;text-align:left}
- #mhome .ct h2{font-size:clamp(56px,6.2vw,118px);line-height:1}
- #mhome .ct .tg{font-size:clamp(15px,1.25vw,22px);margin-top:1.2vw;text-shadow:2px 2px 4px rgba(0,0,0,.45)}
- #mhome .al{justify-content:flex-start;margin-top:1vw}
- #mhome .al span{font-size:14px;padding:4px 12px}
- #mhome .bt{display:flex;gap:12px;margin-top:1.6vw}
- #mhome .bt button{height:auto;padding:.7vw 2.2vw;font-size:clamp(16px,1.25vw,22px);border-radius:6px;transition:opacity .2s}
- #mhome .bt button:hover{opacity:.8}
- #mhome .bt svg{width:1.6vw;height:1.6vw;min-width:22px;min-height:22px}
- #mhome .cr{top:80px;right:4%;font-size:11px}
- #mhome .hero+.rw{margin-top:-10vw}
- #mhome .rw{position:relative;z-index:2;margin-top:2.6vw}
- #mhome .rw h3{margin:0 4% .4vw;font:600 clamp(18px,1.45vw,26px) Kanit,sans-serif;color:#E5E5E5}
- #mhome .sc{padding:22px 4% 26px;gap:8px;scroll-snap-type:none;scroll-behavior:smooth}
- #mhome .po,#mhome .po.wide{width:calc((92vw - 40px)/5.4);max-width:none;aspect-ratio:16/9;border-radius:6px;transition:transform .3s ease,box-shadow .3s;transform-origin:center}
- #mhome .po:hover,#mhome .po:focus-visible{transform:scale(1.1);z-index:5;box-shadow:0 14px 30px rgba(0,0,0,.75)}
- #mhome .sc>.po:first-child{transform-origin:left center}
- #mhome .po .nm{top:24%;font-size:clamp(24px,2.1vw,40px)}
- #mhome .po .un{font-size:clamp(11px,.8vw,14px)}
- #mhome .po .tt{bottom:36px;font-size:clamp(14px,1.05vw,19px)}
- #mhome .po .bd{bottom:9px;font-size:12px}
- #mhome .po.wide .tt{bottom:12px;font-size:clamp(15px,1.15vw,20px)}
- #mhome .tn .rk{font-size:clamp(130px,12.5vw,250px);-webkit-text-stroke:3px #595959;margin-right:-1.6vw}
- #mhome .tn .po{width:8.8vw;min-width:130px;aspect-ratio:2/3}
- #mhome .tn .rn{font-size:clamp(13px,1vw,18px);top:10px}
- #mhome .tn .rn small{font-size:clamp(10px,.75vw,13px)}
- #mhome .tn .nm{font-size:clamp(20px,1.8vw,34px)}
- #mhome .tn .nm .un{font-size:clamp(9px,.62vw,12px)}
- #mhome .tn:hover{z-index:5}
- #mhome .ar{display:flex}
- html body.dash.mh-ov:not(.in-topic) #hub>.hero{display:block!important;position:fixed!important;inset:0!important;z-index:990;overflow-y:auto;background:#141414!important;padding:84px 4% 48px!important;margin:0!important}
- #ovBar{height:68px!important;padding:0 4%!important;background:#141414!important}
 }
 #mhome .ar{display:none;position:absolute;z-index:6;bottom:26px;width:4%;min-width:40px;align-items:center;justify-content:center;border:0;padding:0;background:rgba(20,20,20,.55);color:#fff;cursor:pointer;opacity:0;transition:opacity .25s,background .2s}
 #mhome .ar.l{left:0;border-radius:0 6px 6px 0}#mhome .ar.r{right:0;border-radius:6px 0 0 6px}
