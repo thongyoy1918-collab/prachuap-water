@@ -3,6 +3,10 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
 <style id="dkcss">
+#heroK .c-dk .plist .pi em.wt{font-style:normal;font-weight:600;font-size:12px;margin-left:8px;padding:1px 8px;border-radius:999px}
+#heroK .c-dk .plist .pi em.wt.ok{color:#FFC46B;background:rgba(245,166,35,.14)}
+#heroK .c-dk .plist .pi em.wt.bad{color:#FF8A8D;background:rgba(229,72,77,.16)}
+#heroK .c-dk .plist .pi b small{font:400 10.5px "IBM Plex Sans Thai",sans-serif;color:#8E8E96}
 #heroK .c-alloc .rows .rw.bar{row-gap:6px;padding-bottom:4px}
 #heroK .c-alloc .rows .rw.bar .sb{grid-column:2/-1;display:block!important;height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;position:relative;margin:0!important}
 #heroK .c-alloc .rows .rw.bar .sb u{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--c);box-shadow:0 0 8px var(--c);transition:width 1s cubic-bezier(.2,.8,.2,1)}
@@ -5896,4 +5900,9 @@ const g=document.querySelector("#heroK>.dg"),al=document.querySelector("#heroK>.
 
 function allocBars(){document.querySelectorAll("#heroK .c-alloc .rows .rw").forEach(r=>{if(r.querySelector(".sb"))return;const em=r.querySelector("em"),dot=r.querySelector("i");if(!em)return;const p=parseFloat(em.textContent)||0;
  r.classList.add("bar");const d=document.createElement("span");d.className="sb";d.title="เส้นขาว = 80%";d.innerHTML=`<u style="width:0"></u><s></s>`;d.style.setProperty("--c",dot?getComputedStyle(dot).backgroundColor:"#7AA2FF");r.appendChild(d);requestAnimationFrame(()=>setTimeout(()=>d.querySelector("u").style.width=Math.min(100,p)+"%",60))})}
-const go=()=>{try{build()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
+
+function watchTxt(){document.querySelectorAll("#heroK .c-dk .plist .pi").forEach(p=>{if(p.dataset.wt)return;const em=p.querySelector("em"),b=p.querySelector("b");if(!em||!b)return;
+ const k=/LRC/.test(em.textContent)?"LRC":"URC",v=parseFloat(b.textContent.replace("−","-").replace(/[^\d.\-]/g,""));if(isNaN(v))return;const up=v>0;
+ em.textContent=(up?"สูงกว่า ":"ต่ำกว่า ")+k;em.className="wt "+(k==="URC"?(up?"bad":"ok"):(up?"ok":"bad"));
+ b.innerHTML=`${up?"+":"−"}${Math.abs(v).toFixed(2)}<small> ล้าน ลบ.ม.</small>`;p.dataset.wt=1})}
+const go=()=>{try{build()}catch(e){console.warn(e)}try{watchTxt()}catch(e){console.warn(e)}try{allocBars()}catch(e){console.warn(e)}try{dkHero()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
