@@ -48,7 +48,7 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
 #heroK .c-net .kv .u{color:#4ADE80}#heroK .c-net .kv .d{color:#F87171}
 #heroK .c-net .ks{margin-top:16px;font-size:14px;line-height:1.7;color:#A1A1A6}
 #heroK .c-net .ks b{display:inline!important;color:#fff;font-weight:600}
-#heroK .c-net .kp{position:relative;min-height:290px!important;border-radius:18px;background:#1B1B1E;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:200px}
+#heroK .c-net .kp{position:relative;border-radius:18px;background:#1B1B1E;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:200px}
 #heroK .c-net .kp svg{position:absolute;inset:0;width:100%;height:100%}
 #heroK .c-net .kc{position:absolute;left:16px;top:12px;font-size:13px;color:#A1A1A6;z-index:1}
 #heroK .c-net .kd{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 14px #4ADE80}
@@ -5792,7 +5792,7 @@ function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeo
  const N=31,T0=TODAY,idx=[...Array(N)].map((_,i)=>T0-N+1+i),R=RES.filter(r=>r.d&&r.d.act);
  const A=idx.map(i=>R.reduce((t,r)=>{const v=r.d.act[i];return t+(v==null?(+r.d.act[i-1]||0):+v)},0)),cap=R.reduce((t,r)=>t+(+r.cap||0),0);
  const last=A[N-1],ch=(last-A[0])/A[0]*100,avg=(last-A[0])/(N-1),up=ch>=0;
- const W=760,H=300,PL=16,PR=52,PT=96,PB=40;let lo=Math.min(...A),hi=Math.max(...A);const pd=(hi-lo)*.18+1;lo-=pd;hi+=pd;
+ const W=600,H=230,PL=18,PR=56,PT=40,PB=18;let lo=Math.min(...A),hi=Math.max(...A);const pd=(hi-lo)*.18+1;lo-=pd;hi+=pd;
  const X=i=>PL+i*(W-PL-PR)/(N-1),Y=v=>PT+(hi-v)/(hi-lo)*(H-PT-PB);
  const pts=A.map((v,i)=>[X(i),Y(v)]);let d=`M${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<N;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i],mx=(x0+x1)/2;d+=` C${mx} ${y0} ${mx} ${y1} ${x1} ${y1}`}
  const st=(hi-lo)>60?20:(hi-lo)>25?20:10;let g="";for(let v=Math.ceil(lo/st)*st;v<hi;v+=st)g+=`<line x1="${PL}" x2="${W-PR+6}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.08)"/><text x="${W-12}" y="${Y(v)+4}" fill="rgba(255,255,255,.55)" font-size="12" text-anchor="end" font-family="Geist,monospace">${v}</text>`;
@@ -5807,7 +5807,7 @@ function netChart(){const c=document.querySelector("#heroK .c-net");if(!c||typeo
    o+=`<text transform="translate(${x+3.5} ${y-9}) rotate(-90)" fill="${last?"#fff":"rgba(255,255,255,.78)"}" font-size="${last?12:10}" font-weight="${last?700:500}" font-family="Geist Mono,monospace">${A[i].toFixed(1)}</text>`}
   return o};
  box.innerHTML=`<div class="kl"><div class="kt">ปริมาณน้ำรวม 9 แห่ง</div><div class="kv"><b>${f(last)}</b><span class="${up?"u":"d"}">${up?"↑":"↓"} ${Math.abs(ch).toFixed(1)}%</span></div><div class="ks">ล้าน ลบ.ม. · เทียบ 30 วันก่อน<br>เฉลี่ยต่อวัน <b>${avg>=0?"+":"−"}${Math.abs(avg).toFixed(3)}</b><br>${(last/cap*100).toFixed(2)}% ของความจุ ${cap.toFixed(0)}</div></div>
- <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/>${dayAx()}</svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i><div class="tip"></div></div>`;
+ <div class="kp"><span class="kc">30 วันล่าสุด</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="nkL" x1="0" x2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#4ADE80"/></linearGradient><linearGradient id="nkF" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22C55E" stop-opacity=".22"/><stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>${g}<path d="${d} L${X(N-1)} ${H-PB} L${X(0)} ${H-PB}Z" fill="url(#nkF)"/><path d="${d}" fill="none" stroke="url(#nkL)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><i class="kd" style="left:${X(N-1)/W*100}%;top:${Y(last)/H*100}%"></i><div class="tip"></div></div>`;
  const kp=box.querySelector(".kp"),tp=box.querySelector(".tip"),d0=new Date(2026,0,1),TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
  kp.addEventListener("mousemove",e=>{const r=kp.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(N-1,Math.round((fx-PL)/((W-PL-PR)/(N-1)))));const dt=new Date(d0);dt.setDate(dt.getDate()+idx[i]);
   tp.style.left=(X(i)/W*100)+"%";tp.style.top=(Y(A[i])/H*100)+"%";tp.style.opacity=1;tp.innerHTML=`${dt.getDate()} ${TM[dt.getMonth()]} · <b>${f(A[i])}</b>`});
@@ -5827,4 +5827,5 @@ function dkBg(){if(document.getElementById("dkBg")||!matchMedia("(min-width:701p
  const CR=["ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม","อ่างเก็บน้ำยางชุม"];
  d.innerHTML=[1,2,3,4,5,6].map(k=>`<img alt="" ${k>1?'loading="lazy" ':''}src="prm/mh/hero${k}w.jpg?v=20261103p"${k===1?' class="on"':''}>`).join("")+`<span class="cr">${CR[0]}</span>`;document.body.prepend(d);
  const im=[...d.querySelectorAll("img")],cr=d.querySelector(".cr");let k=0;setInterval(()=>{if(document.hidden)return;const n=(k+1)%im.length,nx=im[n];const sw=()=>{im[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");cr.textContent=CR[n];k=n};if(nx.complete&&nx.naturalWidth)sw();else{nx.loading="eager";nx.onload=sw}},6500)}
+
 const go=()=>{try{build()}catch(e){console.warn(e)}try{dkBg()}catch(e){console.warn(e)}try{flowCard()}catch(e){console.warn(e)}try{netChart()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
