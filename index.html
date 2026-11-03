@@ -2,23 +2,9 @@
 <script>/*PWA shim: downloads without Claude host*/(function(){if(window.claude&&window.claude.use)return;const save=async({filename,data})=>{const u=URL.createObjectURL(data),a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return {status:"saved"}};window.claude={use:async k=>k==="downloads"?{save}:null}})();
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <title>ข้อมูลน้ำประจวบฯ</title>
-<style id="dkcss">
-@media (min-width:1100px){
- body.dash .content{max-width:none!important;width:100%;padding:14px 28px 48px!important;box-sizing:border-box}
- body.dash:not(.in-topic) #hub>.hero{padding:10px 0 18px!important;background:none!important}
- body.dash:not(.in-topic) #hub>.hero>.hero-top{display:none!important}
- body.dash #heroK{max-width:none!important;width:100%;margin-top:0!important;padding-top:0!important}
- body.dash #heroK>.dh{margin-bottom:14px}
- body.dash #heroK>.dg{gap:16px!important}
- body.dash .hub-h{padding:18px 4px 12px!important}
- body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important;gap:16px!important}
- body.dash .tile,body.dash .tile.wide{min-height:280px}
-}
-@media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
-</style>
 <style id="mhcss">
 #mhome,#mhTop,#mhNav,#ovBar{display:none}
-@media (max-width:700px){
+@media all{
  body.dash{padding-bottom:96px}
  body.dash:not(.in-topic) .main>.top{display:none!important}
  body.dash:not(.in-topic) #tiles{display:none!important}
@@ -127,6 +113,103 @@ if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWor
  #mhNav button svg{width:23px;height:23px}
  #mhNav button.on{color:#fff;background:rgba(255,255,255,.1)}
 }
+@media (min-width:1100px){
+ html,body{overflow-x:hidden}
+ body.dash{padding-bottom:0}
+ body.dash #mhNav{display:none!important}
+ #mhome{background:#141414}
+ #mhome .amb{display:none}
+ #mhTop{display:flex!important;align-items:center;gap:26px;height:68px;padding:0 4%;background:linear-gradient(180deg,rgba(0,0,0,.75) 10%,rgba(0,0,0,0))!important;transition:background .4s}
+ body.dash.in-topic #mhTop,body.mh-ov #mhTop{display:none!important}
+ #mhTop.sc{background:#141414!important}
+ #mhTop .in{display:contents}
+ #mhTop img{order:0;width:40px;height:40px}
+ #mhTop h1{order:1;font-size:22px;text-shadow:none}
+ #mhTop .ch{order:2;margin:0;padding:0;gap:22px;overflow:visible}
+ #mhTop .ch button{padding:0;border:0;background:none;backdrop-filter:none;border-radius:0;font:400 15px "IBM Plex Sans Thai",sans-serif;color:#E5E5E5;transition:color .3s}
+ #mhTop .ch button:hover{color:#B3B3B3}
+ #mhTop .ib{order:3;margin-left:auto;gap:22px}
+ #mhome .hero{padding:0}
+ #mhome .card{border-radius:0;border:0;box-shadow:none;height:min(56.25vw,92vh)}
+ #mhome .card::after{background:linear-gradient(77deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.35) 38%,rgba(0,0,0,0) 62%),linear-gradient(180deg,rgba(20,20,20,0) 62%,rgba(20,20,20,.75) 84%,#141414 100%)}
+ #mhome .ct{left:4%;right:auto;bottom:32%;width:min(46%,760px);padding:0;text-align:left}
+ #mhome .ct h2{font-size:clamp(56px,6.2vw,118px);line-height:1}
+ #mhome .ct .tg{font-size:clamp(15px,1.25vw,22px);margin-top:1.2vw;text-shadow:2px 2px 4px rgba(0,0,0,.45)}
+ #mhome .al{justify-content:flex-start;margin-top:1vw}
+ #mhome .al span{font-size:14px;padding:4px 12px}
+ #mhome .bt{display:flex;gap:12px;margin-top:1.6vw}
+ #mhome .bt button{height:auto;padding:.7vw 2.2vw;font-size:clamp(16px,1.25vw,22px);border-radius:6px;transition:opacity .2s}
+ #mhome .bt button:hover{opacity:.8}
+ #mhome .bt svg{width:1.6vw;height:1.6vw;min-width:22px;min-height:22px}
+ #mhome .cr{top:80px;right:4%;font-size:11px}
+ #mhome .hero+.rw{margin-top:-10vw}
+ #mhome .rw{position:relative;z-index:2;margin-top:2.6vw}
+ #mhome .rw h3{margin:0 4% .4vw;font:600 clamp(18px,1.45vw,26px) Kanit,sans-serif;color:#E5E5E5}
+ #mhome .sc{padding:22px 4% 26px;gap:8px;scroll-snap-type:none;scroll-behavior:smooth}
+ #mhome .po,#mhome .po.wide{width:calc((92vw - 40px)/5.4);max-width:none;aspect-ratio:16/9;border-radius:6px;transition:transform .3s ease,box-shadow .3s;transform-origin:center}
+ #mhome .po:hover,#mhome .po:focus-visible{transform:scale(1.1);z-index:5;box-shadow:0 14px 30px rgba(0,0,0,.75)}
+ #mhome .sc>.po:first-child{transform-origin:left center}
+ #mhome .po .nm{top:24%;font-size:clamp(24px,2.1vw,40px)}
+ #mhome .po .un{font-size:clamp(11px,.8vw,14px)}
+ #mhome .po .tt{bottom:36px;font-size:clamp(14px,1.05vw,19px)}
+ #mhome .po .bd{bottom:9px;font-size:12px}
+ #mhome .po.wide .tt{bottom:12px;font-size:clamp(15px,1.15vw,20px)}
+ #mhome .tn .rk{font-size:clamp(130px,12.5vw,250px);-webkit-text-stroke:3px #595959;margin-right:-1.6vw}
+ #mhome .tn .po{width:8.8vw;min-width:130px;aspect-ratio:2/3}
+ #mhome .tn .rn{font-size:clamp(13px,1vw,18px);top:10px}
+ #mhome .tn .rn small{font-size:clamp(10px,.75vw,13px)}
+ #mhome .tn .nm{font-size:clamp(20px,1.8vw,34px)}
+ #mhome .tn .nm .un{font-size:clamp(9px,.62vw,12px)}
+ #mhome .tn:hover{z-index:5}
+ #mhome .ar{display:flex}
+ html body.dash.mh-ov:not(.in-topic) #hub>.hero{display:block!important;position:fixed!important;inset:0!important;z-index:990;overflow-y:auto;background:#141414!important;padding:84px 4% 48px!important;margin:0!important}
+ #ovBar{height:68px!important;padding:0 4%!important;background:#141414!important}
+}
+#mhome .ar{display:none;position:absolute;z-index:6;bottom:26px;width:4%;min-width:40px;align-items:center;justify-content:center;border:0;padding:0;background:rgba(20,20,20,.55);color:#fff;cursor:pointer;opacity:0;transition:opacity .25s,background .2s}
+#mhome .ar.l{left:0;border-radius:0 6px 6px 0}#mhome .ar.r{right:0;border-radius:6px 0 0 6px}
+#mhome .ar:hover{background:rgba(20,20,20,.8)}
+#mhome .rw:hover .ar{opacity:1}
+#mhome .ar svg{width:34px;height:34px;transition:transform .2s}#mhome .ar:hover svg{transform:scale(1.25)}
+</style>
+<style id="dkcss">
+#heroK .dc .rows .rw,#heroK .dc .plist .pi{text-align:left!important;justify-content:flex-start!important}
+#heroK .dc .rows .rw span,#heroK .dc .plist .pi>span:not(.n){flex:1 1 auto!important;text-align:left!important;margin-left:10px}
+#heroK .dc .rows .rw em{margin-left:auto}
+#dkRes{display:none}
+@media (min-width:1100px){
+ body.dash .content{max-width:none!important;width:100%;padding:14px 28px 48px!important;box-sizing:border-box}
+ body.dash:not(.in-topic) #hub>.hero{padding:10px 0 18px!important;background:none!important}
+ body.dash:not(.in-topic) #hub>.hero>.hero-top{display:none!important}
+ body.dash #heroK{max-width:none!important;width:100%;margin-top:0!important;padding-top:0!important}
+ body.dash #heroK>.dh{margin-bottom:14px}
+ body.dash #heroK>.dg{gap:16px!important}
+ body.dash #heroK>.dg>.c-pink,body.dash #heroK>.dg>.c-orange,body.dash #heroK>.dg>.c-green{display:none!important}
+ body.dash .hub-h{padding:18px 4px 12px!important}
+ body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important;gap:16px!important}
+ body.dash .tile,body.dash .tile.wide{min-height:280px}
+ #dkRes{display:block;grid-column:1/-1;border-radius:24px;background:#0E1013;border:1px solid rgba(255,255,255,.07);padding:18px 26px 14px;color:#F4F4F6;font-family:"IBM Plex Sans Thai",system-ui,sans-serif}
+ #dkRes .hd{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+ #dkRes .hd h3{margin:0;font:600 18px Kanit,sans-serif}
+ #dkRes .hd small{color:#8E8E96;font-size:13px}
+ #dkRes .lg{margin-left:auto;display:flex;gap:16px;font-size:12px;color:#A1A1A6}
+ #dkRes .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+ #dkRes .gr{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:14px;align-items:end}
+ #dkRes .it{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 4px;border-radius:14px;transition:background .2s}
+ #dkRes .it:hover,#dkRes .it:focus-visible{background:rgba(255,255,255,.05)}
+ #dkRes .pc{font:600 19px Kanit,sans-serif;font-variant-numeric:tabular-nums}
+ #dkRes .tb{position:relative;width:58%;max-width:74px;height:120px;border-radius:12px;background:rgba(255,255,255,.06);overflow:hidden}
+ #dkRes .fl{position:absolute;left:0;right:0;bottom:0;border-radius:10px 10px 0 0;background:linear-gradient(180deg,#5AC8FA,#0A6CD6);transition:height .8s cubic-bezier(.2,.8,.2,1)}
+ #dkRes .fl.lo{background:linear-gradient(180deg,#FF8A80,#C62828)}
+ #dkRes .fl.hi{background:linear-gradient(180deg,#FFD27A,#E07A1F)}
+ #dkRes .tk{position:absolute;left:-2px;right:-2px;height:0;border-top:2px dashed rgba(255,255,255,.85)}
+ #dkRes .tk.l{border-top-color:#FF8A80}
+ #dkRes .nm{font:600 14px Kanit,sans-serif;text-align:center;line-height:1.2}
+ #dkRes .sb{font-size:11.5px;color:#8E8E96;text-align:center;line-height:1.35}
+ #dkRes .st{font:600 11px Kanit,sans-serif;padding:2px 9px;border-radius:999px;background:rgba(52,199,89,.16);color:#6EE7A0}
+ #dkRes .st.lo{background:rgba(229,72,77,.18);color:#FF8A8D}
+ #dkRes .st.hi{background:rgba(245,166,35,.18);color:#FFC46B}
+}
+@media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
 </style>
 <style id="galcss">
 #gallery .gl-stage{position:relative;background:#0A0A0B;border-radius:24px;overflow:hidden;padding:28px 0 22px;color:#F4F4F6}
@@ -1149,7 +1232,7 @@ body.dash .tile .fig{padding:16px 0 22px}
     <div class="content">
       <div class="tswitch" id="tswitch" role="navigation" aria-label="เปลี่ยนหัวข้อ"></div>
       <div id="hub"><div id="mhTop"><div class="in"><img id="mhLogo" alt="กรมชลประทาน"><h1>หน้าหลัก</h1><div class="ib"><button type="button" id="mhExec" aria-label="รายงานผู้บริหาร 1 หน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button><button type="button" id="mhExp" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div></div><div class="ch"><button type="button" data-o="overview">ภาพรวม</button><button type="button" data-o="reservoirs">อ่างเก็บน้ำ</button><button type="button" data-o="rain">ฝน</button><button type="button" data-o="streams">น้ำท่า</button><button type="button" data-o="manage">บริหารน้ำ</button><button type="button" data-o="maps">แผนที่</button><button type="button" data-o="flood">อุทกภัย 69</button></div></div>
-<div id="mhome" aria-label="หน้าหลัก"><div class="amb" id="mhAmb" aria-hidden="true"><img alt=""><img alt=""></div><div class="hero"><div class="card"><img class="bg on" src="prm/mh/hero1.jpg?v=20261103n" alt="" data-cr="ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero2.jpg?v=20261103n" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero3.jpg?v=20261103n" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero4.jpg?v=20261103n" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero5.jpg?v=20261103n" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero6.jpg?v=20261103n" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><div class="cr" id="mhCr">ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม</div>
+<div id="mhome" aria-label="หน้าหลัก"><div class="amb" id="mhAmb" aria-hidden="true"><img alt=""><img alt=""></div><div class="hero"><div class="card"><img class="bg on" src="prm/mh/hero1.jpg?v=20261103p" alt="" data-cr="ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero2.jpg?v=20261103p" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero3.jpg?v=20261103p" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero4.jpg?v=20261103p" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero5.jpg?v=20261103p" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><img class="bg" src="prm/mh/hero6.jpg?v=20261103p" alt="" loading="lazy" data-cr="อ่างเก็บน้ำยางชุม"><div class="cr" id="mhCr">ภาพ: Prasobchok Jitchaichan · อ่างเก็บน้ำยางชุม</div>
 <div class="ct"><h2>ข้อมูลน้ำ<span>ประจวบฯ</span></h2><p class="tg" id="mhSum"></p><div class="al" id="mhAl"></div>
 <div class="bt"><button type="button" class="p" id="mhGo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>ดูสถานการณ์</button><button type="button" class="s" id="mhRep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>รายงาน 1 หน้า</button></div></div></div></div>
 <div class="rw"><h3>อ่างเก็บน้ำ 9 แห่ง เรียงตามความจุวันนี้</h3><div class="sc" id="mhRes"></div></div>
@@ -5598,8 +5681,23 @@ document.addEventListener("keydown",e=>{if(!$("glVw").classList.contains("on"))r
 let tx=null;$("glFr").addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});$("glFr").addEventListener("touchend",e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>45)shw(si+(dx<0?1:-1));tx=null});
 const ro=()=>{try{rope()}catch(e){}};addEventListener("resize",ro);new MutationObserver(ro).observe($("gallery"),{attributes:true,attributeFilter:["class"]});
 document.querySelectorAll("#glLine img").forEach(i=>i.addEventListener("load",ro));setTimeout(ro,300);sel(0,false)})();</script>
+
+<script id="dkjs">(()=>{function build(){const g=document.querySelector("#heroK>.dg");if(!g||typeof RES==="undefined")return;
+ let el=document.getElementById("dkRes");if(!el){el=document.createElement("div");el.id="dkRes";g.appendChild(el)}
+ const R=RES.filter(r=>r&&r.pct!=null);
+ el.innerHTML=`<div class="hd"><h3>อ่างเก็บน้ำ 9 แห่ง เทียบเกณฑ์</h3><small>% ความจุวันนี้ · คลิกอ่างเพื่อดูรายงาน Rule Curve</small><div class="lg"><span><i style="background:#2F8FE6"></i>อยู่ในเกณฑ์</span><span><i style="background:#E07A1F"></i>ใกล้/เกิน URC</span><span><i style="background:#C62828"></i>ต่ำกว่า LRC</span><span><i style="background:none;border-top:2px dashed #fff;border-radius:0;height:0;width:14px"></i>URC</span><span><i style="background:none;border-top:2px dashed #FF8A80;border-radius:0;height:0;width:14px"></i>LRC</span></div></div><div class="gr">`+
+ R.map(r=>{const p=Math.max(0,Math.min(100,+r.pct)),u=r.urcNow&&r.cap?Math.min(100,r.urcNow/r.cap*100):null,l=r.lrcNow&&r.cap?Math.min(100,r.lrcNow/r.cap*100):null;
+  const lo=r.status==="low"||(r.lrcNow!=null&&r.cur<r.lrcNow),hi=!lo&&(r.status==="high"||(r.urcNow!=null&&r.cur>=r.urcNow*.97));
+  const cls=lo?"lo":hi?"hi":"",st=lo?"ต่ำกว่า LRC":hi?(r.cur>r.urcNow?"เกิน URC":"ใกล้ URC"):"อยู่ในเกณฑ์";
+  return `<button type="button" class="it" data-r="${r.id}" aria-label="${r.name} ${p.toFixed(1)}% ${st}"><span class="pc">${p.toFixed(1)}%</span><span class="tb"><span class="fl ${cls}" style="height:${p}%"></span>${u!=null?`<span class="tk" style="bottom:${u}%"></span>`:""}${l!=null?`<span class="tk l" style="bottom:${l}%"></span>`:""}</span><span class="nm">${r.name}</span><span class="sb">${(+r.cur).toFixed(r.cap>=100?1:2)} / ${(+r.cap).toFixed(r.cap>=100?0:2)}<br>ล้าน ลบ.ม.</span><span class="st ${cls}">${st}</span></button>`}).join("")+`</div>`}
+ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#dkRes .it");if(!b)return;const id=b.dataset.r;
+  try{sel=id;renderList();renderDetail()}catch(_){}try{expKind="one";openExport()}catch(_){}});
+ const go=()=>{try{build()}catch(e){console.warn(e)}};if(document.readyState!=="loading")setTimeout(go,80);else addEventListener("DOMContentLoaded",()=>setTimeout(go,80))})();</script>
 <div id="ovBar"><button type="button" id="ovX" aria-label="กลับ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>สถานการณ์น้ำวันนี้</b><button type="button" class="r" id="ovSv" aria-label="บันทึกเป็นภาพรายงาน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></button></div><nav id="mhNav" aria-label="เมนูหลัก"><button type="button" data-n="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9.5 16.5h5"/></svg>หน้าหลัก</button><button type="button" data-n="reservoirs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/></svg>อ่างฯ</button><button type="button" data-n="rain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 1 1 .8-7.9A5 5 0 0 1 17.5 8 3.5 3.5 0 0 1 17 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg>ฝน</button><button type="button" data-n="maps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>แผนที่</button><button type="button" data-n="gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>รูปภาพ</button></nav><!--rvvw--><div class="gl-vw" id="rvVw" role="dialog" aria-modal="true" aria-label="รายงาน"><div class="gl-fr"><div class="rv-sc" id="rvSc"><img id="rvImg" alt=""></div><div class="rv-ld" id="rvLd"><div><i></i>กำลังสร้างรายงาน…</div></div><div class="gl-cap"><b id="rvT"></b><span id="rvD"></span></div><a class="gl-sv" id="rvSv" download>บันทึก</a><button class="gl-btn gl-x" id="rvX" type="button" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="gl-btn gl-l" id="rvL" type="button" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gl-btn gl-r" id="rvR" type="button" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><div class="gl-th" id="rvTh"></div></div></div><!--/rvvw-->
-<script id="mhjs">(()=>{const $=i=>document.getElementById(i),V="?v=20261103n";
+<script id="mhjs">(()=>{const $=i=>document.getElementById(i),V="?v=20261103p";
+const DK=matchMedia("(min-width:1100px)").matches;if(DK)document.querySelectorAll("#mhome .card img.bg").forEach(i=>{i.src=i.getAttribute("src").replace(/hero(\d)\.jpg/,"hero$1w.jpg");i.loading="eager"});
+const addAr=()=>{document.querySelectorAll("#mhome .rw").forEach(rw=>{const sc=rw.querySelector(".sc");if(!sc||rw.querySelector(".ar"))return;const tp=()=>{const t=sc.offsetTop+22,h=sc.offsetHeight-48;rw.querySelectorAll(".ar").forEach(a=>{a.style.top=t+"px";a.style.height=h+"px";a.style.bottom="auto"})};
+ [["l",-1,"M15 5l-7 7 7 7"],["r",1,"M9 5l7 7-7 7"]].forEach(([c,d,p])=>{const b=document.createElement("button");b.type="button";b.className="ar "+c;b.setAttribute("aria-label",d<0?"เลื่อนซ้าย":"เลื่อนขวา");b.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="${p}"/></svg>`;b.onclick=()=>sc.scrollBy({left:d*sc.clientWidth*.86,behavior:"smooth"});rw.appendChild(b)});tp();addEventListener("resize",tp)})};
 const SH={overview:"สถานการณ์รายวัน",pranburi:"เขื่อนปราณบุรี",manage:"อ่างเกิน 80%",urc7:"URC ล่วงหน้า 7 วัน",trend:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",small:"อ่างขนาดเล็ก",reservoirs:"รายละเอียดรายอ่าง",spill:"น้ำล้นยางชุม",streams:"สถานีวัดน้ำท่า",flood:"อุทกภัย 69",present:"Present",maps:"แผนที่",gallery:"รูปภาพอ่าง"};
 const IMG={spill:"prm/mh/spill.jpg"},MEDIA={maps:"prm/mh/maps.jpg",gallery:"prm/mh/gallery.jpg",present:"prm/mh/present.jpg",flood:""};
 const tile=id=>document.querySelector(`#tiles .tile[data-t="${id}"]`);const open=id=>{const t=tile(id);t&&t.click()};
@@ -5669,7 +5767,7 @@ $("mhExec").onclick=$("mhRep").onclick=()=>{const b=$("btnExec");b&&b.click()};
 $("mhExp").onclick=()=>{const b=$("btnExport");b&&b.click()};
 const ovOpen=()=>{document.body.classList.add("mh-ov");document.body.style.overflow="hidden";const h=document.querySelector("#hub>.hero");if(h)h.scrollTop=0;try{dispatchEvent(new Event("resize"))}catch(e){}try{history.pushState({ov:1},"","#ov")}catch(e){}};
 const ovClose=(nb)=>{if(!document.body.classList.contains("mh-ov"))return;document.body.classList.remove("mh-ov");document.body.style.overflow="";if(!nb&&location.hash==="#ov")try{history.back()}catch(e){}};
-$("mhGo").onclick=ovOpen;$("ovX").onclick=()=>ovClose();$("ovSv").onclick=()=>{ovClose();openRV("overview")};
+$("mhGo").onclick=()=>{try{show("overview",true)}catch(e){const t=tile("overview");t&&t.click()}};$("ovX").onclick=()=>ovClose();$("ovSv").onclick=()=>{ovClose();openRV("overview")};
 addEventListener("popstate",()=>{if(location.hash!=="#ov")ovClose(1)});
 const navOn=()=>{const h=(location.hash||"").slice(1)||"home";document.querySelectorAll("#mhNav button").forEach(b=>b.classList.toggle("on",b.dataset.n===h||(b.dataset.n==="home"&&!document.body.classList.contains("in-topic"))))};
 $("mhNav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const n=b.dataset.n;
@@ -5677,7 +5775,7 @@ $("mhNav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b
 addEventListener("hashchange",navOn);addEventListener("popstate",()=>setTimeout(navOn,60));
 new MutationObserver(navOn).observe(document.body,{attributes:true,attributeFilter:["class"]});
 addEventListener("scroll",()=>{$("mhTop").classList.toggle("sc",scrollY>30)},{passive:true});
-const go=()=>{try{build();navOn()}catch(e){console.warn(e)}};
+const go=()=>{try{build();navOn();addAr()}catch(e){console.warn(e)}};
 (()=>{const bs=[...document.querySelectorAll("#mhome .card img.bg")];const A=[...document.querySelectorAll("#mhAmb img")];let ai=0;const amb=u=>{const nx=A[1-ai];nx.onload=()=>{A[ai].classList.remove("on");nx.classList.add("on");ai=1-ai};nx.src=u};if(bs[0])amb(bs[0].src);if(bs.length<2)return;let k=0;const cr=$("mhCr");
  setInterval(()=>{if(document.hidden||!document.getElementById("mhome").offsetParent)return;const n=(k+1)%bs.length,nx=bs[n];
   const sw=()=>{bs[k].classList.remove("on");nx.classList.remove("on");void nx.offsetWidth;nx.classList.add("on");if(cr)cr.textContent=nx.dataset.cr||"";k=n;amb(nx.src)};
