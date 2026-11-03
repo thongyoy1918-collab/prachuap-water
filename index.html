@@ -5964,18 +5964,22 @@ function bars(card){let i=0;card.querySelectorAll("[style]").forEach(e=>{if(e.cl
   const d=Math.min(i++,30)*55;st.transition="none";st[k]="0%";void e.offsetWidth;st.transition=k+" 2.2s cubic-bezier(.25,.8,.3,1) "+d+"ms";st[k]=v;
   setTimeout(()=>{if(st[k]===v)st.transition=""},2400+d)})})}
 function nums(card){card.querySelectorAll("*").forEach(e=>{if(e.children.length&&![...e.children].every(c=>c.tagName==="SMALL"||c.tagName==="SUP"))return;
-  const tn=[...e.childNodes].find(n=>n.nodeType===3&&/\d/.test(n.nodeValue));if(!tn||e.closest("svg,button.lk,.kn,[data-go],nav,[role=tab]"))return;
+  const tn=[...e.childNodes].find(n=>n.nodeType===3&&/\d/.test(n.nodeValue));if(!tn||e.closest("svg,button.lk,.kn,button[data-go],nav,[role=tab]"))return;
   const raw=tn.nodeValue,m=raw.trim().match(NUM);if(!m||m[1].length>3||m[5].replace(/[\s%]/g,"").length>6)return;
   const to=parseFloat(m[3].replace(/,/g,"")+(m[4]||"")),dec=m[4]?m[4].length-1:0,com=/,/.test(m[3]);if(!(to>0))return;
   const lead=raw.match(/^\s*/)[0],trail=raw.match(/\s*$/)[0],fmt=v=>lead+m[1]+m[2]+(com?v.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec}):v.toFixed(dec))+m[5]+trail;
-  e.classList.add("rvN");const t0=performance.now(),D=2400;let last=fmt(0);tn.nodeValue=last;
+  e.classList.add("rvN");const t0=performance.now(),D=e.closest(".gw")?GD:2400;let last=fmt(0);tn.nodeValue=last;
   const step=t=>{if(tn.nodeValue!==last||!tn.isConnected)return;const k=ease((t-t0)/D);last=k>=1?raw:fmt(to*k);tn.nodeValue=last;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
 function lines(card){card.querySelectorAll("svg path").forEach(p=>{const sk=p.getAttribute("stroke");if(!sk||sk==="none"||(p.getAttribute("fill")&&p.getAttribute("fill")!=="none"))return;let L=0;try{L=p.getTotalLength()}catch(_){}if(!(L>20))return;
   p.style.transition="none";p.style.strokeDasharray=L;p.style.strokeDashoffset=L;void p.getBoundingClientRect();p.style.transition="stroke-dashoffset 2.6s cubic-bezier(.45,.05,.35,1) .15s";p.style.strokeDashoffset=0;
   setTimeout(()=>{p.style.transition="";p.style.strokeDasharray="";p.style.strokeDashoffset=""},3000);
   const svg=p.ownerSVGElement;svg.querySelectorAll("path").forEach(a=>{if(a!==p&&a.getAttribute("fill")&&a.getAttribute("fill")!=="none"){a.style.transition="none";a.style.opacity=0;void a.getBoundingClientRect();a.style.transition="opacity 1.4s ease 1.6s";a.style.opacity=""}});
   const box=svg.parentElement;box.querySelectorAll(":scope>.kd,:scope>.kn").forEach(x=>{x.style.transition="none";x.style.opacity=0;void x.offsetWidth;x.style.transition="opacity .6s ease 2.7s";x.style.opacity=""})})}
-function run(c){if(red)return;try{lines(c)}catch(_){}try{bars(c)}catch(_){}try{nums(c)}catch(_){}}
+const GD=4600;
+function gauge(card){card.querySelectorAll(".gw svg").forEach(sv=>{const L=[...sv.querySelectorAll("line")],on=L.filter(l=>/hsl/.test(l.getAttribute("stroke")||"")),off=L.find(l=>!/hsl/.test(l.getAttribute("stroke")||""));
+  const dim=off?off.getAttribute("stroke"):"rgba(255,255,255,.12)";const n=on.length;
+  on.forEach((l,i)=>{l.style.transition="none";l.style.stroke=dim;const f=(i+1)/n,t=1-Math.pow(1-f,1/3);setTimeout(()=>{l.style.transition="stroke .35s ease";l.style.stroke="";setTimeout(()=>l.style.transition="",400)},t*GD)})})}
+function run(c){if(red)return;try{gauge(c)}catch(_){}try{lines(c)}catch(_){}try{bars(c)}catch(_){}try{nums(c)}catch(_){}}
 function init(){const seen=new WeakSet,list=[...new Set(document.querySelectorAll(CARDS))].filter(c=>!c.parentElement.closest(CARDS));
   const io=new IntersectionObserver(es=>es.forEach(en=>{const c=en.target;if(en.isIntersecting&&en.intersectionRatio>.25){if(!seen.has(c)){seen.add(c);run(c)}}else if(!en.isIntersecting)seen.delete(c)}),{threshold:[0,.25]});
   list.forEach(c=>io.observe(c))}
