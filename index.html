@@ -452,6 +452,29 @@ html body #heroK .c-lime.rb{background:rgba(16,16,19,.66)!important;backdrop-fil
 #mhome .rw:hover .ar{opacity:1}
 #mhome .ar svg{width:34px;height:34px;transition:transform .2s}#mhome .ar:hover svg{transform:scale(1.25)}
 </style>
+<style id="fmcss">
+#fmap .fm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:16px;margin-top:6px}
+#fmap .fm-c{all:unset;box-sizing:border-box;display:flex;flex-direction:column;cursor:pointer;border-radius:22px;overflow:hidden;background:rgba(16,16,19,.66);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);transition:transform .3s,box-shadow .3s}
+#fmap .fm-c:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px rgba(255,140,60,.6),0 18px 40px -18px rgba(255,120,40,.6)}
+#fmap .fm-c img{display:block;width:100%;aspect-ratio:1.414;object-fit:cover;background:#0b0d12}
+#fmap .fm-b{padding:14px 18px 16px;color:#fff}
+#fmap .fm-b .ey{display:flex;gap:8px;align-items:center;font:600 12px "IBM Plex Sans Thai",sans-serif;color:#FDBA74}
+#fmap .fm-b .ey::before{content:"";width:8px;height:8px;border-radius:50%;background:#F97316}
+#fmap .fm-b h3{margin:6px 0 4px;font:600 19px/1.3 Kanit,sans-serif;color:#fff}
+#fmap .fm-b p{margin:0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.6)}
+#fmap .fm-b .ac{display:flex;gap:10px;margin-top:12px}
+#fmap .fm-b .ac a,#fmap .fm-b .ac span{display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;font:600 12.5px "IBM Plex Sans Thai",sans-serif;text-decoration:none}
+#fmap .fm-b .ac span{background:#F97316;color:#fff}
+#fmap .fm-b .ac a{background:rgba(255,255,255,.09);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+#fmVw{position:fixed;inset:0;z-index:300;background:rgba(5,6,8,.94);display:none;flex-direction:column}
+#fmVw.on{display:flex}
+#fmVw .bar{display:flex;align-items:center;gap:12px;padding:12px 16px;color:#fff;font:600 15px Kanit,sans-serif}
+#fmVw .bar .sp{flex:1}
+#fmVw .bar button,#fmVw .bar a{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1);font:600 13px "IBM Plex Sans Thai",sans-serif;color:#fff}
+#fmVw .sc{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;touch-action:pan-x pan-y pinch-zoom}
+#fmVw .sc img{max-width:100%;height:auto;cursor:zoom-in}
+#fmVw .sc.z img{max-width:none;width:200%;cursor:zoom-out}
+</style>
 <style id="spcss">
 #spl{position:fixed;inset:0;z-index:100000;background:#07080B;overflow:hidden;cursor:pointer;animation:spFail .6s ease 16s forwards}
 #spl.go{animation:spOut .7s cubic-bezier(.6,0,.3,1) forwards}
@@ -2852,6 +2875,15 @@ document.addEventListener("DOMContentLoaded",()=>{try{flPickRender();document.qu
             <div class="pr-act"><button class="btn-sec prm-save" data-src="prm/cons/a8.jpg?v=20261104t" data-fn="แผนพัฒนาแหล่งน้ำ_อ.บางสะพานน้อย.jpg" type="button">บันทึกภาพ</button></div></div>
           </div></div></div><!--/prm-group-->
       </section><!--/maps-->
+      <section id="fmap">
+        <div class="sec-h"><div><h2>แผนที่พื้นที่ประสบอุทกภัย</h2><p>แผนที่สถานการณ์น้ำท่วมรายพื้นที่ บนแผนที่ภูมิประเทศ L7018 · ภาพคมชัด 4K</p></div></div>
+        <div class="fm-grid"><button type="button" class="fm-c" data-i="0"><img src="prm/fmap/bangsaphan_691029.jpg" alt="พื้นที่ประสบอุทกภัย คลองบางสะพาน" loading="lazy"><div class="fm-b"><div class="ey">อ.บางสะพาน · 29 ต.ค. 2569</div><h3>พื้นที่ประสบอุทกภัย คลองบางสะพาน</h3><p>น้ำท่วมถนน ทล.3374 ระยะ 1.6 กม. · ถนน ทช.1035 ระยะ 4.70 กม. · จุดน้ำท่วม 3 จุด (ม.5 ม.9 ม.1)</p><div class="ac"><span>ดูเต็มจอ</span><a href="prm/fmap/bangsaphan_691029.jpg" download onclick="event.stopPropagation()">ดาวน์โหลด 4K</a></div></div></button></div>
+        <div id="fmVw" role="dialog" aria-modal="true" aria-label="แผนที่"><div class="bar"><span id="fmT"></span><span class="sp"></span><a id="fmD" download>ดาวน์โหลด</a><button type="button" id="fmX">ปิด ✕</button></div><div class="sc" id="fmSc"><img id="fmI" alt=""></div></div>
+        <script>(()=>{const M=[{"f": "prm/fmap/bangsaphan_691029.jpg", "t": "พื้นที่ประสบอุทกภัย คลองบางสะพาน", "a": "อ.บางสะพาน", "d": "29 ต.ค. 2569", "s": "น้ำท่วมถนน ทล.3374 ระยะ 1.6 กม. · ถนน ทช.1035 ระยะ 4.70 กม. · จุดน้ำท่วม 3 จุด (ม.5 ม.9 ม.1)"}],v=document.getElementById("fmVw"),sc=document.getElementById("fmSc"),im=document.getElementById("fmI");
+          document.querySelectorAll("#fmap .fm-c").forEach(b=>b.onclick=()=>{const m=M[+b.dataset.i];im.src=m.f;document.getElementById("fmT").textContent=m.t+" · "+m.d;document.getElementById("fmD").href=m.f;sc.classList.remove("z");v.classList.add("on");document.body.style.overflow="hidden"});
+          const x=()=>{v.classList.remove("on");document.body.style.overflow=""};document.getElementById("fmX").onclick=x;addEventListener("keydown",e=>{if(e.key==="Escape"&&v.classList.contains("on"))x()});
+          im.onclick=()=>sc.classList.toggle("z")})();</script>
+      </section>
       <section id="gallery"><div class="sec-h"><div><h2>รูปภาพอ่างเก็บน้ำ</h2><p>อ่างเก็บน้ำขนาดกลาง 8 แห่ง จังหวัดประจวบคีรีขันธ์ · คลิกภาพเพื่อดูแบบเต็มจอ</p></div></div>
         <div class="gl-stage"><div class="gl-track" id="glTrack"><div class="gl-line" id="glLine"><svg class="gl-rope" id="glRope" preserveAspectRatio="none"><path d="" fill="none" stroke="#9A8A72" stroke-width="2"/></svg><button type="button" class="gl-pc gl-no" data-i="0" style="--r:-4deg;--dy:6px" aria-label="ดูภาพ อ่างเก็บน้ำห้วยไทรงาม"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ ห้วยไทรงาม</span></button><button type="button" class="gl-pc gl-no" data-i="1" style="--r:3deg;--dy:18px" aria-label="ดูภาพ อ่างเก็บน้ำห้วยมงคล"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ ห้วยมงคล</span></button><button type="button" class="gl-pc" data-i="2" style="--r:-2deg;--dy:26px" aria-label="ดูภาพ อ่างเก็บน้ำยางชุม"><img src="prm/gal/yangchum_cov.jpg?v=20261103j" alt="อ่างเก็บน้ำยางชุม" loading="lazy"><span>อ่างฯ ยางชุม</span></button><button type="button" class="gl-pc gl-no" data-i="3" style="--r:4deg;--dy:30px" aria-label="ดูภาพ อ่างเก็บน้ำห้วยวังเต็น"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ ห้วยวังเต็น</span></button><button type="button" class="gl-pc gl-no" data-i="4" style="--r:-3deg;--dy:28px" aria-label="ดูภาพ อ่างเก็บน้ำคลองบึง"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ คลองบึง</span></button><button type="button" class="gl-pc gl-no" data-i="5" style="--r:2deg;--dy:22px" aria-label="ดูภาพ อ่างเก็บน้ำห้วยอ่างหิน"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ ห้วยอ่างหิน</span></button><button type="button" class="gl-pc gl-no" data-i="6" style="--r:-4deg;--dy:12px" aria-label="ดูภาพ อ่างเก็บน้ำคลองช่องลม"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ คลองช่องลม</span></button><button type="button" class="gl-pc gl-no" data-i="7" style="--r:3deg;--dy:4px" aria-label="ดูภาพ อ่างเก็บน้ำคลองจะกระ"><i class="gl-ph">ยังไม่มีภาพ</i><span>อ่างฯ คลองจะกระ</span></button></div></div>
           <div class="gl-bar"><div><h3 id="glT"></h3><p id="glD"></p></div><div class="gl-nav"><span class="gl-cnt" id="glC"></span><button class="gl-btn" id="glP" type="button" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="gl-btn" id="glN" type="button" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
@@ -5500,7 +5532,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
     {id:"streams",cat:"น้ำท่า",chip:stOver?["สูงกว่าตลิ่ง","bad"]:["ปกติ","ok"],t:"สถานีวัดน้ำท่า",d:"ระดับน้ำเทียบตลิ่ง และแนวโน้มของสถานีวัดน้ำท่า",ic:I.wave,c:"#6E7F90",n:String(STREAMS.length),u:"สถานี",s:stOver?`สูงกว่าตลิ่ง ${stOver} สถานี`:`ต่ำกว่าตลิ่งทุกสถานี · เพิ่มขึ้น ${stUp}`,viz:""},
     {id:"flood",cat:"อุทกภัย 69",chip:["ดำเนินการ "+FLOOD.sites.length+" จุด","info"],t:"การให้ความช่วยเหลือ อุทกภัย 69",d:"สนับสนุนเครื่องสูบน้ำ รถขุด และเครื่องจักร-เครื่องมือในพื้นที่ประสบภัย",ic:I.help,c:"#E07A1F",n:String(FLOOD.sites.length),u:"จุด",s:Object.entries(FLOOD.types).map(([k,t])=>[t[0].replace(/ .*/,""),FLOOD.sites.filter(x=>x.type===k).reduce((a,x)=>a+x.count,0)]).filter(x=>x[1]).map(x=>x[0]+" "+x[1]).join(" · ")},
     {id:"present",cat:"Present",chip:["16:9","info"],t:"ข้อมูลสำหรับ Present",d:"ภาพแนวนอน 16:9 พร้อมใส่สไลด์นำเสนอ",ic:I.grid,c:"#123B7A",n:"8",u:"ภาพ",s:"สถานการณ์น้ำ · อ่างเกิน 80% · Inflow/Outflow · ฝนสะสม · จุดเสี่ยง · เครื่องจักร",viz:""},
-    {id:"maps",cat:"แผนที่",chip:["4K · 8 อำเภอ","info"],t:"แผนที่แหล่งน้ำ และทางน้ำ",d:"แผนที่แหล่งน้ำ ทางน้ำรายอำเภอ และรายตำบล จังหวัดประจวบคีรีขันธ์",ic:I.grid,c:"#0E8A7A",n:"8",u:"อำเภอ",s:"64 แผ่น · รายงาน PDF รายอำเภอ",viz:""},{id:"gallery",cat:"รูปภาพ",chip:["8 อ่าง","info"],t:"รูปภาพอ่างเก็บน้ำ",d:"อ่างเก็บน้ำขนาดกลาง 8 แห่ง แขวนเป็นภาพ คลิกเพื่อดูแบบเต็มจอ",ic:I.grid,c:"#0E7490",n:"8",u:"อ่าง",s:"ภาพถ่ายอ่างเก็บน้ำ · ดูแบบเต็มจอ",viz:""},
+    {id:"maps",cat:"แผนที่",chip:["4K · 8 อำเภอ","info"],t:"แผนที่แหล่งน้ำ และทางน้ำ",d:"แผนที่แหล่งน้ำ ทางน้ำรายอำเภอ และรายตำบล จังหวัดประจวบคีรีขันธ์",ic:I.grid,c:"#0E8A7A",n:"8",u:"อำเภอ",s:"64 แผ่น · รายงาน PDF รายอำเภอ",viz:""},{id:"fmap",cat:"แผนที่อุทกภัย",chip:["1 แผ่น","bad"],t:"แผนที่พื้นที่ประสบอุทกภัย",d:"แผนที่สถานการณ์น้ำท่วม จุดน้ำท่วม ถนนที่น้ำท่วม และลำน้ำ บนแผนที่ภูมิประเทศ",ic:I.map,c:"#C2410C",n:"1",u:"แผ่น",s:"ล่าสุด 29 ต.ค. 2569 · อ.บางสะพาน",viz:""},
+    {id:"gallery",cat:"รูปภาพ",chip:["8 อ่าง","info"],t:"รูปภาพอ่างเก็บน้ำ",d:"อ่างเก็บน้ำขนาดกลาง 8 แห่ง แขวนเป็นภาพ คลิกเพื่อดูแบบเต็มจอ",ic:I.grid,c:"#0E7490",n:"8",u:"อ่าง",s:"ภาพถ่ายอ่างเก็บน้ำ · ดูแบบเต็มจอ",viz:""},
   ].filter(t=>document.getElementById(t.id));
   const go='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   const arw='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
@@ -5936,6 +5969,7 @@ function fit(){const st=document.getElementById("splSt");if(!st)return;const s=M
   el.addEventListener("pointerleave",()=>pcs.forEach(([d])=>d.style.transform="none"));
   el.addEventListener("pointerup",e=>{if(e.pointerType==="touch")pcs.forEach(([d])=>d.style.transform="none")})});
  document.getElementById("splGo").addEventListener("click",e=>{e.stopPropagation();end()})})()})();</script>
+
 
 
 
