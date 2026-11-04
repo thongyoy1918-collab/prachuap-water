@@ -1672,6 +1672,7 @@ body.dash .tile .fig{padding:16px 0 22px}
 
 
 
+
       <section id="spill">
         <style>
         #spill .sp-k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
@@ -1788,10 +1789,10 @@ function drawSpillChart(){
     T(c,"◀ ผลจริง ต.ค.",X(30.5)-10,t+4,{s:16,w:600,c:RP.ink2,a:"right"});T(c,"คาดการณ์ พ.ย. – ธ.ค. ▶",X(30.5)+10,t+4,{s:16,w:600,c:RP.act});
     return {t,b,Y}}
   function line(pts,col,w,dash){c.strokeStyle=col;c.lineWidth=w;c.setLineDash(dash||[]);c.beginPath();pts.forEach((p,k)=>k?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();c.setLineDash([])}
-  function legend(y,items){let x=70;items.forEach(([col,txt,kind])=>{if(kind==="bar"){if(col==="#0A8F4E"){c.strokeStyle=col;c.lineWidth=3;c.strokeRect(x+1.5,y-12.5,19,13)}else{c.fillStyle=col;c.fillRect(x,y-14,22,16)}}else{line([[x,y-6],[x+30,y-6]],col,4,kind==="dash"?[8,5]:null)}T(c,txt,x+(kind==="bar"?30:40),y,{s:17,c:RP.ink2});c.font=`400 17px ${FF}`;x+=c.measureText(txt).width+(kind==="bar"?62:72)})}
+  function legend(y,items){let x=70;items.forEach(([col,txt,kind])=>{if(kind==="bar"){c.fillStyle=col;c.fillRect(x,y-14,22,16)}else{line([[x,y-6],[x+30,y-6]],col,4,kind==="dash"?[8,5]:null)}T(c,txt,x+(kind==="bar"?30:40),y,{s:17,c:RP.ink2});c.font=`400 17px ${FF}`;x+=c.measureText(txt).width+(kind==="bar"?62:72)})}
   const AQ=SPD.act.map((a,q)=>a?q:-1).filter(q=>q>=0),AG="#0A8F4E";
   function pill(txt,x,y,al){c.font=`700 19px ${FF}`;const w=c.measureText(txt).width+20,x0=al==="right"?x-w:al==="center"?x-w/2:x;rr(c,x0,y-22,w,30,8);c.fillStyle=AG;c.fill();c.strokeStyle="#fff";c.lineWidth=2;c.stroke();T(c,txt,x0+10,y,{s:19,w:700,c:"#fff"})}
-  function aBar(x,v0,v1,col,Y){const h=Y(v0)-Y(v1);if(col===AG){c.fillStyle="rgba(10,143,78,.10)";c.fillRect(x-BW*.5,Y(v1),BW,h);c.strokeStyle=AG;c.lineWidth=3.2;c.strokeRect(x-BW*.5+1.6,Y(v1)+1.6,BW-3.2,Math.max(0,h-1.6))}else{c.globalAlpha=.85;c.fillStyle=col;c.fillRect(x-BW*.3,Y(v1),BW*.6,h);c.globalAlpha=1}}
+  function aBar(x,v0,v1,col,Y){c.fillStyle=col;c.fillRect(x-BW*.48,Y(v1),BW*.96,Y(v0)-Y(v1));c.strokeStyle="#062F1A";c.lineWidth=2;c.strokeRect(x-BW*.48,Y(v1),BW*.96,Y(v0)-Y(v1))}
   // chart 1 storage
   let g=frame(290,540,"1) ปริมาณน้ำในอ่าง: ผลจริง และคาดการณ์ 2 กรณี","เทียบสันฝาย Spillway 41.10 · เกณฑ์ควบคุมบน (URC) · เป้าหมายต่ำกว่า URC 1 ล้าน ลบ.ม.",30,42,2,v=>v.toFixed(0));
   const urc=SPD.urcOct.concat(F.map(r=>r[7]));
@@ -5935,6 +5936,7 @@ function fit(){const st=document.getElementById("splSt");if(!st)return;const s=M
   el.addEventListener("pointerleave",()=>pcs.forEach(([d])=>d.style.transform="none"));
   el.addEventListener("pointerup",e=>{if(e.pointerType==="touch")pcs.forEach(([d])=>d.style.transform="none")})});
  document.getElementById("splGo").addEventListener("click",e=>{e.stopPropagation();end()})})()})();</script>
+
 
 
 <script id="rn2js">(()=>{
