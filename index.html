@@ -6247,7 +6247,7 @@ function build(){const host=document.querySelector('#maps .prm-lv[data-sec="ww"]
  const tot=D.pts.length,km=Object.values(D.amp).reduce((a,b)=>a+b.km,0),ar=Object.values(D.amp).reduce((a,b)=>a+b.area,0),nm=D.pts.filter(p=>p.t==="L"||p.t==="m").length;
  card.innerHTML=`<div><div id="pmMap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="แผนที่แหล่งน้ำและทางน้ำ จังหวัดประจวบคีรีขันธ์ แบ่งเขตอำเภอ">${g}</svg><div id="pmTip"></div></div>
   <div id="pmLg"><span><i class="ln"></i>แม่น้ำ คลอง</span><span><i class="bd"></i>อ่างเก็บน้ำ</span>${Object.entries(TY).map(([k,v])=>`<span><i style="background:${v[1]}"></i>${v[0]}</span>`).join("")}</div></div>
-  <div id="pmSide"><div class="ey">แผนที่ภาพรวม</div><h3>แหล่งน้ำและทางน้ำ จ.ประจวบคีรีขันธ์</h3><p class="sub">แบ่งเขต 8 อำเภอ · ชี้หรือคลิกอำเภอบนแผนที่เพื่อดูรายละเอียด และเปิดแผนที่ A0 ของอำเภอนั้น</p>
+  <div id="pmSide"><div class="ey">แผนที่ภาพรวม</div><h3>แหล่งน้ำและทางน้ำ จ.ประจวบคีรีขันธ์</h3><p class="sub">แบ่งเขต 8 อำเภอ · ชี้หรือคลิกอำเภอบนแผนที่เพื่อดูรายละเอียด และเปิดแผนที่ของอำเภอนั้น</p>
   <div id="pmOv"><div id="pmK"><div><small>พื้นที่</small><b>${Math.round(ar).toLocaleString("en-US")}<em>ตร.กม.</em></b></div><div><small>ทางน้ำ</small><b>${km.toLocaleString("en-US")}<em>กม.</em></b></div><div><small>แหล่งน้ำ</small><b>${tot}<em>แห่ง</em></b></div><div><small>อ่างใหญ่/กลาง</small><b>${nm}<em>แห่ง</em></b></div></div>
   <div id="pmL">${ORD.map(c=>{const a=D.amp[c];return `<button type="button" data-a="${c}"><span class="nm">อ.${a.n}</span><span class="ct">${a.np}</span><span class="ds">${Math.round(a.area)} ตร.กม. · ทางน้ำ ${a.km} กม.</span></button>`}).join("")}</div></div>
   <div id="pmD"></div></div>`;
@@ -6262,7 +6262,7 @@ function build(){const host=document.querySelector('#maps .prm-lv[data-sec="ww"]
   const a=D.amp[c],T=DT[c],P=T.pts,n=k=>P.filter(p=>p.t===k).length,big=P.filter(p=>p.t==="L"||p.t==="m"),sm=P.filter(p=>p.t==="s"),dt=(P.find(p=>p.d)||{}).d||"";
   OV.hidden=true;EY.textContent="รายละเอียดอำเภอ";H3.textContent="อ."+a.n+" จ.ประจวบคีรีขันธ์";SUB.textContent=T.tam.length+" ตำบล · แหล่งน้ำ "+P.length+" แห่ง · คลิกอำเภออื่นบนแผนที่เพื่อสลับ";
   const kk=(arr,nn)=>`<div class="kk" style="--n:${nn}">${arr.map(([l,v,u,col])=>`<div style="--c:${col}"><small>${l}</small><b>${v}<em>${u}</em></b></div>`).join("")}</div>`;
-  let h=`<div class="bar"><button type="button" class="bk">‹ ภาพรวม 8 อำเภอ</button><span class="sp"></span><button type="button" class="go">เปิดแผนที่ A0 อ.${a.n} ›</button></div>`;
+  let h=`<div class="bar"><button type="button" class="bk">‹ ภาพรวม 8 อำเภอ</button><span class="sp"></span><button type="button" class="go">เปิดแผนที่ อ.${a.n} ›</button></div>`;
   h+=kk([["พื้นที่อำเภอ",f0(Math.round(T.area)),"ตร.กม.","#E0B36A"],["ทางน้ำรวม",f0(T.km),"กม.","#5CC0FF"],["มีน้ำตลอดปี",f0(T.per),"กม.","#4FA3FF"],["แหล่งน้ำ",P.length,"แห่ง","#B06BFF"]],4);
   h+=kk([["อ่างฯ ขนาดใหญ่/กลาง",big.length,"แห่ง","#FF8A3D"],["อ่างฯ ขนาดเล็ก",sm.length,"แห่ง","#B06BFF"],["ฝาย/อาคารทดน้ำ",n("w"),"แห่ง","#3DDC84"],["อื่น ๆ",n("o"),"แห่ง","#9AA8B8"]],4);
   let L="";
