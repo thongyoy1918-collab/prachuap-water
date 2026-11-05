@@ -90,6 +90,13 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9cc3de;border-color:#
 .agentlog{list-style:none;margin:8px 0 0;padding:0;font-size:13px;line-height:1.5}
 .agentlog li{padding:2px 0}
 .agentlog li.run::before{content:"⏳ "} .agentlog li.ok::before{content:"✅ "} .agentlog li.bad::before{content:"❌ "}
+.agsw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:400;color:var(--ink)}
+.agsw input{display:none}
+.agtrack{width:38px;height:22px;border-radius:11px;background:#b8c2cc;position:relative;transition:.2s}
+.agtrack::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.agsw input:checked+.agtrack{background:#0f8a83}
+.agsw input:checked+.agtrack::after{left:19px}
+#agentBox.off{opacity:.75}
 </style>
 </head>
 <body>
@@ -116,7 +123,9 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9cc3de;border-color:#
   </fieldset>
 
   <fieldset class="ai" id="agentBox">
-    <legend>🤖 ทำให้ครบชุด (Agent)</legend>
+    <legend style="display:flex;align-items:center;gap:10px">🤖 ทำให้ครบชุด (Agent)
+      <label class="agsw" title="เปิด/ปิด AI Agent"><input type="checkbox" id="agentOn" checked><span class="agtrack"></span><b id="agentOnTxt">เปิด</b></label></legend>
+    <div id="agentBody">
     <div class="hint">แนบหนังสือต้นเรื่อง (หรือพิมพ์เล่าเรื่อง) แล้วกดปุ่มเดียว AI จะ อ่าน → เลือกชนิด/ผู้รับ → ร่าง → ตรวจคำผิดและรูปแบบ → แก้เอง → ได้ไฟล์ Word ส่วนที่ต้นเรื่องไม่มี (ผลการดำเนินงาน ตัวเลข) จะเว้นเป็น [ระบุ...] ให้กรอกเอง</div>
     <input type="file" id="agentFile" accept=".pdf,.docx,.doc,.txt,image/*" style="margin-top:6px">
     <textarea id="agentBrief" rows="2" style="margin-top:6px" placeholder="(ไม่บังคับ) บอกเพิ่ม เช่น: ส่งข้อมูลตามที่ขอ ครบแล้ว 3 ชุด / ไม่มีต้นเรื่อง ให้ร่างหนังสือขอความอนุเคราะห์…"></textarea>
@@ -124,6 +133,8 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9cc3de;border-color:#
     <div class="btns" style="margin-top:8px"><button class="btn teal" id="agentBtn">🤖 ทำให้ครบชุด</button></div>
     <ol id="agentLog" class="agentlog"></ol>
     <div class="status" id="agentStatus"></div>
+    </div>
+    <div class="hint" id="agentOffHint" style="display:none">ปิด Agent อยู่ — ทำหนังสือเองตามปกติด้านล่าง กดสวิตช์เพื่อเปิด</div>
   </fieldset>
 
   <fieldset class="ai" id="aiBox">
@@ -1351,6 +1362,14 @@ ${guard}
   }finally{ btn.disabled=false; }
 }
 $("agentBtn").onclick = agentRun;
+function agentToggle(on, save){
+  $("agentOn").checked=on; $("agentBody").style.display=on?"":"none"; $("agentOffHint").style.display=on?"none":"";
+  $("agentOnTxt").textContent=on?"เปิด":"ปิด"; $("agentBox").classList.toggle("off",!on);
+  if (save){ try{ localStorage.setItem("agentOn", on?"1":"0"); }catch(e){} }
+}
+$("agentOn").onchange = e=>agentToggle(e.target.checked, true);
+(()=>{ let on=true; try{ on = localStorage.getItem("agentOn")!=="0"; }catch(e){} agentToggle(on,false); })();
+
 
 
 /* ---------- ตรากรมชลประทาน (ฝังในหน้า: พื้นโปร่งใส ตัวหนังสือสีอ่อน) ---------- */
