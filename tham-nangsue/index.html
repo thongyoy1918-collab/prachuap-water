@@ -132,8 +132,9 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9cc3de;border-color:#
   <fieldset>
     <legend>หัวหนังสือ</legend>
     <div id="memoHead">
-      <label>ส่วนราชการ</label>
-      <input type="text" id="agency">
+      <!-- ส่วนราชการกรอกอัตโนมัติตามฝ่ายที่เลือก (ไม่แสดงในฟอร์ม) -->
+      <label style="display:none">ส่วนราชการ</label>
+      <input type="text" id="agency" style="display:none">
       <div class="chips" id="agencyChips" style="display:none"></div>
     </div>
     <div class="row">
