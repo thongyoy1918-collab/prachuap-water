@@ -4093,7 +4093,7 @@ function r24Map(c,D,i,bx,by,bw,bh,o={}){
   c.fillStyle="#D9DCE0";c.fillRect(vx0-5,vy0-5,vx1-vx0+10,vy1-vy0+10);c.fillStyle="#CFE2F0";c.fill(new Path2D(G.sea));
   for(const k in HW_NB){const p=new Path2D(HW_NB[k]);c.fillStyle="#D9DCE0";c.fill(p);c.strokeStyle="#B9BEC4";c.lineWidth=.9*u;c.stroke(p)}
   c.fillStyle="#CFE2F0";c.fill(new Path2D(G.sea));
-  c.fillStyle="#FCFAF0";c.fill(pk);
+  c.save();c.filter=`blur(${Math.max(5,12*u*sc)}px)`;c.translate(14*u,20*u);c.fillStyle="rgba(15,30,45,.55)";c.fill(pk);c.restore();c.save();c.filter=`blur(${Math.max(2,3*u*sc)}px)`;c.translate(3*u,4*u);c.fillStyle="rgba(20,35,50,.30)";c.fill(pk);c.restore();c.fillStyle="#FCFAF0";c.fill(pk);
   c.save();c.clip(pk);
   const hm=r24Heat(i,D);c.globalAlpha=.82;c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);c.globalAlpha=1;
   if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalAlpha=.38;c.globalCompositeOperation="multiply";c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
