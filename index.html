@@ -3,14 +3,6 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>ข้อมูลน้ำประจวบฯ</title>
-<style id="dpcss">html.dphone body.dash .content{padding:10px 10px 40px!important}
-html.dphone body.dash #heroK>.dg{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
-html.dphone body.dash #heroK>.dg>*:not(#x){grid-column:1/-1!important}
-html.dphone body.dash #hub .tiles:not(#x),html.dphone body.dash #tiles:not(#x){grid-template-columns:1fr 1fr!important;gap:10px!important}
-html.dphone body.dash #hub .tile:not(#x){min-height:240px;padding:16px 14px 14px}
-html.dphone #dkHero{min-height:420px}
-html.dphone #dkRes{display:none!important}
-</style>
 <style id="hidecards">body.dash #heroK>.dg>.c-pink,body.dash #heroK>.dg>.c-orange,body.dash #heroK>.dg>.c-green{display:none!important}</style>
 <style id="tfcss">
 @media (min-width:1100px){
@@ -6334,7 +6326,4 @@ function start(){const q=new URLSearchParams(location.search).get("wx");if(q){co
 addEventListener("resize",()=>{clearTimeout(size.t);size.t=setTimeout(()=>{mount();size()},200)});
 if(document.readyState==="complete")setTimeout(start,400);else addEventListener("load",()=>setTimeout(start,400))})();</script>
 
-<script id="dpjs">(function(){if(!matchMedia("(max-width:700px)").matches)return;
-for(const ss of document.styleSheets){let own;try{own=ss.ownerNode&&ss.ownerNode.id;const rs=ss.cssRules;for(const r of rs){if(r.media&&r.conditionText!==undefined||r.media){const t=r.media.mediaText.replace(/\s/g,"");if(t==="(min-width:701px)"||t==="(min-width:1100px)")r.media.mediaText="all";else if(t==="(max-width:700px)"&&own==="mhcss")r.media.mediaText="not all"}}}catch(e){}}
-document.documentElement.classList.add("dphone")})();
-</script></body></html>
+</body></html>
