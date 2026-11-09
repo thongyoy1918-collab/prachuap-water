@@ -1742,6 +1742,7 @@ body.dash .tile .fig{padding:16px 0 22px}
               <div class="hw-nav"><button type="button" id="r24Prev" aria-label="ก่อนหน้า">‹</button><select id="r24Sel" aria-label="เลือกเวลาข้อมูล"></select><button type="button" id="r24Next" aria-label="ถัดไป">›</button></div>
               <button class="btn-sec" type="button" id="r24Line">คัดลอกข้อความ LINE</button>
               <button class="btn-sec" type="button" id="r24Img">บันทึกภาพรายงาน</button>
+              <button class="btn-sec" type="button" id="r24ImgA4">รายงาน A4</button>
             </div>
           </div>
           <div class="hw-msg" id="r24Msg" aria-live="polite"></div>
@@ -3192,6 +3193,7 @@ const FLOOD={"date":"31 ต.ค. 2569","types":{"pump":["เครื่อง�
       <button type="button" id="k-tr" data-k="tr" aria-pressed="false"><b>แนวโน้ม 7 วัน</b><span>กราฟรายอ่าง · ตารางรายวัน</span></button>
       <button type="button" id="k-rain169" data-k="rain169" aria-pressed="false"><b>ฝนสะสม 16:9</b><span>แนวนอน · สไลด์นำเสนอ</span></button>
       <button type="button" id="k-r24" data-k="r24" aria-pressed="false"><b>ฝนสะสม 24 ชม.</b><span>แผนที่ฝน 24 ชม. · ฝนหัวงาน · รายสถานี</span></button>
+      <button type="button" id="k-r24a4" data-k="r24a4" aria-pressed="false"><b>ฝนสะสม 24 ชม. · A4</b><span>แนวตั้ง A4 · แผนที่ใหญ่ · ฝนหัวงาน 7 วัน</span></button>
       <button type="button" id="k-hw" data-k="hw" aria-pressed="false"><b>ฝนหัวงาน</b><span>รายงานสถานการณ์น้ำฝน · 12 สถานี</span></button>
       <button type="button" id="k-rain" data-k="rain" aria-pressed="false"><b>ฝนสะสม</b><span>ฝนรายเดือน · ฝนสะสม · เทียบค่าเฉลี่ย</span></button>
       <button type="button" id="k-small" data-k="small" aria-pressed="false"><b>อ่างขนาดเล็ก</b><span>33 แห่ง · เกณฑ์น้ำ · รายอ่าง</span></button>
@@ -4082,7 +4084,7 @@ function r24Heat(i,D){if(R24_HC[i])return R24_HC[i];const[x0,y0,x1,y1]=hwPkBox()
   c.putImageData(im,0,0);const o=document.createElement("canvas");o.width=W*2;o.height=H*2;const oc=o.getContext("2d");oc.filter="blur(2px)";oc.drawImage(cv,0,0,W*2,H*2);
   return R24_HC[i]={cv:o,x:x0,y:y0,w:W*st,h:H*st}}
 function r24Map(c,D,i,bx,by,bw,bh,o={}){
-  const G=HW_GEO,[x0,y0,x1,y1]=hwPkBox(),padL=o.padL??40,padR=o.padR??220,padT=24,padB=26;
+  const G=HW_GEO,[x0,y0,x1,y1]=hwPkBox(),padL=o.padL??40,padR=o.padR??220,padT=o.padT??24,padB=o.padB??26;
   const sc=Math.min(bw/(x1-x0+padL+padR),bh/(y1-y0+padT+padB)),u=1/sc;
   const ox=bx+(bw-(x1-x0+padL+padR)*sc)/2+(padL-x0)*sc,oy=by+(bh-(y1-y0+padT+padB)*sc)/2+(padT-y0)*sc;
   const vx0=(bx-ox)/sc,vy0=(by-oy)/sc,vx1=(bx+bw-ox)/sc,vy1=(by+bh-oy)/sc;
@@ -4166,6 +4168,50 @@ function r24Render(){const box=document.getElementById("r24Main");if(!box)return
 function r24Text(){const D=r24Snap(r24I);const L=[`🌧️ ฝนสะสม 24 ชม. จ.ประจวบคีรีขันธ์`,`ข้อมูลถึง ${r24Date(D.t)} ${D.t.slice(11,16)} น.`,``,`🟣 สูงสุด ${hwF(D.max.v)} มม. ${D.max.n} อ.${D.max.a}`,`🔴 >90 มม. ${D.n90} สถานี · 🟠 >35 มม. ${D.n35} สถานี`,``,`🔵 อำเภอที่ฝนสูงสุด`];
   D.amp.slice().sort((a,b)=>b.max-a.max).slice(0,3).forEach((a,k)=>L.push(`${k+1}. อ.${a.a} ${hwF(a.max)} มม. (${a.top.n})`));return L.join("\n")}
 function r24Hdr(c,x,y,w,h){rr(c,x,y,w,h,12);c.fillStyle="#EAF2FB";c.fill();c.strokeStyle="#C5D6E8";c.lineWidth=1.5;c.stroke();c.fillStyle="#17497A";rr(c,x,y,6,h,3);c.fill()}
+function drawR24A4(){
+  const D=r24Snap(r24I),W=1600,H=2262,S4=3840/W,cv=document.createElement("canvas");cv.width=3840;cv.height=Math.round(H*S4);const c=cv.getContext("2d");c.scale(S4,S4);
+  c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
+  header(c,W,"แผนที่ปริมาณฝนสะสม 24 ชั่วโมง ย้อนหลัง",`จังหวัดประจวบคีรีขันธ์ · ข้อมูลถึง ${r24DateL(D.t)} ${D.t.slice(11,16)} น. · ${D.S.length} สถานี`,`${r24Date(D.t)} ${D.t.slice(11,16)} น.`);
+  const M=56,G=20,top=282,r2h=1420,bot=H-104-22;
+  // map
+  const mw=780;card(c,M,top,mw,r2h,22);T(c,"แผนที่ฝนสะสม 24 ชม. (IDW)",M+24,top+42,{s:24,w:700});
+  r24Map(c,D,r24I,M+14,top+60,mw-28,r2h-74,{r:14,padR:186,padL:14,padT:8,padB:10});
+  // right column
+  const x2=M+mw+G,w2=W-M-x2;
+  const ks=[["ฝนสูงสุด 24 ชม.",hwF(D.max.v),"มม.",r24C(D.max.v),`${D.max.n} · อ.${D.max.a}`],["ฝนหนักมาก >90",D.n90,"สถานี","#D93636",`จาก ${D.S.length} สถานี`],["ฝนหนัก >35",D.n35,"สถานี","#E8702A",`ข้อมูล ${D.t.slice(11,16)} น.`],["สถานีที่มีฝน",`${D.wet}/${D.S.length}`,"สถานี","#1F7AC9",`${Math.round(D.wet/D.S.length*100)}% ของสถานีทั้งหมด`]];
+  const kw=(w2-14)/2,kh=104;
+  ks.forEach((k,j)=>{const x=x2+(j%2)*(kw+14),y=top+Math.floor(j/2)*(kh+14);card(c,x,y,kw,kh,18);c.fillStyle=k[3];rr(c,x,y,6,kh,3);c.fill();
+    T(c,k[0],x+22,y+32,{s:17,c:RP.muted,w:500});const vw=T(c,String(k[1]),x+22,y+76,{s:38,w:700});T(c,k[2],x+28+vw,y+76,{s:16,c:RP.muted});fitT(c,k[4],x+22,y+96,kw-36,{s:13,c:RP.ink2})});
+  const ay=top+2*kh+14+G,ah=360;card(c,x2,ay,w2,ah,22);T(c,"ฝนสูงสุดรายอำเภอ",x2+24,ay+42,{s:24,w:700});T(c,"มม. (เฉลี่ย)",x2+w2-24,ay+42,{s:16,c:RP.muted,a:"right"});
+  const mx=Math.max(50,...D.amp.map(a=>a.max));R24_AMPS.forEach((n,k)=>{const a=D.amp.find(z=>z.a===n);const y=ay+84+k*35;T(c,n,x2+24,y,{s:18,c:RP.ink2});
+    const bx=x2+160,bw=w2-160-150;rr(c,bx,y-12,bw,13,6.5);c.fillStyle=RP.line2;c.fill();if(a){rr(c,bx,y-12,Math.max(13,bw*a.max/mx),13,6.5);c.fillStyle=r24C(a.max);c.fill();
+    T(c,hwF(a.max),x2+w2-78,y,{s:19,w:700,a:"right"});T(c,`(${hwF(a.avg)})`,x2+w2-24,y,{s:14,c:RP.muted,a:"right"})}});
+  const hy=ay+ah+G,hh=top+r2h-hy;card(c,x2,hy,w2,hh,22);
+  if(HW.days.length){const Hd=hwDay(HW.days.length-1),C=k=>HW_CL[Math.max(k,0)];T(c,"ฝนหัวงาน · โครงการฯ",x2+24,hy+42,{s:24,w:700});T(c,`รายงานประจำวัน ${hwDate(Hd.iso)}`,x2+w2-24,hy+42,{s:15,c:RP.muted,a:"right"});
+    const cx=[x2+24,x2+w2-250,x2+w2-140,x2+w2-30];let y=hy+62;c.fillStyle=RP.navy;rr(c,x2+14,y,w2-28,34,9);c.fill();
+    T(c,"สถานี",cx[0]+34,y+23,{s:16,w:600,c:"#fff"});[["วันนี้",cx[1]],["เมื่อวาน",cx[2]],["สะสม*",cx[3]]].forEach(([l,x])=>T(c,l,x,y+23,{s:16,w:600,c:"#fff",a:"right"}));
+    y+=38;const rh=Math.min(56,(hh-100-58)/Hd.rows.length);
+    Hd.rows.forEach((r,k)=>{const kk=hwCls(r.t),cc=C(kk),yy=y+k*rh,m=yy+rh/2;if(k%2){c.fillStyle=RP.line2;c.fillRect(x2+14,yy,w2-28,rh)}
+      c.beginPath();c.arc(cx[0]+12,m,12,0,7);c.fillStyle=cc.c;c.fill();c.strokeStyle=cc.bd;c.lineWidth=1.2;c.stroke();T(c,String(r.no),cx[0]+12,m+5,{s:13,w:700,c:cc.ink,a:"center"});
+      fitT(c,r.name,cx[0]+34,m-2,cx[1]-110-cx[0]-34,{s:18,w:600});T(c,r.amp,cx[0]+34,m+17,{s:13,c:RP.muted});
+      rr(c,cx[1]-70,m-16,76,32,16);c.fillStyle=cc.c;c.fill();c.strokeStyle=cc.bd;c.lineWidth=1;c.stroke();T(c,hwF(r.t),cx[1]-32,m+6,{s:17,w:700,c:cc.ink,a:"center"});
+      T(c,hwF(r.y),cx[2],m+6,{s:17,c:RP.ink2,a:"right"});T(c,r.type==="res"?hwF(r.cum):hwF(r.d3),cx[3],m+6,{s:17,c:RP.ink2,a:"right"})});
+    const yb=hy+hh-52;c.fillStyle="#EAF2FB";rr(c,x2+14,yb,w2-28,38,10);c.fill();T(c,"ฝนเฉลี่ยหัวงาน",cx[0]+6,yb+26,{s:18,w:700,c:RP.navy2});T(c,hwF(Hd.avg)+" มม.",cx[1],yb+26,{s:19,w:700,c:RP.navy2,a:"right"})}
+  // bottom row: legend + 7 days
+  const by2=top+r2h+G,bh2=bot-by2,lw=380;card(c,M,by2,lw,bh2,22);T(c,"เกณฑ์การเฝ้าระวัง",M+24,by2+42,{s:23,w:700});
+  HW_CL.slice().reverse().forEach((cl,i)=>{const yy=by2+92+i*((bh2-110)/4);c.save();c.translate(M+46,yy);c.scale(1.5,1.5);const dp=new Path2D(HW_DROP);c.fillStyle=cl.c;c.fill(dp);c.strokeStyle=cl.bd;c.lineWidth=1.3;c.stroke(dp);c.restore();
+    T(c,cl.l,M+80,yy+8,{s:21,w:600});T(c,cl.r,M+lw-24,yy+8,{s:18,c:RP.ink2,a:"right"})});
+  const hx=M+lw+G,hw2=W-M-hx;card(c,hx,by2,hw2,bh2,22);
+  if(HW.days.length){const C=k=>HW_CL[Math.max(k,0)];const i1=HW.days.length-1,i0=Math.max(0,i1-6),ids=[];for(let i=i0;i<=i1;i++)ids.push(i);
+    T(c,`ฝนหัวงานรายวันย้อนหลัง ${ids.length} วัน (มม.)`,hx+24,by2+42,{s:23,w:700});T(c,"* สะสม: อ่างเก็บน้ำ = ทั้งปี · สถานีอำเภอ = 3 วัน",hx+hw2-24,by2+42,{s:13,c:RP.muted,a:"right"});
+    const nx=hx+24,nw=130,cw2=(hw2-48-nw)/ids.length,ry=by2+58,rh2=(bh2-58-14)/(HW.st.length+1);
+    ids.forEach((i,j)=>T(c,hwDateS(HW.days[i][0]),nx+nw+cw2*j+cw2/2,ry+rh2*.72,{s:14,w:600,c:i===i1?RP.navy2:RP.muted,a:"center"}));
+    HW.st.forEach((s,k)=>{const yy=ry+rh2*(k+1);T(c,s.short,nx,yy+rh2*.7,{s:14,c:RP.ink2});
+      ids.forEach((i,j)=>{const a=(HW.days[i][1][s.id]||[])[2],kk=hwCls(a),CC=C(kk),x=nx+nw+cw2*j+3;rr(c,x,yy+2,cw2-6,rh2-4,5);
+        c.fillStyle=kk<0?RP.line2:kk===0?(a>0?"#fff":RP.line2):CC.c;c.fill();if(kk===0&&a>0){c.strokeStyle="#C5CED6";c.lineWidth=1;c.stroke()}
+        T(c,a==null?"–":a>0?hwF(a):"0",x+(cw2-6)/2,yy+rh2*.7,{s:13,w:600,c:kk>0?CC.ink:(a>0?RP.ink:RP.muted),a:"center"})})})}
+  footer(c,W,H,`ฝนสะสม 24 ชม. ข้อมูลถึง ${r24Date(D.t)} ${D.t.slice(11,16)} น. · สูงสุด ${hwF(D.max.v)} มม. ${D.max.n} อ.${D.max.a}`,"ที่มา : คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) · ฝนหัวงานจากรายงานประจำวัน โครงการชลประทานประจวบคีรีขันธ์");
+  return cv}
 function drawR24(){
   const D=r24Snap(r24I),W=2000,H=1640,S4=3840/W,cv=document.createElement("canvas");cv.width=3840;cv.height=Math.round(H*S4);const c=cv.getContext("2d");c.scale(S4,S4);
   c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
@@ -4211,7 +4257,7 @@ addEventListener("resize",()=>{clearTimeout(r24DrawWeb.t);r24DrawWeb.t=setTimeou
   document.getElementById("r24Sel").onchange=e=>{r24I=+e.target.value;r24Render()};
   document.getElementById("r24Prev").onclick=()=>{if(r24I>0){r24I--;r24Render()}};
   document.getElementById("r24Next").onclick=()=>{if(r24I<R24.snaps.length-1){r24I++;r24Render()}};
-  document.getElementById("r24Img").onclick=()=>{expKind="r24";openExport()};
+  document.getElementById("r24Img").onclick=()=>{expKind="r24";openExport()};{const b=document.getElementById("r24ImgA4");if(b)b.onclick=()=>{expKind="r24a4";openExport()}}
   document.getElementById("r24Line").onclick=async()=>{const t=r24Text(),m=document.getElementById("r24Msg");
     try{await navigator.clipboard.writeText(t);m.textContent="คัดลอกข้อความสำหรับ LINE แล้ว"}catch(e){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();m.textContent=ok?"คัดลอกข้อความสำหรับ LINE แล้ว":"คัดลอกไม่ได้ในเบราว์เซอร์นี้"}
     setTimeout(()=>m.textContent="",3500)};
@@ -5944,8 +5990,8 @@ async function buildExport(){
   if(expKind==="risk169"){try{await Promise.all(Object.values(riskImgs()).map(i=>i.decode().catch(()=>{})))}catch(e){}}if(expKind==="fl"||expKind==="fl169"||expKind==="flL"){try{const q=flQr(FL_L);q&&await q.decode()}catch(e){}try{await Promise.all(flImgs().flat().map(i=>i.decode().catch(()=>{})))}catch(e){}}
   document.getElementById("hiPrWrap").hidden=expKind!=="hi";
   const r=RES.find(x=>x.id===sel);
-  const mk=async()=>(expKind==="exec"?drawExec():expKind==="water"?await document.getElementById("prWaterFrame").contentWindow.renderBoard():expKind==="all"?drawOverview():expKind==="daily"?drawDaily():expKind==="spill"?drawSpill(1):expKind==="spill2"?drawSpill(2):expKind==="spill3"?drawSpillChart():expKind==="u7"?drawU7():expKind==="fl"?(await mapKit(),await osmWarm(drawFlood)):expKind==="flL"?await osmWarm(drawFloodL):expKind==="dw"?drawDailyW():expKind==="hi"?drawHigh80():expKind==="tr"?drawTrend7():expKind==="r24"?drawR24():expKind==="hw"?drawHW():expKind==="rain"?drawRain():expKind==="rain169"?drawRain169():expKind==="sit169"?drawSit169():expKind==="ov169"?drawOver169():expKind==="risk169"?drawRisk169():expKind==="hi169"?drawHigh169():expKind==="flow169"?drawFlow169():expKind==="fl169"?await osmWarm((K=>()=>drawFlood169(K))(await mapKit())):expKind==="small"?drawSmall():expKind==="pr"?drawPranburi():expKind==="one169"?drawReservoir169(r):drawReservoir(r));window.__lastMk=mk;let cv=expKind==="water"?await mk():await to4K(mk);;
-  expName=expKind==="exec"?"รายงานผู้บริหาร_"+((document.getElementById("datePill")||{}).textContent||"").replace(/\s+/g,"")+".png":expName=expKind==="spill"?"รายงานInflow-Outflow_อ่างยางชุม_หน้า1.png":expKind==="spill2"?"รายงานInflow-Outflow_อ่างยางชุม_หน้า2.png":expKind==="spill3"?"รายงานกราฟ_อ่างยางชุม_ต.ค.-ธ.ค.69.png":expKind==="sit169"?"สถานการณ์อ่างขนาดใหญ่และกลาง_16x9_9พ.ย.69.png":expKind==="ov169"?"ภาพรวมอ่างเก็บน้ำ_16x9_9พ.ย.69.png":expKind==="risk169"?"จุดเสี่ยงและเครื่องจักร_จ.ประจวบฯ_16x9_9พ.ย.69.png":expKind==="hi169"?"อ่างเก็บน้ำเกิน80_16x9_9พ.ย.69.png":expKind==="flow169"?"น้ำไหลเข้า-ระบายสะสม_16x9_9พ.ย.69.png":expKind==="fl169"?`สนับสนุนเครื่องจักร_อุทกภัย69_16x9_${FLOOD.date.replace(/ /g,"")}.png`:expKind==="water"?"สถานการณ์น้ำ_จ.ประจวบฯ_16x9_9พ.ย.69.png":expKind==="pr"?"สถานการณ์น้ำเขื่อนปราณบุรี_9พ.ย.69.png":expKind==="small"?`อ่างเก็บน้ำขนาดเล็ก_${SMALL.date.replace(/ /g,"")}.png`:expKind==="r24"?`ฝนสะสม24ชม_${R24.snaps[r24I].t.slice(0,13).replace(" ","_")}.png`:expKind==="hw"?`ฝนหัวงาน_${HW.days[hwDI][0]}.png`:expKind==="rain"?"ปริมาณฝนสะสม_9พ.ย.69.png":expKind==="rain169"?"ปริมาณฝนสะสม_16x9_9พ.ย.69.png":expKind==="tr"?"แนวโน้มปริมาณน้ำ_7วัน_9พ.ย.69.png":expKind==="fl"?`สนับสนุนเครื่องจักร_อุทกภัย69_${FLOOD.date.replace(/ /g,"")}.png`:expKind==="flL"?`อุทกภัย69_จุด${FL_L+1}_แนวนอน_${FLOOD.sites[FL_L].date.replace(/ /g,"")}.png`:expKind==="u7"?`วิเคราะห์URC_7วัน_${(()=>{try{const x=window.U7.A.find(z=>z.r.id===window.U7.cur).r;return (x.type==="large"?"":"อ่าง")+x.name}catch(e){return ""}})().replace(/\s/g,"")}_9พ.ย.69.png`:expKind==="hi"?"บริหารจัดการน้ำ_อ่างเกิน80_9พ.ย.69.png":expKind==="all"?"รายงานสถานการณ์น้ำ_9อ่าง_9พ.ย.69.png":expKind==="daily"?"รายงานประจำวัน_อ่าง-น้ำท่า_9พ.ย.69.png":expKind==="dw"?"รายงานประจำวัน_พื้นขาว_9พ.ย.69.png":expKind==="one169"?`รายงาน16x9_${r.name}_`+((document.getElementById("datePill")||{}).textContent||"").replace(/\s+|25(?=\d\d$)/g,"")+".png":`รายงาน_${r.name}_9พ.ย.69.png`;
+  const mk=async()=>(expKind==="exec"?drawExec():expKind==="water"?await document.getElementById("prWaterFrame").contentWindow.renderBoard():expKind==="all"?drawOverview():expKind==="daily"?drawDaily():expKind==="spill"?drawSpill(1):expKind==="spill2"?drawSpill(2):expKind==="spill3"?drawSpillChart():expKind==="u7"?drawU7():expKind==="fl"?(await mapKit(),await osmWarm(drawFlood)):expKind==="flL"?await osmWarm(drawFloodL):expKind==="dw"?drawDailyW():expKind==="hi"?drawHigh80():expKind==="tr"?drawTrend7():expKind==="r24a4"?drawR24A4():expKind==="r24"?drawR24():expKind==="hw"?drawHW():expKind==="rain"?drawRain():expKind==="rain169"?drawRain169():expKind==="sit169"?drawSit169():expKind==="ov169"?drawOver169():expKind==="risk169"?drawRisk169():expKind==="hi169"?drawHigh169():expKind==="flow169"?drawFlow169():expKind==="fl169"?await osmWarm((K=>()=>drawFlood169(K))(await mapKit())):expKind==="small"?drawSmall():expKind==="pr"?drawPranburi():expKind==="one169"?drawReservoir169(r):drawReservoir(r));window.__lastMk=mk;let cv=expKind==="water"?await mk():await to4K(mk);;
+  expName=expKind==="exec"?"รายงานผู้บริหาร_"+((document.getElementById("datePill")||{}).textContent||"").replace(/\s+/g,"")+".png":expName=expKind==="spill"?"รายงานInflow-Outflow_อ่างยางชุม_หน้า1.png":expKind==="spill2"?"รายงานInflow-Outflow_อ่างยางชุม_หน้า2.png":expKind==="spill3"?"รายงานกราฟ_อ่างยางชุม_ต.ค.-ธ.ค.69.png":expKind==="sit169"?"สถานการณ์อ่างขนาดใหญ่และกลาง_16x9_9พ.ย.69.png":expKind==="ov169"?"ภาพรวมอ่างเก็บน้ำ_16x9_9พ.ย.69.png":expKind==="risk169"?"จุดเสี่ยงและเครื่องจักร_จ.ประจวบฯ_16x9_9พ.ย.69.png":expKind==="hi169"?"อ่างเก็บน้ำเกิน80_16x9_9พ.ย.69.png":expKind==="flow169"?"น้ำไหลเข้า-ระบายสะสม_16x9_9พ.ย.69.png":expKind==="fl169"?`สนับสนุนเครื่องจักร_อุทกภัย69_16x9_${FLOOD.date.replace(/ /g,"")}.png`:expKind==="water"?"สถานการณ์น้ำ_จ.ประจวบฯ_16x9_9พ.ย.69.png":expKind==="pr"?"สถานการณ์น้ำเขื่อนปราณบุรี_9พ.ย.69.png":expKind==="small"?`อ่างเก็บน้ำขนาดเล็ก_${SMALL.date.replace(/ /g,"")}.png`:expKind==="r24a4"?`ฝนสะสม24ชม_A4_${R24.snaps[r24I].t.slice(0,13).replace(" ","_")}.png`:expKind==="r24"?`ฝนสะสม24ชม_${R24.snaps[r24I].t.slice(0,13).replace(" ","_")}.png`:expKind==="hw"?`ฝนหัวงาน_${HW.days[hwDI][0]}.png`:expKind==="rain"?"ปริมาณฝนสะสม_9พ.ย.69.png":expKind==="rain169"?"ปริมาณฝนสะสม_16x9_9พ.ย.69.png":expKind==="tr"?"แนวโน้มปริมาณน้ำ_7วัน_9พ.ย.69.png":expKind==="fl"?`สนับสนุนเครื่องจักร_อุทกภัย69_${FLOOD.date.replace(/ /g,"")}.png`:expKind==="flL"?`อุทกภัย69_จุด${FL_L+1}_แนวนอน_${FLOOD.sites[FL_L].date.replace(/ /g,"")}.png`:expKind==="u7"?`วิเคราะห์URC_7วัน_${(()=>{try{const x=window.U7.A.find(z=>z.r.id===window.U7.cur).r;return (x.type==="large"?"":"อ่าง")+x.name}catch(e){return ""}})().replace(/\s/g,"")}_9พ.ย.69.png`:expKind==="hi"?"บริหารจัดการน้ำ_อ่างเกิน80_9พ.ย.69.png":expKind==="all"?"รายงานสถานการณ์น้ำ_9อ่าง_9พ.ย.69.png":expKind==="daily"?"รายงานประจำวัน_อ่าง-น้ำท่า_9พ.ย.69.png":expKind==="dw"?"รายงานประจำวัน_พื้นขาว_9พ.ย.69.png":expKind==="one169"?`รายงาน16x9_${r.name}_`+((document.getElementById("datePill")||{}).textContent||"").replace(/\s+|25(?=\d\d$)/g,"")+".png":`รายงาน_${r.name}_9พ.ย.69.png`;
   img.style.aspectRatio=cv.width+"/"+cv.height; img.style.maxWidth=cv.width>cv.height?"100%":"520px";
   cv.toBlob(b=>{expBlob=b; if(img.dataset.url)URL.revokeObjectURL(img.dataset.url); const u=URL.createObjectURL(b); img.src=u; img.dataset.url=u;
     st.textContent=`${expName} · ${cv.width}×${cv.height} พิกเซล`; btn.disabled=false;},"image/png");
@@ -6709,8 +6755,8 @@ const SH={overview:"สถานการณ์รายวัน",pranburi:"เ
 const IMG={spill:"prm/mh/spill.jpg"},MEDIA={maps:"prm/mh/maps.jpg",gallery:"prm/mh/gallery.jpg",present:"prm/mh/present.jpg",flood:""};
 const tile=id=>document.querySelector(`#tiles .tile[data-t="${id}"]`);const open=id=>{const t=tile(id);t&&t.click()};
 const REP=new Set(["overview","pranburi","manage","urc7","flood","present","trend","rain","small","reservoirs","streams"]);
-const KL={one:"รายงาน Rule Curve",exec:"รายงานผู้บริหาร 1 หน้า",all:"ภาพรวม 9 แห่ง",daily:"รายงานประจำวัน",dw:"ประจำวัน · พื้นขาว",hi:"อ่างเกิน 80%",hi169:"อ่างเกิน 80% · 16:9",u7:"รายงาน URC",fl:"ช่วยเหลืออุทกภัย 69",flL:"อุทกภัย 69 · แนวนอน",fl169:"อุทกภัย 69 · 16:9",tr:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",rain169:"ฝนสะสม · 16:9",hw:"ฝนหัวงาน",r24:"ฝนสะสม 24 ชม.",small:"อ่างขนาดเล็ก 33 แห่ง",one:"รายงาน Rule Curve",one169:"รายอ่าง · 16:9",pr:"เขื่อนปราณบุรี",spill:"น้ำล้น · หน้า 1",spill2:"น้ำล้น · หน้า 2",spill3:"กราฟน้ำล้น ต.ค.–ธ.ค.",sit169:"สถานการณ์ · 16:9",ov169:"ภาพรวม · 16:9",risk169:"จุดเสี่ยง · 16:9",flow169:"น้ำไหลลง/ระบาย · 16:9",water:"แหล่งน้ำ 16:9"};
-const TK={overview:["all","sit169","ov169","daily","dw","exec"],manage:["hi","hi169"],urc7:["u7"],trend:["tr"],rain:["rain","rain169","hw","r24"],small:["small"],reservoirs:["one","one169","u7"],streams:["daily","flow169"],flood:["fl","flL","fl169"],present:["sit169","ov169","risk169","hi169","rain169","flow169","fl169","water"],spill:["spill","spill2","spill3"]};
+const KL={one:"รายงาน Rule Curve",exec:"รายงานผู้บริหาร 1 หน้า",all:"ภาพรวม 9 แห่ง",daily:"รายงานประจำวัน",dw:"ประจำวัน · พื้นขาว",hi:"อ่างเกิน 80%",hi169:"อ่างเกิน 80% · 16:9",u7:"รายงาน URC",fl:"ช่วยเหลืออุทกภัย 69",flL:"อุทกภัย 69 · แนวนอน",fl169:"อุทกภัย 69 · 16:9",tr:"แนวโน้ม 7 วัน",rain:"ฝนสะสม",rain169:"ฝนสะสม · 16:9",hw:"ฝนหัวงาน",r24:"ฝนสะสม 24 ชม.",r24a4:"ฝนสะสม 24 ชม. A4",small:"อ่างขนาดเล็ก 33 แห่ง",one:"รายงาน Rule Curve",one169:"รายอ่าง · 16:9",pr:"เขื่อนปราณบุรี",spill:"น้ำล้น · หน้า 1",spill2:"น้ำล้น · หน้า 2",spill3:"กราฟน้ำล้น ต.ค.–ธ.ค.",sit169:"สถานการณ์ · 16:9",ov169:"ภาพรวม · 16:9",risk169:"จุดเสี่ยง · 16:9",flow169:"น้ำไหลลง/ระบาย · 16:9",water:"แหล่งน้ำ 16:9"};
+const TK={overview:["all","sit169","ov169","daily","dw","exec"],manage:["hi","hi169"],urc7:["u7"],trend:["tr"],rain:["rain","rain169","hw","r24","r24a4"],small:["small"],reservoirs:["one","one169","u7"],streams:["daily","flow169"],flood:["fl","flL","fl169"],present:["sit169","ov169","risk169","hi169","rain169","flow169","fl169","water"],spill:["spill","spill2","spill3"]};
 const RC={};let RVback=null,RV=null,ri=0,busy=Promise.resolve();
 const kindsFor=(id,rid)=>{if(rid)return ["one"];if(id&&id.slice(0,2)==="k:")return [id.slice(2)];if(id==="pranburi")return ["pr","one","one169"];return TK[id]||null};
 function renderKind(k,rid){const key=k+"|"+(rid||(typeof sel!=="undefined"?sel:""));if(RC[key])return Promise.resolve(RC[key]);
