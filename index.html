@@ -1749,7 +1749,7 @@ body.dash .tile .fig{padding:16px 0 22px}
           <div class="hw-kpis" id="r24Kpis"></div>
           <div class="r24-grid">
             <div class="rn-card"><div class="rn-h"><h3>แผนที่ฝนสะสม 24 ชม.</h3><span>มม.</span></div><div id="r24Map"></div>
-              <p class="hw-note">พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) เพื่อแสดงแนวโน้ม · ▲ ■ ● = สถานีฝนหัวงานของโครงการฯ (หมายเลขตามตารางฝนหัวงาน) · กรอบขวา = 8 อันดับฝนสูงสุด</p></div>
+              <p class="hw-note">พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) เพื่อแสดงแนวโน้ม · หยดน้ำ = สถานีฝนหัวงานของโครงการฯ (สีตามฝนวันนี้) (หมายเลขตามตารางฝนหัวงาน) · กรอบขวา = 8 อันดับฝนสูงสุด</p></div>
             <div class="r24-side">
               <div class="rn-card"><div class="rn-h"><h3>ฝนสูงสุดรายอำเภอ</h3><span>มม. (เฉลี่ย)</span></div><div id="r24Amp"></div></div>
               <div class="rn-card"><div class="rn-h"><h3>ฝนหัวงาน · โครงการฯ</h3><span id="r24HwSub"></span></div><div class="tbl-scroll" id="r24Hw"></div></div>
@@ -4106,8 +4106,12 @@ function r24Map(c,D,i,bx,by,bw,bh,o={}){
   D.S.slice().reverse().forEach(r=>{c.beginPath();c.arc(r.x,r.y,3.4*u,0,7);c.fillStyle=r24C(r.v);c.fill();c.strokeStyle="#fff";c.lineWidth=1.2*u;c.stroke()});
   // headworks symbols + number
   const OB=[];
-  (HW.st||[]).forEach((s,k)=>{const x=hwX(s.lon),y=hwY(s.lat);hwSym(c,s.id,x,y,u*.9);c.font=`700 ${9.5*u}px Kanit, ${HW_FONT}`;c.textAlign="center";
-    c.lineWidth=2.6*u;c.strokeStyle="#fff";c.lineJoin="round";c.strokeText(String(k+1),x,y+15*u);c.fillStyle="#1F2A33";c.fillText(String(k+1),x,y+15*u);OB.push([x-10*u,y-12*u,20*u,30*u])});
+  let HWD=null;try{if(HW.days.length)HWD=hwDay(HW.days.length-1)}catch(e){}
+  (HW.st||[]).forEach((s,k)=>{const x=hwX(s.lon),y=hwY(s.lat),t=HWD?HWD.rows[k].t:null,kk=hwCls(t),CC=HW_CL[Math.max(kk,0)],sz=1.05*u;
+    c.save();c.fillStyle="rgba(0,0,0,.25)";c.beginPath();c.ellipse(x+1.5*u,y+6*u,8*u,2.6*u,0,0,7);c.fill();c.restore();
+    c.save();c.translate(x,y-5*u);c.scale(sz,sz);const dp=new Path2D(HW_DROP);c.shadowColor="rgba(0,0,0,.3)";c.shadowBlur=3;c.fillStyle=kk>=0?CC.c:"#9AA5B1";c.fill(dp);c.shadowBlur=0;
+    c.strokeStyle=kk>=0?CC.bd:"#5E6E7E";c.lineWidth=1.6;c.stroke(dp);c.beginPath();c.ellipse(-4,-3,2.2,3.8,-.5,0,7);c.fillStyle="rgba(255,255,255,.6)";c.fill();
+    c.font="700 10px Kanit, "+HW_FONT;c.textAlign="center";c.fillStyle=kk>=0?CC.ink:"#fff";c.fillText(String(k+1),0,9);c.restore();OB.push([x-12*u,y-24*u,24*u,32*u])});
   // callouts: top N to the right (sea)
   const N=o.top??8,T8=D.S.slice(0,N).filter(r=>r.v>0);const cw=178*u,ch=40*u;
   const ys=T8.map(r=>r.y).sort((a,b)=>a-b);let pos=T8.slice().sort((a,b)=>a.y-b.y);
