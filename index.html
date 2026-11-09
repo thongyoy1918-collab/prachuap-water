@@ -1614,7 +1614,6 @@ body.dash .tile .fig{padding:16px 0 22px}
 @media (max-width:520px){#r24Main .hw-tbl{font-size:12.5px}#r24Main .hw-tbl th,#r24Main .hw-tbl td{padding:7px 5px}#r24Main .hw-tbl .c3,#r24Main .hw-tbl .c4{display:none}}
 #r24Main .r24-top td:nth-child(2),#r24Main .r24-top th:nth-child(2){text-align:left}
 
-#r24Main .rn-card .rn-h{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-left:4px solid #E5FF1F;border-radius:12px;padding:10px 14px;margin-bottom:12px}
 </style>
 
 <div class="app">
@@ -4181,13 +4180,13 @@ function drawR24(){
   const kh=118,ks=[["ฝนสูงสุด",hwF(D.max.v),"มม.",r24C(D.max.v)],["หนักมาก >90",D.n90,"สถานี","#D93636"],["หนัก >35",D.n35,"สถานี","#E8702A"]],kw=(w2-2*14)/3;
   ks.forEach((k,j)=>{const x=x2+j*(kw+14);card(c,x,top,kw,kh,18);c.fillStyle=k[3];rr(c,x,top,6,kh,3);c.fill();T(c,k[0],x+20,top+34,{s:18,c:RP.muted,w:500});const vw=T(c,String(k[1]),x+20,top+86,{s:42,w:700});T(c,k[2],x+26+vw,top+86,{s:17,c:RP.muted})});
   // amphoe bars
-  const ay=top+kh+G,ah=400;card(c,x2,ay,w2,ah,22);r24Hdr(c,x2+14,ay+12,w2-28,46);T(c,"ฝนสูงสุดรายอำเภอ",x2+30,ay+43,{s:24,w:700,c:RP.navy2});T(c,"มม. (เฉลี่ย)",x2+w2-30,ay+42,{s:16,c:RP.muted,a:"right"});
+  const ay=top+kh+G,ah=400;card(c,x2,ay,w2,ah,22);T(c,"ฝนสูงสุดรายอำเภอ",x2+24,ay+42,{s:24,w:700});T(c,"มม. (เฉลี่ย)",x2+w2-24,ay+42,{s:16,c:RP.muted,a:"right"});
   const mx=Math.max(50,...D.amp.map(a=>a.max));R24_AMPS.forEach((n,k)=>{const a=D.amp.find(z=>z.a===n);const y=ay+86+k*38;T(c,n,x2+24,y,{s:19,c:RP.ink2});
     const bx=x2+170,bw=w2-170-150;rr(c,bx,y-13,bw,14,7);c.fillStyle=RP.line2;c.fill();if(a){rr(c,bx,y-13,Math.max(14,bw*a.max/mx),14,7);c.fillStyle=r24C(a.max);c.fill();
     const vw=T(c,hwF(a.max),x2+w2-80,y,{s:20,w:700,a:"right"});T(c,`(${hwF(a.avg)})`,x2+w2-24,y,{s:15,c:RP.muted,a:"right"})}});
   // headworks table
   const hy=ay+ah+G,hh=bot-hy;card(c,x2,hy,w2,hh,22);
-  if(HW.days.length){const Hd=hwDay(HW.days.length-1),C=k=>HW_CL[Math.max(k,0)];r24Hdr(c,x2+14,hy+10,w2-28,42);T(c,"ฝนหัวงาน · โครงการฯ",x2+30,hy+39,{s:23,w:700,c:RP.navy2});T(c,`รายงานประจำวัน ${hwDate(Hd.iso)}`,x2+w2-30,hy+39,{s:15,c:RP.muted,a:"right"});
+  if(HW.days.length){const Hd=hwDay(HW.days.length-1),C=k=>HW_CL[Math.max(k,0)];T(c,"ฝนหัวงาน · โครงการฯ",x2+24,hy+40,{s:23,w:700});T(c,`รายงานประจำวัน ${hwDate(Hd.iso)}`,x2+w2-24,hy+40,{s:15,c:RP.muted,a:"right"});
     const cx=[x2+24,x2+w2-250,x2+w2-140,x2+w2-30];let y=hy+58;c.fillStyle=RP.navy;rr(c,x2+14,y,w2-28,30,8);c.fill();
     T(c,"สถานี",cx[0]+30,y+21,{s:15,w:600,c:"#fff"});[["วันนี้",cx[1]],["เมื่อวาน",cx[2]],["สะสม",cx[3]]].forEach(([l,x])=>T(c,l,x,y+21,{s:15,w:600,c:"#fff",a:"right"}));
     y+=34;const rh=(hh-58-34-46)/Hd.rows.length;
@@ -4199,8 +4198,8 @@ function drawR24(){
     const yb=hy+hh-40;c.fillStyle="#EAF2FB";rr(c,x2+14,yb-8,w2-28,38,10);c.fill();T(c,"ฝนเฉลี่ยหัวงาน",cx[0]+6,yb+17,{s:18,w:700,c:RP.navy2});T(c,hwF(Hd.avg)+" มม.",cx[1],yb+17,{s:19,w:700,c:RP.navy2,a:"right"})}
   // right column: top 16
   const x3=x2+w2+G,w3=W-M-x3;card(c,x3,top,w3,ch,22);
-  r24Hdr(c,x3+14,top+12,w3-28,72);T(c,"ฝนล่าสุดรายสถานี (มม.)",x3+30,top+44,{s:24,w:700,c:RP.navy2});T(c,`เรียงจากมากไปน้อย · 16 อันดับแรก จาก ${D.S.length} สถานี`,x3+30,top+72,{s:16,c:RP.muted});
-  let y=top+96;const n=16,rh=(ch-96-46)/n;
+  T(c,"ฝนล่าสุดรายสถานี (มม.)",x3+24,top+44,{s:24,w:700});T(c,`เรียงจากมากไปน้อย · 16 อันดับแรก จาก ${D.S.length} สถานี`,x3+24,top+72,{s:16,c:RP.muted});
+  let y=top+92;const n=16,rh=(ch-92-46)/n;
   D.S.slice(0,n).forEach((r,k)=>{const yy=y+k*rh;if(k%2){c.fillStyle=RP.line2;c.fillRect(x3+14,yy,w3-28,rh)}
     T(c,String(k+1),x3+34,yy+rh/2+6,{s:16,w:700,c:RP.muted,a:"center"});fitT(c,r.n,x3+58,yy+rh/2-1,w3-58-170,{s:17,w:600});T(c,`ต.${r.tb} อ.${r.a} · ${r.ag}`,x3+58,yy+rh/2+17,{s:13,c:RP.muted});
     T(c,r.tm,x3+w3-112,yy+rh/2+6,{s:15,c:RP.ink2,a:"right"});rr(c,x3+w3-98,yy+5,76,rh-10,6);c.fillStyle=r24C(r.v);c.fill();T(c,hwF(r.v),x3+w3-60,yy+rh/2+7,{s:19,w:700,c:r24Ink(r.v),a:"center"})});
