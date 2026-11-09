@@ -4092,13 +4092,13 @@ function r24Map(c,D,i,bx,by,bw,bh,o={}){
   for(const k in HW_NB){const p=new Path2D(HW_NB[k]);c.fillStyle="#D9DCE0";c.fill(p);c.strokeStyle="#B9BEC4";c.lineWidth=.9*u;c.stroke(p)}
   c.fillStyle="#CFE2F0";c.fill(new Path2D(G.sea));
   // province: vivid heat
-  c.save();c.shadowColor="rgba(255,110,40,.85)";c.shadowBlur=14;c.fillStyle="#3D5A33";c.fill(pk);c.restore();
+  c.save();c.shadowColor="rgba(0,0,0,.25)";c.shadowBlur=8;c.fillStyle="#9DC9E8";c.fill(pk);c.restore();
   c.save();c.clip(pk);
-  const hm=r24Heat(i,D);c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);
+  const hm=r24Heat(i,D);c.filter="saturate(1.5) contrast(1.06)";c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);c.filter="none";
   if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalAlpha=.16;c.globalCompositeOperation="multiply";c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
   c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1*u;HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));
   c.restore();
-  c.save();c.shadowColor="rgba(255,120,40,.9)";c.shadowBlur=10;c.strokeStyle="#FF8A3C";c.lineWidth=2.6*u;c.lineJoin="round";c.stroke(pk);c.restore();
+  c.save();c.strokeStyle="#2B2F33";c.lineWidth=2*u;c.lineJoin="round";c.stroke(pk);c.restore();
   // amphoe names
   c.textAlign="center";const FA=`700 ${12*u}px Kanit, ${HW_FONT}`;
   HWAMP.forEach(a=>{c.font=FA;c.lineJoin="round";c.lineWidth=3.4*u;c.strokeStyle="rgba(255,255,255,.85)";c.strokeText(a.n,a.c[0],a.c[1]);c.fillStyle="#1B2A20";c.fillText(a.n,a.c[0],a.c[1])});
