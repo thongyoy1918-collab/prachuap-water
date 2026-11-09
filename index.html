@@ -3,6 +3,7 @@
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>ข้อมูลน้ำประจวบฯ</title>
+
 <style id="hidecards">body.dash #heroK>.dg>.c-pink,body.dash #heroK>.dg>.c-orange,body.dash #heroK>.dg>.c-green{display:none!important}</style>
 <style id="tfcss">
 @media (min-width:1100px){
@@ -336,6 +337,43 @@ html body #heroK .c-lime.rb{background:rgba(16,16,19,.66)!important;backdrop-fil
  body.dash .tile,body.dash .tile.wide{min-height:280px}
 }
 @media (min-width:1600px){body.dash .tiles,body.dash #tiles{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
+</style><style id="tiles3">
+@media (min-width:701px){
+html body.dash #hub .tiles.tiles{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important}
+@media (min-width:1100px){html body.dash #hub .tiles.tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+html body.dash #hub .tiles>.tile.tile{min-height:312px;padding:20px 20px 16px;border-radius:24px!important;background:linear-gradient(180deg,rgba(24,26,32,.78),rgba(12,13,16,.78))!important}
+html body.dash #hub .tiles>.tile.tile::before{background:radial-gradient(320px 200px at 100% 0%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 70%),linear-gradient(90deg,var(--tc),color-mix(in srgb,var(--tc) 30%,transparent)) top/100% 3px no-repeat;opacity:1}
+/* icon badge */
+html body.dash #hub .tile .t3ic{position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc) 22%,rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc) 45%,transparent),0 8px 22px -10px var(--tc);color:color-mix(in srgb,var(--tc) 35%,#fff);transition:transform .35s cubic-bezier(.2,.8,.2,1),background .35s}
+html body.dash #hub .tile .t3ic svg{width:22px;height:22px}
+html body.dash #hub .tile:hover .t3ic{transform:rotate(-6deg) scale(1.08);background:var(--tc);color:#fff}
+html body.dash #hub .tile .ey{padding-right:54px;line-height:1.3;margin-bottom:8px}
+html body.dash #hub .tile h4{padding-right:50px;font-size:20px;line-height:1.25;min-height:50px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html body.dash #hub .tile .d{font-size:12.5px;color:rgba(255,255,255,.58)}
+html body.dash #hub .tile .chip2{font-size:11.5px;padding:6px 11px;margin-top:12px;display:inline-flex;align-items:center;gap:6px}
+html body.dash #hub .tile .chip2::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+/* result */
+html body.dash #hub .tile .fig{grid-template-columns:minmax(0,1fr) auto;column-gap:8px;padding-top:14px}
+html body.dash #hub .tile .fig>svg,html body.dash #hub .tile .fig>canvas,html body.dash #hub .tile .fig>div:not(.n):not(.u){width:52px!important;max-height:46px;opacity:.95}
+html body.dash #hub .tile .fig .n{flex-wrap:wrap;row-gap:2px;font-size:clamp(28px,2.5vw,38px);color:var(--t3n,#fff)!important;text-shadow:0 0 22px color-mix(in srgb,var(--t3n,#fff) 45%,transparent);font-variant-numeric:tabular-nums;min-width:0}
+html body.dash #hub .tile .fig .n small{font-size:13px;color:color-mix(in srgb,var(--t3n,#fff) 55%,rgba(255,255,255,.6))}
+html body.dash #hub .tile .fig .u{font-size:12px;color:rgba(255,255,255,.6)}
+html body.dash #hub .tile.t3-ok{--t3n:#4ADE80}
+html body.dash #hub .tile.t3-warn{--t3n:#FFD34E}
+html body.dash #hub .tile.t3-bad{--t3n:#FF7A70}
+html body.dash #hub .tile.t3-info{--t3n:color-mix(in srgb,var(--tc) 30%,#fff)}
+html body.dash #hub .tile .fig svg.ring circle.v{stroke:var(--t3n,#fff)!important;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--t3n,#fff) 50%,transparent))}
+html body.dash #hub .tile .fig svg.ring{width:56px!important;max-height:56px!important}
+/* footer */
+html body.dash #hub .tile .lnk{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px}
+html body.dash #hub .tile .lnk .apbtn{flex:1 1 auto;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;padding:9px 12px;font-size:13px}
+html body.dash #hub .tile .lnk .apbtn::after{content:"→";transition:transform .3s}
+html body.dash #hub .tile:hover .lnk .apbtn::after{transform:translateX(3px)}
+html body.dash #hub .tile .lnk>span:last-child{flex:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:12px;padding:8px 10px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+html body.dash #hub .tile .lnk>span:last-child svg{width:14px;height:14px}
+html body.dash #hub .tile .lnk>span.t3cam{font-size:0;gap:0}
+html body.dash #hub .tile .lnk>span.t3cam svg{width:16px;height:16px}
+}
 </style>
 <style id="mhcss">
 #mhome,#mhTop,#mhNav,#ovBar{display:none}
@@ -6326,4 +6364,12 @@ function start(){const q=new URLSearchParams(location.search).get("wx");if(q){co
 addEventListener("resize",()=>{clearTimeout(size.t);size.t=setTimeout(()=>{mount();size()},200)});
 if(document.readyState==="complete")setTimeout(start,400);else addEventListener("load",()=>setTimeout(start,400))})();</script>
 
-</body></html>
+<script id="tiles3js">(()=>{const IC={"overview": "<rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1.5\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1.5\"/>", "pranburi": "<path d=\"M3 20h18\"/><path d=\"M5 20V8l4-3v15\"/><path d=\"M9 9h6M9 13h6M9 17h6\"/><path d=\"M15 20V7l4 2v11\"/><path d=\"M2 4c1.5 1 3 1 4.5 0\"/>", "manage": "<path d=\"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3\"/><path d=\"M1 14h6M9 8h6M17 16h6\"/>", "urc7": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"17\" rx=\"2\"/><path d=\"M16 2v4M8 2v4M3 10h18\"/><path d=\"M8 17l3-3 2 2 3-3\"/>", "trend": "<path d=\"M3 17l6-6 4 4 8-8\"/><path d=\"M14 7h7v7\"/>", "rain": "<path d=\"M20 15.5A4.5 4.5 0 0 0 17.5 7 6 6 0 0 0 6 8.5 4 4 0 0 0 6 16.5h11\"/><path d=\"M8 19l-1 2M12 19l-1 2M16 19l-1 2\"/>", "small": "<path d=\"M7 16.3c2.2 0 4-1.8 4-4 0-1.2-.6-2.3-1.8-3.3S7.1 6.7 7 5.3C6.8 6.7 6 8 4.8 9 3.6 10 3 11.1 3 12.3c0 2.2 1.8 4 4 4z\"/><path d=\"M12.6 6.6A11 11 0 0 0 14 3.4c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a7 7 0 0 1-11.9 4.9\"/>", "reservoirs": "<path d=\"M3 3v18h18\"/><path d=\"M7 15c3-1 4-6 7-6s4 3 6 2\"/><path d=\"M7 19c3-1 5-3 8-3s4 1 5 1\" opacity=\".55\"/>", "spill": "<path d=\"M2 6c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0\"/><path d=\"M2 12c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0\"/><path d=\"M2 18c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0\"/>", "streams": "<path d=\"M22 12h-4l-3 9L9 3l-3 9H2\"/>", "flood": "<path d=\"M3 11l9-7 9 7\"/><path d=\"M5 10v5M19 10v5\"/><path d=\"M10 15v-3h4v3\"/><path d=\"M2 19c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0\"/>", "present": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"13\" rx=\"2\"/><path d=\"M12 16v4M8 21h8\"/><path d=\"M7 12l3-3 2 2 4-4\"/>", "maps": "<path d=\"M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z\"/><path d=\"M9 4v14M15 6v14\"/>", "gallery": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"M21 15l-5-5L5 21\"/>"},CAM="<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"/><circle cx=\"12\" cy=\"13\" r=\"4\"/></svg>";
+function ap(){document.querySelectorAll("#hub .tile").forEach(t=>{
+ if(!t.querySelector(".t3ic")){const k=t.dataset.t||"",p=IC[k]||IC.overview;const i=document.createElement("i");i.className="t3ic";i.setAttribute("aria-hidden","true");i.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';t.appendChild(i)}
+ const c=t.querySelector(".chip2"),st=c?(["ok","warn","bad","info"].find(x=>c.classList.contains(x))||"info"):"info";
+ ["ok","warn","bad","info"].forEach(x=>t.classList.toggle("t3-"+x,x===st));
+ const s=t.querySelector(".lnk>span:last-child");if(s&&!s.dataset.t3){s.dataset.t3=1;s.title="บันทึกภาพ";s.classList.add("t3cam");s.insertAdjacentHTML("afterbegin",CAM)}
+});}
+const go=()=>{ap();const h=document.getElementById("hub");if(h)new MutationObserver(()=>{clearTimeout(go.t);go.t=setTimeout(ap,60)}).observe(h,{childList:true,subtree:true})};
+document.readyState==="loading"?addEventListener("DOMContentLoaded",go):go();setTimeout(ap,1500)})();</script></body></html>
