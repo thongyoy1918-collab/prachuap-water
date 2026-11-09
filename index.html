@@ -4076,67 +4076,70 @@ const R24_HC={};
 function r24Heat(i,D){if(R24_HC[i])return R24_HC[i];const[x0,y0,x1,y1]=hwPkBox(),st=2,W=Math.ceil((x1-x0)/st)+2,H=Math.ceil((y1-y0)/st)+2;
   const cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d"),im=c.createImageData(W,H),P=D.S;
   for(let j=0;j<H;j++)for(let k=0;k<W;k++){const gx=x0+k*st,gy=y0+j*st;let nw=0,sw=0,hit=-1;
-    for(const p of P){const d=(p.x-gx)**2+(p.y-gy)**2;if(d<.5){hit=p.v;break}const w=1/(d*d);nw+=w*p.v;sw+=w}
+    for(const p of P){const d=(p.x-gx)**2+(p.y-gy)**2;if(d<.5){hit=p.v;break}const w=1/d;nw+=w*p.v;sw+=w}
     const v=hit>=0?hit:nw/sw,[r,g,b]=r24Rgb(v),q=(j*W+k)*4;im.data[q]=r;im.data[q+1]=g;im.data[q+2]=b;im.data[q+3]=255}
   c.putImageData(im,0,0);const o=document.createElement("canvas");o.width=W*2;o.height=H*2;const oc=o.getContext("2d");oc.filter="blur(2px)";oc.drawImage(cv,0,0,W*2,H*2);
   return R24_HC[i]={cv:o,x:x0,y:y0,w:W*st,h:H*st}}
 function r24Map(c,D,i,bx,by,bw,bh,o={}){
-  const G=HW_GEO,[x0,y0,x1,y1]=hwPkBox(),padL=o.padL??40,padR=o.padR??220,padT=24,padB=26;
+  const G=HW_GEO,[x0,y0,x1,y1]=hwPkBox(),padL=o.padL??40,padR=o.padR??220,padT=60,padB=30;
   const sc=Math.min(bw/(x1-x0+padL+padR),bh/(y1-y0+padT+padB)),u=1/sc;
   const ox=bx+(bw-(x1-x0+padL+padR)*sc)/2+(padL-x0)*sc,oy=by+(bh-(y1-y0+padT+padB)*sc)/2+(padT-y0)*sc;
   const vx0=(bx-ox)/sc,vy0=(by-oy)/sc,vx1=(bx+bw-ox)/sc,vy1=(by+bh-oy)/sc;
   c.save();hwRR(c,bx,by,bw,bh,o.r||12);c.clip();c.translate(ox,oy);c.scale(sc,sc);
   const pk=new Path2D(HW_PK);
-  c.fillStyle="#D9DCE0";c.fillRect(vx0-5,vy0-5,vx1-vx0+10,vy1-vy0+10);c.fillStyle="#CFE2F0";c.fill(new Path2D(G.sea));
-  for(const k in HW_NB){const p=new Path2D(HW_NB[k]);c.fillStyle="#D9DCE0";c.fill(p);c.strokeStyle="#B9BEC4";c.lineWidth=.9*u;c.stroke(p)}
-  c.fillStyle="#CFE2F0";c.fill(new Path2D(G.sea));
-  c.fillStyle="#FCFAF0";c.fill(pk);
+  // dark land + navy sea
+  let g=c.createLinearGradient(vx0,vy0,vx0,vy1);g.addColorStop(0,"#2F4B2B");g.addColorStop(1,"#263F25");c.fillStyle=g;c.fillRect(vx0-5,vy0-5,vx1-vx0+10,vy1-vy0+10);
+  c.fillStyle="#0F2536";c.fill(new Path2D(G.sea));
+  for(const k in HW_NB){const p=new Path2D(HW_NB[k]);c.fillStyle="#2C4729";c.fill(p);c.strokeStyle="rgba(255,255,255,.10)";c.lineWidth=.8*u;c.stroke(p)}
+  c.fillStyle="#0F2536";c.fill(new Path2D(G.sea));
+  // province: vivid heat
+  c.save();c.shadowColor="rgba(255,110,40,.85)";c.shadowBlur=14;c.fillStyle="#3D5A33";c.fill(pk);c.restore();
   c.save();c.clip(pk);
-  const hm=r24Heat(i,D);c.globalAlpha=.82;c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);c.globalAlpha=1;
-  if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalAlpha=.38;c.globalCompositeOperation="multiply";c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
-  c.lineCap=c.lineJoin="round";c.globalAlpha=.55;c.strokeStyle="#2F8BFF";c.lineWidth=.6*u;c.stroke(new Path2D(G.per));c.globalAlpha=.9;
-  c.strokeStyle="#0071FE";c.lineWidth=1.6*u;c.stroke(new Path2D(G.major));c.fillStyle="#0071FE";c.fill(new Path2D(G.res));c.globalAlpha=1;
-  const hw=new Path2D(G.hwy4);c.strokeStyle="#7A1F1F";c.lineWidth=2.4*u;c.stroke(hw);c.strokeStyle="#F0B35B";c.lineWidth=1.2*u;c.stroke(hw);
-  c.strokeStyle="#1A1A1A";c.lineWidth=1.1*u;c.setLineDash([8*u,3*u,1.6*u,3*u]);HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));c.setLineDash([]);
-  c.restore();c.strokeStyle="#1A1A1A";c.lineWidth=1.8*u;c.lineJoin="round";c.stroke(pk);
-  // station dots
-  D.S.slice().reverse().forEach(r=>{c.beginPath();c.arc(r.x,r.y,3.4*u,0,7);c.fillStyle=r24C(r.v);c.fill();c.strokeStyle="#fff";c.lineWidth=1.2*u;c.stroke()});
-  // headworks symbols + number
-  const OB=[];
-  (HW.st||[]).forEach((s,k)=>{const x=hwX(s.lon),y=hwY(s.lat);hwSym(c,s.id,x,y,u*.9);c.font=`700 ${9.5*u}px Kanit, ${HW_FONT}`;c.textAlign="center";
-    c.lineWidth=2.6*u;c.strokeStyle="#fff";c.lineJoin="round";c.strokeText(String(k+1),x,y+15*u);c.fillStyle="#1F2A33";c.fillText(String(k+1),x,y+15*u);OB.push([x-10*u,y-12*u,20*u,30*u])});
-  // callouts: top N to the right (sea)
-  const N=o.top??8,T8=D.S.slice(0,N).filter(r=>r.v>0);const cw=178*u,ch=40*u;
-  const ys=T8.map(r=>r.y).sort((a,b)=>a-b);let pos=T8.slice().sort((a,b)=>a.y-b.y);
-  const span=(pos.length-1)*(ch+6*u),mid=pos.length?(pos[0].y+pos[pos.length-1].y)/2:0;let y=Math.max(vy0+30*u,Math.min(vy1-30*u-span,mid-span/2));
-  pos.forEach(r=>{r.cy=y;y+=ch+6*u});
-  let cx=-1e9;pos.forEach(r=>{cx=Math.max(cx,hwEdgeX(r.cy-ch/2),hwEdgeX(r.cy+ch/2),hwEdgeX(r.cy),r.x+10*u)});cx=Math.min(vx1-cw-6*u,cx+14*u);
-  pos.forEach(r=>{c.strokeStyle="rgba(30,40,50,.75)";c.lineWidth=1*u;c.beginPath();c.moveTo(r.x,r.y);c.lineTo(cx,r.cy);c.stroke();
-    c.beginPath();c.arc(r.x,r.y,5.5*u,0,7);c.strokeStyle="#1F2A33";c.lineWidth=1.6*u;c.stroke();
-    hwRR(c,cx,r.cy-ch/2,cw,ch,4*u);c.fillStyle="rgba(255,255,255,.97)";c.fill();c.strokeStyle="#5E6E7E";c.lineWidth=1*u;c.stroke();
-    const vw=46*u;hwRR(c,cx+cw-vw-4*u,r.cy-ch/2+4*u,vw,ch-8*u,3*u);c.fillStyle=r24C(r.v);c.fill();
-    c.textAlign="center";c.font=`700 ${14.5*u}px Kanit, ${HW_FONT}`;c.fillStyle=r24Ink(r.v);c.fillText(hwF(r.v),cx+cw-4*u-vw/2,r.cy+5*u);
-    c.textAlign="left";c.fillStyle="#1F2A33";let nm=r.n;c.font=`600 ${12.5*u}px ${HW_FONT}`;while(c.measureText(nm).width>cw-vw-16*u&&nm.length>4)nm=nm.slice(0,-2)+"…";c.fillText(nm,cx+7*u,r.cy-2.5*u);
-    c.font=`400 ${10*u}px ${HW_FONT}`;c.fillStyle="#5E6E7E";c.fillText(`อ.${r.a} · ${r.tm} น.`,cx+7*u,r.cy+12*u)});
-  // amphoe names
-  c.textAlign="center";const FA=`700 ${12*u}px Kanit, ${HW_FONT}`;c.font=FA;
-  HWAMP.forEach(a=>{c.lineJoin="round";c.lineWidth=3.2*u;c.strokeStyle="rgba(255,255,255,.95)";c.strokeText(a.n,a.c[0],a.c[1]);c.fillStyle="#3B3420";c.fillText(a.n,a.c[0],a.c[1])});
-  c.save();c.font=`italic 600 ${17*u}px Kanit, ${HW_FONT}`;try{c.letterSpacing=(5*u)+"px"}catch(e){}c.fillStyle="#4F7FA6";c.textAlign="center";c.fillText("อ่าวไทย",hwX(99.98),hwY(11.0));c.restore();
-  c.save();c.font=`italic 500 ${12*u}px Kanit, ${HW_FONT}`;try{c.letterSpacing=(4*u)+"px"}catch(e){}c.fillStyle="#7B8189";c.textAlign="center";c.translate(hwX(99.2),hwY(12.0));c.rotate(-Math.PI/2.3);c.fillText("ประเทศเมียนมา",0,0);c.restore();
+  const hm=r24Heat(i,D);c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);
+  if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalAlpha=.16;c.globalCompositeOperation="multiply";c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
+  c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1*u;HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));
   c.restore();
-  // north
-  {const x=bx+40,y=by+46,R=22;c.save();c.beginPath();c.arc(x,y,R,0,7);c.fillStyle="rgba(255,255,255,.92)";c.fill();c.strokeStyle="#33393F";c.lineWidth=1.4;c.stroke();
-   c.beginPath();c.moveTo(x,y-R+4);c.lineTo(x+7,y+R-8);c.lineTo(x,y+R-12);c.closePath();c.fillStyle="#1A1A1A";c.fill();
-   c.beginPath();c.moveTo(x,y-R+4);c.lineTo(x-7,y+R-8);c.lineTo(x,y+R-12);c.closePath();c.fillStyle="#fff";c.fill();c.strokeStyle="#1A1A1A";c.lineWidth=1;c.stroke();
-   c.font=`700 12px Kanit, ${HW_FONT}`;c.textAlign="center";c.fillStyle="#1A1A1A";c.fillText("N",x,y+R+14);c.restore()}
-  // scale
-  {const pxkm=HW_PJ.sy/110.57*sc,km=20,L=km*pxkm,x=bx+20,y=by+bh-24;c.save();c.fillStyle="rgba(255,255,255,.85)";hwRR(c,x-10,y-28,L+46,40,6);c.fill();
-   for(let k=0;k<4;k++){c.fillStyle=k%2?"#fff":"#1A1A1A";c.fillRect(x+k*L/4,y-6,L/4,6)}c.strokeStyle="#1A1A1A";c.lineWidth=1;c.strokeRect(x,y-6,L,6);
-   c.font=`600 10.5px ${HW_FONT}`;c.fillStyle="#1A1A1A";c.textAlign="center";[0,10,20].forEach((v,k)=>c.fillText(String(v),x+k*L/2,y-10));c.textAlign="left";c.fillText("กม.",x+L+6,y);c.restore()}
-  // colour legend (top-right)
-  if(o.legend!==false){const lw=Math.min(300,bw*.5),x=bx+bw-lw-12,y=by+12,sw=(lw-24)/7;c.save();c.fillStyle="rgba(255,255,255,.94)";hwRR(c,x,y,lw,52,8);c.fill();c.strokeStyle="#9AA5B1";c.lineWidth=1;c.stroke();
-   R24_BIN.forEach((b,k)=>{c.fillStyle=b[1];c.fillRect(x+12+k*sw,y+12,sw,10);c.font=`500 10px ${HW_FONT}`;c.fillStyle="#1F2A33";c.textAlign="center";c.fillText(b[2],x+12+k*sw+sw/2,y+38)});
-   c.font=`600 10px ${HW_FONT}`;c.textAlign="right";c.fillStyle="#5E6E7E";c.fillText("มม.",x+lw-8,y+49);c.restore()}
+  c.save();c.shadowColor="rgba(255,120,40,.9)";c.shadowBlur=10;c.strokeStyle="#FF8A3C";c.lineWidth=2.6*u;c.lineJoin="round";c.stroke(pk);c.restore();
+  // amphoe names
+  c.textAlign="center";const FA=`700 ${12*u}px Kanit, ${HW_FONT}`;
+  HWAMP.forEach(a=>{c.font=FA;c.lineJoin="round";c.lineWidth=3.4*u;c.strokeStyle="rgba(255,255,255,.85)";c.strokeText(a.n,a.c[0],a.c[1]);c.fillStyle="#1B2A20";c.fillText(a.n,a.c[0],a.c[1])});
+  // station dots (heavy = rings)
+  D.S.slice().reverse().forEach(r=>{const col=r24C(r.v);
+    if(r.v>=50){c.beginPath();c.arc(r.x,r.y,10*u,0,7);c.strokeStyle="rgba(255,255,255,.95)";c.lineWidth=1.6*u;c.stroke();c.beginPath();c.arc(r.x,r.y,6.6*u,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=1.3*u;c.stroke()}
+    else{c.beginPath();c.arc(r.x,r.y,5.6*u,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=1.3*u;c.stroke()}});
+  // headworks: dark diamonds
+  let H=null;try{if(HW.days.length)H=hwDay(HW.days.length-1)}catch(e){}
+  (HW.st||[]).forEach((s,k)=>{const x=hwX(s.lon),y=hwY(s.lat),d=11*u;const t=H?H.rows[k].t:null,kk=hwCls(t),bd=kk>0?HW_CL[kk].c:"#9FD3F5";
+    c.save();c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=4;c.beginPath();c.moveTo(x,y-d);c.lineTo(x+d,y);c.lineTo(x,y+d);c.lineTo(x-d,y);c.closePath();c.fillStyle="#132029";c.fill();c.restore();
+    c.strokeStyle=bd;c.lineWidth=1.6*u;c.stroke();c.font=`700 ${10.5*u}px Kanit, ${HW_FONT}`;c.fillStyle="#fff";c.textAlign="center";c.fillText(String(k+1),x,y+3.8*u)});
+  // callouts
+  const N=o.top??8,T8=D.S.slice(0,N).filter(r=>r.v>0);const cw=178*u,ch=40*u;
+  let pos=T8.slice().sort((a,b)=>a.y-b.y);const span=(pos.length-1)*(ch+6*u),mid=pos.length?(pos[0].y+pos[pos.length-1].y)/2:0;let y=Math.max(vy0+70*u,Math.min(vy1-60*u-span,mid-span/2));
+  pos.forEach(r=>{r.cy=y;y+=ch+6*u});
+  let cx=-1e9;pos.forEach(r=>{cx=Math.max(cx,hwEdgeX(r.cy-ch/2),hwEdgeX(r.cy+ch/2),hwEdgeX(r.cy),r.x+10*u)});cx=Math.min(vx1-cw-6*u,cx+18*u);
+  pos.forEach(r=>{c.strokeStyle="rgba(255,255,255,.75)";c.lineWidth=1*u;c.beginPath();c.moveTo(r.x,r.y);c.lineTo(cx,r.cy);c.stroke()});
+  pos.forEach(r=>{c.save();c.shadowColor="rgba(0,0,0,.35)";c.shadowBlur=6;hwRR(c,cx,r.cy-ch/2,cw,ch,6*u);c.fillStyle="#fff";c.fill();c.restore();
+    const vw=46*u;hwRR(c,cx+cw-vw-5*u,r.cy-ch/2+5*u,vw,ch-10*u,4*u);c.fillStyle=r24C(r.v);c.fill();
+    c.textAlign="center";c.font=`700 ${14.5*u}px Kanit, ${HW_FONT}`;c.fillStyle=r24Ink(r.v);c.fillText(hwF(r.v),cx+cw-5*u-vw/2,r.cy+5*u);
+    c.textAlign="left";c.fillStyle="#13202B";let nm=r.n;c.font=`600 ${12.5*u}px ${HW_FONT}`;while(c.measureText(nm).width>cw-vw-18*u&&nm.length>4)nm=nm.slice(0,-2)+"…";c.fillText(nm,cx+8*u,r.cy-2.5*u);
+    c.font=`400 ${10*u}px ${HW_FONT}`;c.fillStyle="#5E6E7E";c.fillText(`อ.${r.a} · ${r.tm} น.`,cx+8*u,r.cy+12*u)});
+  // labels
+  c.save();c.font=`500 ${14*u}px Kanit, ${HW_FONT}`;try{c.letterSpacing=(5*u)+"px"}catch(e){}c.fillStyle="rgba(255,255,255,.32)";c.textAlign="center";c.translate(vx0+26*u,hwY(12.0));c.rotate(-Math.PI/2);c.fillText("สาธารณรัฐแห่งสหภาพเมียนมา",0,0);c.restore();
+  c.save();c.font=`italic 600 ${17*u}px Kanit, ${HW_FONT}`;try{c.letterSpacing=(6*u)+"px"}catch(e){}c.fillStyle="rgba(160,200,230,.6)";c.textAlign="center";c.fillText("อ่าวไทย",hwX(100.0),hwY(11.0));c.restore();
+  c.restore();
+  // breadcrumb
+  {c.save();c.font=`600 13px ${HW_FONT}`;const t1="ประเทศไทย › ",t2="ประจวบคีรีขันธ์";c.font=`400 13px ${HW_FONT}`;const w1=c.measureText(t1).width;c.font=`700 13px ${HW_FONT}`;const w2=c.measureText(t2).width;
+   hwRR(c,bx+12,by+12,w1+w2+28,34,10);c.fillStyle="rgba(255,255,255,.96)";c.fill();c.font=`400 13px ${HW_FONT}`;c.fillStyle="#5E6E7E";c.textAlign="left";c.fillText(t1,bx+26,by+34);c.font=`700 13px ${HW_FONT}`;c.fillStyle="#13202B";c.fillText(t2,bx+26+w1,by+34);c.restore()}
+  // north (bottom-left, dark)
+  {const x=bx+40,y=by+bh-96,R=22;c.save();c.beginPath();c.arc(x,y,R,0,7);c.fillStyle="#13202B";c.fill();c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1.4;c.stroke();
+   c.beginPath();c.moveTo(x,y-12);c.lineTo(x+8,y+10);c.lineTo(x,y+5);c.lineTo(x-8,y+10);c.closePath();c.fillStyle="#fff";c.fill();
+   c.font=`700 12px Kanit, ${HW_FONT}`;c.textAlign="center";c.fillStyle="#fff";c.fillText("N",x,y-R-6);c.restore()}
+  // scale (white)
+  {const pxkm=HW_PJ.sy/110.57*sc,L=20*pxkm,x=bx+22,y=by+bh-26;c.save();c.fillStyle="#fff";c.fillRect(x,y-4,L/2,4);c.fillStyle="rgba(255,255,255,.35)";c.fillRect(x+L/2,y-4,L/2,4);c.strokeStyle="#fff";c.lineWidth=1;c.strokeRect(x,y-4,L,4);
+   c.font=`600 11px ${HW_FONT}`;c.fillStyle="#fff";c.textAlign="left";c.fillText("0",x-2,y-10);c.textAlign="right";c.fillText("20 กม.",x+L+4,y-10);c.restore()}
+  // legend top-right
+  if(o.legend!==false){const lw=Math.min(320,bw*.52),x=bx+bw-lw-12,y=by+12,sw=(lw-24)/7;c.save();c.shadowColor="rgba(0,0,0,.3)";c.shadowBlur=6;hwRR(c,x,y,lw,50,10);c.fillStyle="rgba(255,255,255,.97)";c.fill();c.restore();
+   R24_BIN.forEach((b,k)=>{c.fillStyle=b[1];c.fillRect(x+12+k*sw,y+12,sw,9);c.font=`500 10.5px ${HW_FONT}`;c.fillStyle="#1F2A33";c.textAlign="center";c.fillText(b[2],x+12+k*sw+sw/2,y+38)});c.restore()}
 }
 function r24DrawWeb(){const box=document.getElementById("r24Map");if(!box||!R24.snaps.length)return;let cv=box.querySelector("canvas");
   if(!cv){box.innerHTML="";cv=document.createElement("canvas");cv.style.cssText="width:100%;height:auto;display:block;border-radius:14px";cv.setAttribute("role","img");cv.setAttribute("aria-label","แผนที่ฝนสะสม 24 ชั่วโมง");box.appendChild(cv)}
@@ -4171,7 +4174,7 @@ function drawR24(){
   const M=56,G=22,top=282,bot=H-104-22,ch=bot-top;
   // map
   const mw=720;card(c,M,top,mw,ch,22);T(c,"แผนที่ฝนสะสม 24 ชม. (IDW)",M+24,top+42,{s:24,w:700});
-  r24Map(c,D,r24I,M+14,top+60,mw-28,ch-74,{r:14,padR:200,padL:20});
+  r24Map(c,D,r24I,M+14,top+60,mw-28,ch-74,{r:14,padR:200,padL:30});
   // middle column
   const x2=M+mw+G,w2=560;
   // KPI strip
