@@ -1526,7 +1526,7 @@ body.dash .tile .fig{padding:16px 0 22px}
 #hwMain .rn-kpi .l{font-size:13px;color:rgba(255,255,255,.6)}
 #hwMain .rn-kpi .s{font-size:12.5px;color:rgba(255,255,255,.55);margin-top:4px}
 #hwMain .hw-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;margin-bottom:14px}
-#hwMain .hw-map svg{width:100%;height:auto;display:block;max-height:820px}
+#hwMain .hw-map canvas{width:100%;display:block;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 #hwMain .hw-map svg text{font-family:Kanit,sans-serif}
 #hwMain .hw-st{cursor:pointer}
 #hwMain .hw-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
@@ -3761,6 +3761,86 @@ function hwMapSvg(D){
       <text x="${p.x}" y="${p.y+10}" text-anchor="middle" font-size="10" font-weight="700" fill="${k>=0?C.ink:"#fff"}">${r.no}</text></g>`});
   return `<svg viewBox="-10 -6 418 734" role="img" aria-label="แผนที่ฝนหัวงาน">${s}</svg>`;
 }
+const HW_FONT='"IBM Plex Sans Thai", system-ui, sans-serif';
+let HW_PKBB=null;
+const HW_TERR=new Image();HW_TERR.src=HW_TERRAIN;HW_TERR.onload=()=>{try{if(HW.days.length&&!document.getElementById("hwMain").hidden)hwDrawWeb(hwDay(hwDI))}catch(e){}};
+function hwPkBox(){if(HW_PKBB)return HW_PKBB;const n=HW_PK.match(/-?\d+(\.\d+)?/g).map(Number);let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<n.length;i+=2){a=Math.min(a,n[i]);c=Math.max(c,n[i]);b=Math.min(b,n[i+1]);d=Math.max(d,n[i+1])}return HW_PKBB=[a,b,c,d]}
+function hwRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function hwMap3D(c,D,bx,by,bw,bh,o={}){
+  const C=k=>HW_CL[Math.max(k,0)];
+  const [x0,y0,x1,y1]=hwPkBox(),DEP=9,padL=118,padR=128,padT=30,padB=30+DEP;
+  const sc=Math.min(bw/(x1-x0+padL+padR),bh/(y1-y0+padT+padB));
+  const ox=bx+(bw-(x1-x0+padL+padR)*sc)/2+(padL-x0)*sc, oy=by+(bh-(y1-y0+padT+padB)*sc)/2+(padT-y0)*sc;
+  c.save();hwRR(c,bx,by,bw,bh,o.r||16);c.clip();
+  // sea + sky wash
+  let g=c.createLinearGradient(bx,by,bx+bw,by+bh);g.addColorStop(0,"#EAF4FA");g.addColorStop(1,"#BFDDF0");c.fillStyle=g;c.fillRect(bx,by,bw,bh);
+  c.translate(ox,oy);c.scale(sc,sc);
+  const pk=new Path2D(HW_PK);
+  // neighbours: pale land, no outline
+  for(const k in HW_NB){const p=new Path2D(HW_NB[k]);c.fillStyle="#F3F3EE";c.fill(p)}
+  c.save();c.globalAlpha=.55;c.strokeStyle="#FFFFFF";c.lineWidth=6;c.lineJoin="round";for(const k in HW_NB)c.stroke(new Path2D(HW_NB[k]));c.restore();
+  // soft drop shadow
+  c.save();c.filter=`blur(${Math.max(4,10)}px)`;c.translate(10,DEP+12);c.fillStyle="rgba(20,40,30,.38)";c.fill(pk);c.restore();
+  // extruded side: soil with a grass lip
+  for(let i=DEP;i>=1;i--){c.save();c.translate(0,i);const t=i/DEP;c.fillStyle=i<=2?"#4E8A2E":`rgb(${Math.round(128-40*t)},${Math.round(92-30*t)},${Math.round(55-20*t)})`;c.fill(pk);c.restore()}
+  // top surface
+  c.save();c.clip(pk);
+  g=c.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,"#9CCB5A");g.addColorStop(.55,"#7DB346");g.addColorStop(1,"#5E9A36");c.fillStyle=g;c.fillRect(x0-5,y0-5,x1-x0+10,y1-y0+10);
+  if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalCompositeOperation="multiply";c.globalAlpha=.85;c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
+  g=c.createRadialGradient(x0+(x1-x0)*.25,y0+(y1-y0)*.15,10,x0+(x1-x0)*.4,y0+(y1-y0)*.5,(y1-y0)*.8);g.addColorStop(0,"rgba(255,255,230,.30)");g.addColorStop(1,"rgba(0,30,0,.10)");c.fillStyle=g;c.fillRect(x0-5,y0-5,x1-x0+10,y1-y0+10);
+  // amphoe boundaries
+  c.strokeStyle="rgba(255,255,255,.85)";c.lineWidth=1.3;c.setLineDash([5,3]);HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));c.setLineDash([]);
+  c.restore();
+  c.strokeStyle="rgba(255,255,240,.95)";c.lineWidth=1.6;c.lineJoin="round";c.stroke(pk);
+  // stations
+  const P=D.rows.map(r=>({r,x:hwX(r.lon),y:hwY(r.lat),side:HW_SIDE[r.id]||"R"}));
+  ["L","R"].forEach(sd=>{const L=P.filter(p=>p.side===sd).sort((a,b)=>a.y-b.y);let last=-1e9;L.forEach(p=>{p.ly=Math.max(p.y-6,last+31);last=p.ly})});
+  P.forEach(p=>{const r=p.r;c.font=`600 12.5px ${HW_FONT}`;const w1=c.measureText(r.short).width;c.font=`700 14px Kanit, ${HW_FONT}`;const w2=c.measureText(hwF(r.t)).width;const w=Math.ceil(w1+w2+30);
+    p.lx=p.side==="L"?Math.max(x0-padL+4,p.x-30-w):Math.min(x1+padR-4-w,p.x+30);p.w=w});
+  const OB=[];P.forEach(p=>{OB.push([p.lx-3,p.ly-15,p.w+6,30]);OB.push([p.x-14,p.y-24,28,36])});
+  const hit=(x,y,w,h)=>OB.some(o=>x<o[0]+o[2]&&x+w>o[0]&&y<o[1]+o[3]&&y+h>o[1]);
+  // amphoe names (avoid stations/pills)
+  c.textAlign="center";c.font=`700 12.5px Kanit, ${HW_FONT}`;
+  HWAMP.forEach(a=>{const w=c.measureText(a.n).width;let best=null;
+    for(const [dx,dy] of [[0,0],[0,-16],[0,16],[0,-30],[0,30],[-24,0],[24,0],[-24,-16],[24,16],[24,-16],[-24,16],[0,-44],[0,44]]){const x=a.c[0]+dx,y=a.c[1]+dy;if(!hit(x-w/2-2,y-12,w+4,16)){best=[x,y];break}}
+    if(!best)return;OB.push([best[0]-w/2-2,best[1]-12,w+4,16]);
+    c.lineWidth=3.6;c.strokeStyle="rgba(255,255,255,.92)";c.lineJoin="round";c.strokeText(a.n,best[0],best[1]);c.fillStyle="#1E3A12";c.fillText(a.n,best[0],best[1])});
+  P.forEach(p=>{const r=p.r,k=hwCls(r.t),CC=C(k),nm=r.short,val=hwF(r.t);
+    c.font=`600 12.5px ${HW_FONT}`;const w1=c.measureText(nm).width;c.font=`700 14px Kanit, ${HW_FONT}`;const w2=c.measureText(val).width;const w=Math.ceil(w1+w2+30);
+    const lx=p.lx,ax=p.side==="L"?lx+w:lx;
+    c.strokeStyle="rgba(255,255,255,.95)";c.lineWidth=2.6;c.beginPath();c.moveTo(p.x,p.y-6);c.lineTo(ax,p.ly);c.stroke();
+    c.strokeStyle="rgba(30,50,40,.75)";c.lineWidth=1.1;c.stroke();
+    c.save();c.shadowColor="rgba(10,30,20,.28)";c.shadowBlur=8;c.shadowOffsetY=3;hwRR(c,lx,p.ly-13,w,26,13);c.fillStyle="#fff";c.fill();c.restore();
+    hwRR(c,lx,p.ly-13,w,26,13);c.strokeStyle=k>0?CC.bd:"rgba(0,0,0,.12)";c.lineWidth=k>0?1.8:1;c.stroke();
+    c.textAlign="left";c.font=`600 12.5px ${HW_FONT}`;c.fillStyle="#1B2B22";c.fillText(nm,lx+11,p.ly+4.5);
+    if(k>0){c.font=`700 14px Kanit, ${HW_FONT}`;const vw=w2+12;hwRR(c,lx+w-vw-4,p.ly-10,vw,20,10);c.fillStyle=CC.c;c.fill();c.fillStyle=CC.ink;c.textAlign="center";c.fillText(val,lx+w-4-vw/2,p.ly+5)}
+    else{c.textAlign="right";c.font=`700 14px Kanit, ${HW_FONT}`;c.fillStyle="#1B2B22";c.fillText(val,lx+w-11,p.ly+5)}
+    if(o.hits){const m=c.getTransform(),q=m.transformPoint(new DOMPoint(p.x,p.y-4)),q2=m.transformPoint(new DOMPoint(lx,p.ly-13)),q3=m.transformPoint(new DOMPoint(lx+w,p.ly+13));o.hits.push({i:r.no-1,x:q.x,y:q.y,r:[q2.x,q2.y,q3.x,q3.y]})}
+    // 3D drop
+    c.save();c.fillStyle="rgba(0,0,0,.28)";c.beginPath();c.ellipse(p.x+2,p.y+7,9,3.2,0,0,7);c.fill();c.restore();
+    c.save();c.translate(p.x,p.y-4);const dp=new Path2D(HW_DROP);
+    const gg=c.createLinearGradient(-11,-17,11,15);const base=k>=0?CC.c:"#999";gg.addColorStop(0,k===0?"#FFFFFF":"rgba(255,255,255,.65)");gg.addColorStop(.35,base);gg.addColorStop(1,k===0?"#C9D3DC":CC.bd);
+    c.shadowColor="rgba(0,0,0,.25)";c.shadowBlur=4;c.fillStyle=k===0?gg:base;c.fill(dp);c.shadowBlur=0;
+    if(k>0){c.globalAlpha=.55;c.fillStyle=gg;c.fill(dp);c.globalAlpha=1}
+    c.strokeStyle="#fff";c.lineWidth=1.8;c.stroke(dp);
+    c.beginPath();c.ellipse(-4,-3,2.4,4,-.5,0,7);c.fillStyle="rgba(255,255,255,.75)";c.fill();
+    c.textAlign="center";c.font=`700 10.5px Kanit, ${HW_FONT}`;c.fillStyle=k>=0?CC.ink:"#fff";c.fillText(String(r.no),0,9);c.restore()});
+  c.restore();
+  // compass
+  {const x=bx+bw-48,y=by+bh-52,R=28;c.save();c.shadowColor="rgba(0,0,0,.25)";c.shadowBlur=8;c.beginPath();c.arc(x,y,R,0,7);c.fillStyle="#fff";c.fill();c.restore();
+   c.beginPath();c.arc(x,y,R,0,7);c.strokeStyle="#9AA7A0";c.lineWidth=2;c.stroke();
+   c.beginPath();c.moveTo(x,y-R+5);c.lineTo(x+7,y);c.lineTo(x-7,y);c.closePath();c.fillStyle="#D9372B";c.fill();
+   c.beginPath();c.moveTo(x,y+R-5);c.lineTo(x+7,y);c.lineTo(x-7,y);c.closePath();c.fillStyle="#3A4A44";c.fill();
+   c.font=`700 13px Kanit, ${HW_FONT}`;c.textAlign="center";c.fillStyle="#D9372B";c.fillText("N",x,y-R-5)}
+}
+function hwDrawWeb(D){
+  const box=document.getElementById("hwMap");if(!box)return;let cv=box.querySelector("canvas");
+  if(!cv){box.innerHTML="";cv=document.createElement("canvas");cv.style.cssText="width:100%;display:block;border-radius:18px";cv.setAttribute("role","img");cv.setAttribute("aria-label","แผนที่ฝนหัวงาน");box.appendChild(cv)}
+  const w=Math.max(280,box.clientWidth||520),h=Math.round(w*1.36),dpr=Math.min(3,window.devicePixelRatio||1);
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const hits=[];hwMap3D(c,D,0,0,w,h,{r:18,hits});cv._hits=hits.map(t=>({i:t.i,x:t.x/dpr,y:t.y/dpr,r:t.r.map(v=>v/dpr)}));cv.style.cursor="pointer";
+}
+addEventListener("resize",()=>{clearTimeout(hwDrawWeb.t);hwDrawWeb.t=setTimeout(()=>{if(HW.days.length&&!document.getElementById("hwMain").hidden)hwDrawWeb(hwDay(hwDI))},200)});
 function hwRender(){
   const box=document.getElementById("hwMain");if(!box||!HW.days.length)return;
   const D=hwDay(hwDI);
@@ -3775,7 +3855,7 @@ function hwRender(){
     ["สถานีที่มีฝน",`${D.wet}/${D.n}`,"สถานี",`หนักมาก ${D.cnt[3]} · หนัก ${D.cnt[2]} · ปานกลาง ${D.cnt[1]}`],
     ["ฝนสะสม 3 วัน สูงสุด",D.m3?hwF(D.m3.d3):"–","มม.",D.m3?D.m3.name:""]
   ].map(k=>`<div class="rn-kpi"><div class="l">${k[0]}</div><div class="v num">${k[1]}<small>${k[2]}</small></div><div class="s">${k[3]}</div></div>`).join("");
-  document.getElementById("hwMap").innerHTML=hwMapSvg(D);
+  hwDrawWeb(D);
   const chip=v=>{const k=hwCls(v),c=C(k);return k<0?"–":`<span class="hw-chip" style="background:${c.c};color:${c.ink};box-shadow:inset 0 0 0 1px ${c.bd}">${hwF(v)}</span>`};
   const no=r=>{const c=C(hwCls(r.t));return `<span class="hw-no" style="background:${c.c};color:${c.ink};box-shadow:inset 0 0 0 1.5px ${c.bd}">${r.no}</span>`};
   const row=r=>`<tr data-i="${r.no-1}"><td><div class="hw-nm">${no(r)}<div><b>${r.name}</b><small>${r.amp}</small></div></div></td><td>${hwF(r.y)}</td><td>${chip(r.t)}</td><td class="c3">${hwF(r.d3)}</td><td class="c4">${r.cum==null?"–":hwF(r.cum)}</td></tr>`;
@@ -3803,7 +3883,7 @@ function hwText(){
   return t;
 }
 function drawHW(){
-  const D=hwDay(hwDI),W=1600,H=2262,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+  const D=hwDay(hwDI),W=1600,H=2262,S4=3840/W,cv=document.createElement("canvas");cv.width=3840;cv.height=Math.round(H*S4);const c=cv.getContext("2d");c.scale(S4,S4);
   c.fillStyle=RP.bg;c.fillRect(0,0,W,H);
   const C=k=>HW_CL[Math.max(k,0)];
   header(c,W,"รายงานสถานการณ์น้ำฝน",`ในเขตโครงการชลประทานประจวบคีรีขันธ์ · ฝนหัวงาน 12 สถานี`,hwDate(D.iso));
@@ -3818,32 +3898,7 @@ function drawHW(){
   // map card
   const my=ky+kh+24,mh=1180,mw=720;card(c,M,my,mw,mh,22);
   T(c,"แผนที่ตำแหน่งสถานีและปริมาณฝนวันนี้",M+28,my+46,{s:26,w:700});
-  const bx=M+20,by=my+70,bw=mw-40,bh=mh-90,sc=Math.min(bw/418,bh/734),ox=bx+(bw-418*sc)/2+10*sc,oy=by+(bh-734*sc)/2+6*sc;
-  c.save();rr(c,bx,by,bw,bh,16);c.clip();c.fillStyle="#DCEAF5";c.fillRect(bx,by,bw,bh);
-  c.translate(ox,oy);c.scale(sc,sc);
-  for(const k in HW_NB){c.fillStyle="#E9ECE6";c.strokeStyle="#C9CFC6";c.lineWidth=1/sc*1.2;const p=new Path2D(HW_NB[k]);c.fill(p);c.stroke(p)}
-  const pk=new Path2D(HW_PK);c.fillStyle="#F3F1E6";c.fill(pk);
-  if(window.HW_TERR&&HW_TERR.complete&&HW_TERR.naturalWidth){c.save();c.clip(pk);c.globalAlpha=.55;c.drawImage(HW_TERR,0,0,398,722);c.restore()}
-  c.setLineDash([4,3]);c.strokeStyle="rgba(90,70,40,.75)";c.lineWidth=1.1;HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));c.setLineDash([]);
-  c.strokeStyle="#5A4630";c.lineWidth=1.8;c.stroke(pk);
-  c.font=`600 11.5px ${FF}`;c.textAlign="center";HWAMP.forEach(a=>{c.lineWidth=3;c.strokeStyle="rgba(255,255,255,.9)";c.strokeText(a.n,a.c[0],a.c[1]);c.fillStyle="#5B4A30";c.fillText(a.n,a.c[0],a.c[1])});
-  c.font=`italic 17px ${FF}`;c.fillStyle="#3E7DB3";c.fillText("อ่าวไทย",hwX(99.9),hwY(11.6));
-  // stations
-  const P=D.rows.map(r=>({r,x:hwX(r.lon),y:hwY(r.lat),side:HW_SIDE[r.id]||"R"}));
-  ["L","R"].forEach(sd=>{const L=P.filter(p=>p.side===sd).sort((a,b)=>a.y-b.y);let last=-1e9;L.forEach(p=>{p.ly=Math.max(p.y,last+30);last=p.ly})});
-  P.forEach(p=>{const r=p.r,k=hwCls(r.t),CC=C(k),nm=r.short,val=hwF(r.t);
-    c.font=`500 12.5px ${FF}`;const w1=c.measureText(nm).width;c.font=`700 13.5px ${FF}`;const w2=c.measureText(val).width;const w=Math.ceil(w1+w2+26);
-    const lx=p.side==="L"?Math.max(-6,p.x-26-w):Math.min(404-w,p.x+26),ax=p.side==="L"?lx+w:lx;
-    c.strokeStyle="rgba(30,40,50,.7)";c.lineWidth=1;c.beginPath();c.moveTo(p.x,p.y);c.lineTo(ax,p.ly);c.stroke();
-    rr(c,lx,p.ly-12,w,24,12);c.fillStyle="#fff";c.fill();c.strokeStyle=k>0?CC.bd:"#8E9DAA";c.lineWidth=1.6;c.stroke();
-    c.textAlign="left";c.font=`500 12.5px ${FF}`;c.fillStyle=RP.ink;c.fillText(nm,lx+10,p.ly+4.5);
-    c.textAlign="right";c.font=`700 13.5px ${FF}`;c.fillStyle=k>0?CC.bd:RP.ink;c.fillText(val,lx+w-10,p.ly+5);
-    c.save();c.translate(p.x,p.y+2);c.scale(.95,.95);const dp=new Path2D(HW_DROP);c.fillStyle=CC.c;c.fill(dp);c.strokeStyle=CC.bd;c.lineWidth=1.8;c.stroke(dp);c.restore();
-    c.textAlign="center";c.font=`700 10px ${FF}`;c.fillStyle=CC.ink;c.fillText(String(r.no),p.x,p.y+10)});
-  c.restore();
-  // N arrow
-  {const x=bx+44,y=by+56;c.beginPath();c.arc(x,y,30,0,7);c.fillStyle="rgba(255,255,255,.9)";c.fill();c.strokeStyle=RP.ink;c.lineWidth=1.5;c.stroke();
-   c.beginPath();c.moveTo(x,y-22);c.lineTo(x+11,y+14);c.lineTo(x,y+7);c.lineTo(x-11,y+14);c.closePath();c.fillStyle=RP.ink;c.fill();T(c,"N",x,y-36,{s:18,w:700,a:"center"})}
+  hwMap3D(c,D,M+16,my+66,mw-32,mh-82,{r:16});
   // table card
   const tx=M+mw+G,tw2=W-M-tx;card(c,tx,my,tw2,mh,22);
   T(c,"ปริมาณฝนรายสถานี (มม.)",tx+28,my+46,{s:26,w:700});
@@ -3884,11 +3939,10 @@ function drawHW(){
   footer(c,W,H,`ข้อมูลวันที่ ${hwDate(D.iso)} · ฝนเฉลี่ย ${hwF(D.avg)} มม.${D.mx&&D.mx.t>0?` · ฝนสูงสุด ${D.mx.name} ${hwF(D.mx.t)} มม.`:""} · หน่วย มม.`,`ที่มา : โครงการชลประทานประจวบคีรีขันธ์ สำนักงานชลประทานที่ 14 (รายงานประจำวันที่ ${hwDate(D.iso)})`);
   return cv;
 }
-const HW_TERR=new Image();try{HW_TERR.src=HW_TERRAIN}catch(e){}
 (function(){
   if(!document.getElementById("hwMain"))return;
   const tabs=document.querySelectorAll("#rnSubTabs button");
-  const set=k=>{tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.v===k));document.getElementById("rnMain").hidden=k!=="tmd";document.getElementById("hwMain").hidden=k!=="hw";
+  const set=k=>{tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.v===k));document.getElementById("rnMain").hidden=k!=="tmd";document.getElementById("hwMain").hidden=k!=="hw";if(k==="hw"&&HW.days.length)setTimeout(()=>hwDrawWeb(hwDay(hwDI)),30);
     document.getElementById("rnSave").onclick=()=>{expKind=k==="hw"?"hw":"rain";openExport()};
     try{localStorage.setItem("rnSubTab",k)}catch(e){}};
   tabs.forEach(b=>b.onclick=()=>set(b.dataset.v));
@@ -3904,7 +3958,7 @@ const HW_TERR=new Image();try{HW_TERR.src=HW_TERRAIN}catch(e){}
         const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();
         m.textContent=ok?"คัดลอกข้อความสำหรับ LINE แล้ว":"คัดลอกไม่ได้ในเบราว์เซอร์นี้"}
       setTimeout(()=>m.textContent="",3500)};
-    document.getElementById("hwMap").addEventListener("click",e=>{const g=e.target.closest(".hw-st");if(!g)return;const tr=document.querySelector(`#hwTbl tr[data-i="${g.dataset.i}"]`);if(tr){document.querySelectorAll("#hwTbl tr.sel").forEach(x=>x.classList.remove("sel"));tr.classList.add("sel");tr.scrollIntoView({block:"nearest",behavior:"smooth"})}});
+    document.getElementById("hwMap").addEventListener("click",e=>{const cv=e.target.closest("canvas");if(!cv||!cv._hits)return;const bb=cv.getBoundingClientRect(),mx=e.clientX-bb.left,my=e.clientY-bb.top;let hh=cv._hits.find(t=>mx>=t.r[0]&&mx<=t.r[2]&&my>=t.r[1]&&my<=t.r[3]);if(!hh){hh=cv._hits.map(t=>[Math.hypot(t.x-mx,t.y-my),t]).sort((a,b)=>a[0]-b[0])[0];hh=hh&&hh[0]<24?hh[1]:null}if(!hh)return;const g={dataset:{i:hh.i}};const tr=document.querySelector(`#hwTbl tr[data-i="${g.dataset.i}"]`);if(tr){document.querySelectorAll("#hwTbl tr.sel").forEach(x=>x.classList.remove("sel"));tr.classList.add("sel");tr.scrollIntoView({block:"nearest",behavior:"smooth"})}});
     hwRender();
   }
   set(k0);
