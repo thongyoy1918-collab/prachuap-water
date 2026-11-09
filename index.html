@@ -4094,7 +4094,7 @@ function r24Map(c,D,i,bx,by,bw,bh,o={}){
   // province: vivid heat
   c.save();c.shadowColor="rgba(0,0,0,.25)";c.shadowBlur=8;c.fillStyle="#9DC9E8";c.fill(pk);c.restore();
   c.save();c.clip(pk);
-  const hm=r24Heat(i,D);c.filter="saturate(1.5) contrast(1.06)";c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);c.filter="none";
+  const hm=r24Heat(i,D);c.filter="saturate(3) contrast(1.12)";c.drawImage(hm.cv,hm.x,hm.y,hm.w,hm.h);c.filter="none";
   if(HW_TERR.complete&&HW_TERR.naturalWidth){c.globalAlpha=.16;c.globalCompositeOperation="multiply";c.drawImage(HW_TERR,0,0,398,722);c.globalAlpha=1;c.globalCompositeOperation="source-over"}
   c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1*u;HWAMP.forEach(a=>c.stroke(new Path2D(a.d)));
   c.restore();
