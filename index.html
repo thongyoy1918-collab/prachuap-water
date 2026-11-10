@@ -2039,7 +2039,7 @@ function drawSpillChart(){
   F.forEach((r,i)=>{const x=X(i+31),a=r[10],sp=r[11],e=r[12]-r[10];c.fillStyle="#F0A06A";c.fillRect(x-BW*.4,g.Y(a),BW*.4,g.b-g.Y(a));if(sp>0){c.fillStyle="#E5262B";c.fillRect(x-BW*.4,g.Y(a+sp),BW*.4,g.Y(a)-g.Y(a+sp))}
     const b2=r[12]+r[13];c.fillStyle="#C9B5F0";c.fillRect(x,g.Y(b2),BW*.4,g.b-g.Y(b2))});
   SPD.plan.forEach((p,k)=>{const rg=[[0,2],[3,9],[10,29],[30,44],[45,60]][k],x0=X(rg[0]+31)-BW/2,x1=X(rg[1]+31)+BW/2,yy=g.t+40+(k%2)*30;c.fillStyle="#E07B39";c.fillRect(x0,yy+6,x1-x0,3);T(c,p[1].toFixed(2),(x0+x1)/2,yy,{s:18,w:700,c:"#B85A1F",a:"center"})});
-  AQ.forEach(q=>{const a=SPD.act[q],sp=a[3]||0,tot=Math.max(a[1],sp);aBar(X(31+q),0,tot-sp,AG,g.Y);if(sp>0)aBar(X(31+q),tot-sp,tot,"#E5262B",g.Y)});if(AQ.length){const q=AQ[AQ.length-1],a=SPD.act[q];pill("Outflow จริง "+F[q][0].replace(" 69","")+" : "+a[1].toFixed(3)+(a[3]>0?" (ล้น "+a[3].toFixed(3)+")":""),X(31+q)+40,g.Y(Math.max(a[1],a[3]||0))+30)}
+  AQ.forEach(q=>{const a=SPD.act[q],sp=a[3]||0;aBar(X(31+q),0,a[1],AG,g.Y);if(sp>0)aBar(X(31+q),a[1],a[1]+sp,"#E5262B",g.Y)});if(AQ.length){const q=AQ[AQ.length-1],a=SPD.act[q];pill("Outflow จริง "+F[q][0].replace(" 69","")+" : "+a[1].toFixed(3)+(a[3]>0?" (ล้น "+a[3].toFixed(3)+")":""),X(31+q)+40,g.Y(a[1]+(a[3]||0))+30)}
   legend(1346+520-22,[["#B85A1F","Outflow ผลจริง ต.ค.","bar"],[AG,"Outflow ผลจริง พ.ย.","bar"],["#F0A06A","Outflow แผน (ระบายผ่านอาคาร)","bar"],["#E5262B","น้ำล้น Spillway","bar"],["#C9B5F0","Outflow แผน กรณี +25%","bar"]]);
   // analysis: actual vs plan
   {const sy=1346+520+18,sh=A4-104-18-sy;card(c,40,sy,W-80,sh,18);
@@ -2048,7 +2048,7 @@ function drawSpillChart(){
    T(c,"4) วิเคราะห์ผลจริงเทียบแผน"+(n?" ("+per+(n>1?" รวม "+n+" วัน":"")+")":""),70,sy+42,{s:26,w:700});
    T(c,"เทียบกับแผนกรณีปริมาณน้ำไหลเข้าอ่างตามค่าเฉลี่ย · หน่วย ล้าน ลบ.ม.",W-70,sy+42,{s:17,c:RP.muted,a:"right"});
    if(!n){T(c,"รอข้อมูลผลจริง",70,sy+90,{s:20,c:RP.muted})}else{
-   const aIn=sum(0,q=>SPD.act[q][0]),pIn=sum(0,q=>F[q][1]),aSp=sum(0,q=>SPD.act[q][3]||0),pSp=sum(0,q=>F[q][11]),aOut=sum(0,q=>SPD.act[q][1]-(SPD.act[q][3]||0)),pOut=sum(0,q=>F[q][10]),aSt=SPD.act[ql][2],pSt=F[ql][3],pIn25=sum(0,q=>F[q][4]);
+   const aIn=sum(0,q=>SPD.act[q][0]),pIn=sum(0,q=>F[q][1]),aSp=sum(0,q=>SPD.act[q][3]||0),pSp=sum(0,q=>F[q][11]),aOut=sum(0,q=>SPD.act[q][1]),pOut=sum(0,q=>F[q][10]),aSt=SPD.act[ql][2],pSt=F[ql][3],pIn25=sum(0,q=>F[q][4]);
    const M=[["Inflow",aIn,pIn,"in"],["Outflow ผ่านอาคาร",aOut,pOut,"out"],["น้ำล้น Spillway",aSp,pSp,"sp"],["ปริมาณน้ำในอ่าง ("+d1+")",aSt,pSt,"st"]];
    const bw=(W-140-3*14)/4;M.forEach((m,k)=>{const x=70+k*(bw+14),y=sy+62,df=m[1]-m[2],pc=m[2]?df/m[2]*100:0,ok=m[3]==="st"?Math.abs(df)<=0.05:Math.abs(pc)<=5;
      rr(c,x,y,bw,120,12);c.fillStyle="#F4F8FB";c.fill();c.strokeStyle="#D5DEE7";c.lineWidth=1;c.stroke();
@@ -6431,7 +6431,7 @@ function drawExec(){
   const HI=R.filter(r=>r.status==="high"),LO=R.filter(r=>r.status==="low"),OK=R.filter(r=>r.status!=="high"&&r.status!=="low");
   const SI=typeof smInfo==="function"?smInfo():null;
   // Yang Chum actual vs plan
-  let YC=null;if(typeof SPD!=="undefined"){const q=SPD.act.map((a,i)=>a?i:-1).filter(i=>i>=0).pop();if(q!=null){const a=SPD.act[q],F=SPD.fc[q];YC={d:F[0].replace(" 69",""),aIn:a[0],pIn:F[1],aSp:a[3]||0,pSp:F[11],aOut:a[1]-(a[3]||0),pOut:F[10],aSt:a[2],pSt:F[3],pct:a[4]*100,end:String(SPD.sum[6][2]).replace(" 69","")}}}
+  let YC=null;if(typeof SPD!=="undefined"){const q=SPD.act.map((a,i)=>a?i:-1).filter(i=>i>=0).pop();if(q!=null){const a=SPD.act[q],F=SPD.fc[q];YC={d:F[0].replace(" 69",""),aIn:a[0],pIn:F[1],aSp:a[3]||0,pSp:F[11],aOut:a[1],pOut:F[10],aSt:a[2],pSt:F[3],pct:a[4]*100,end:String(SPD.sum[6][2]).replace(" 69","")}}}
   const FA=FLOOD.area||{},FS=FLOOD.sites||[],cnt=t=>FS.filter(s=>s.type===t).reduce((a,s)=>a+(s.count||1),0),act=FS.filter(s=>/กำลัง/.test(s.status)).length;
   const ST=typeof STREAMS!=="undefined"?STREAMS:[],up=ST.filter(s=>/เพิ่ม/.test(s[7])),dn=ST.filter(s=>/ลด/.test(s[7]));
   const nm=r=>(r.type==="large"?"":"อ่างฯ ")+r.name;
