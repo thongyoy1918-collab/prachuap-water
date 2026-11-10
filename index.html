@@ -2015,7 +2015,8 @@ function drawSpillChart(){
   function legend(y,items){let x=70;items.forEach(([col,txt,kind])=>{if(kind==="bar"){c.fillStyle=col;c.fillRect(x,y-14,22,16)}else{line([[x,y-6],[x+30,y-6]],col,4,kind==="dash"?[8,5]:null)}T(c,txt,x+(kind==="bar"?30:40),y,{s:17,c:RP.ink2});c.font=`400 17px ${FF}`;x+=c.measureText(txt).width+(kind==="bar"?62:72)})}
   const AQ=SPD.act.map((a,q)=>a?q:-1).filter(q=>q>=0),AG="#0A8F4E";
   function pill(txt,x,y,al){c.font=`700 19px ${FF}`;const w=c.measureText(txt).width+20,x0=al==="right"?x-w:al==="center"?x-w/2:x;rr(c,x0,y-22,w,30,8);c.fillStyle=AG;c.fill();c.strokeStyle="#fff";c.lineWidth=2;c.stroke();T(c,txt,x0+10,y,{s:19,w:700,c:"#fff"})}
-  function aBar(x,v0,v1,col,Y){c.fillStyle=col;c.fillRect(x-BW*.48,Y(v1),BW*.96,Y(v0)-Y(v1));c.strokeStyle="#062F1A";c.lineWidth=2;c.strokeRect(x-BW*.48,Y(v1),BW*.96,Y(v0)-Y(v1))}
+  function aBar(x,v0,v1,col,Y){const w=BW*.32,x0=x-BW*.48;c.fillStyle=col;c.fillRect(x0,Y(v1),w,Y(v0)-Y(v1));c.strokeStyle="#062F1A";c.lineWidth=1.2;c.strokeRect(x0,Y(v1),w,Y(v0)-Y(v1))}
+  const AS=new Set(SPD.act.map((a,q)=>a?q:-1).filter(q=>q>=0));const PB=(i,k)=>AS.has(i)?[-.16+.32*k,.32]:[-.4+.4*k,.4];
   // chart 1 storage
   let g=frame(290,540,"1) ปริมาณน้ำในอ่าง: ผลจริง และคาดการณ์ 2 กรณี","เทียบสันฝาย Spillway 41.10 · เกณฑ์ควบคุมบน (URC) · เป้าหมายต่ำกว่า URC 1 ล้าน ลบ.ม.",30,42,2,v=>v.toFixed(0));
   const urc=SPD.urcOct.concat(F.map(r=>r[7]));
@@ -2025,19 +2026,20 @@ function drawSpillChart(){
   line([[X(30),g.Y(O[30][5])]].concat(F.map((r,i)=>[X(i+31),g.Y(r[6])])),"#9B6BDF",6,[12,7]);
   line([[X(30),g.Y(O[30][5])]].concat(F.map((r,i)=>[X(i+31),g.Y(r[3])])),"#1C86C0",3.5);
   [[0,O[0][5]],[30,O[30][5]],[60,F[29][3]],[91,F[60][3]]].forEach(([i,v])=>{c.beginPath();c.arc(X(i),g.Y(v),7,0,7);c.fillStyle=i<31?RP.navy:"#1C86C0";c.fill();T(c,v.toFixed(2),X(i)+(i>85?-10:10),g.Y(v)+(i===30?-16:30),{s:19,w:700,c:i<31?RP.navy:"#1C86C0",a:i>85?"right":"left"})});
-  if(AQ.length){line([[X(30),g.Y(O[30][5])]].concat(AQ.map(q=>[X(31+q),g.Y(SPD.act[q][2])])),AG,6);const q=AQ[AQ.length-1],v=SPD.act[q][2];c.beginPath();c.arc(X(31+q),g.Y(v),11,0,7);c.fillStyle=AG;c.fill();c.strokeStyle="#fff";c.lineWidth=3;c.stroke();pill("ผลจริง "+F[q][0].replace(" 69","")+" : "+v.toFixed(2),X(31+q)+16,g.Y(v)+44)}
+  if(AQ.length){line([[X(30),g.Y(O[30][5])]].concat(AQ.map(q=>[X(31+q),g.Y(SPD.act[q][2])])),AG,6);const q=AQ[AQ.length-1],v=SPD.act[q][2];c.beginPath();c.arc(X(31+q),g.Y(v),11,0,7);c.fillStyle=AG;c.fill();c.strokeStyle="#fff";c.lineWidth=3;c.stroke();line([[X(30),g.Y(O[30][5])]].concat(F.slice(0,q+2).map((r,i)=>[X(i+31),g.Y(r[6])])),"#9B6BDF",3,[10,6]);line([[X(30),g.Y(O[30][5])]].concat(F.slice(0,q+2).map((r,i)=>[X(i+31),g.Y(r[3])])),"#1C86C0",3);c.beginPath();c.arc(X(31+q),g.Y(F[q][3]),7,0,7);c.fillStyle="#1C86C0";c.fill();c.strokeStyle="#fff";c.lineWidth=2;c.stroke();
+    pill("ผลจริง "+F[q][0].replace(" 69","")+" : "+v.toFixed(2),X(31+q)+16,g.Y(v)+44);{const t="แผน "+F[q][3].toFixed(2);c.font=`700 17px ${FF}`;const w=c.measureText(t).width+18,x0=X(31+q)+16,y0=g.Y(v)+44+10;rr(c,x0,y0,w,26,7);c.fillStyle="#fff";c.fill();c.strokeStyle="#1C86C0";c.lineWidth=1.5;c.stroke();T(c,t,x0+9,y0+19,{s:17,w:700,c:"#1C86C0"})}}
   legend(290+540-22,[[RP.navy,"ผลจริง ต.ค."],[AG,"ผลจริง พ.ย. (รายวัน)"],["#1C86C0","คาดการณ์ ฝนเฉลี่ย"],["#9B6BDF","คาดการณ์ +25%","dash"],["#E0A030","URC / เป้าหมาย URC−1","line"]]);
   // chart 2 inflow
   g=frame(848,480,"2) ปริมาณน้ำไหลเข้าอ่าง (Inflow) รายวัน 2 กรณี","ต.ค. ผลจริง · พ.ย.–ธ.ค. Inflow แผน กรณีตามค่าเฉลี่ย และมากกว่าค่าเฉลี่ย 25%",0,2,0.5,v=>v.toFixed(1));
   O.forEach((r,i)=>{c.fillStyle="#1C86C0";c.fillRect(X(i)-BW*.35,g.Y(r[2]),BW*.7,g.b-g.Y(r[2]))});
-  F.forEach((r,i)=>{const x=X(i+31);c.fillStyle="#7FC1E8";c.fillRect(x-BW*.4,g.Y(Math.min(2,r[1])),BW*.4,g.b-g.Y(Math.min(2,r[1])));c.fillStyle="#9B6BDF";c.fillRect(x,g.Y(Math.min(2,r[4])),BW*.4,g.b-g.Y(Math.min(2,r[4])))});
+  F.forEach((r,i)=>{const x=X(i+31),p0=PB(i,0),p1=PB(i,1);c.fillStyle="#7FC1E8";c.fillRect(x+BW*p0[0],g.Y(Math.min(2,r[1])),BW*p0[1],g.b-g.Y(Math.min(2,r[1])));c.fillStyle="#9B6BDF";c.fillRect(x+BW*p1[0],g.Y(Math.min(2,r[4])),BW*p1[1],g.b-g.Y(Math.min(2,r[4])))});
   AQ.forEach(q=>{const v=SPD.act[q][0];aBar(X(31+q),0,Math.min(2,v),AG,g.Y)});if(AQ.length){const q=AQ[AQ.length-1];pill("Inflow จริง "+F[q][0].replace(" 69","")+" : "+SPD.act[q][0].toFixed(3),X(31+q)+40,g.Y(Math.min(2,SPD.act[q][0]))-10)}
   legend(848+480-22,[["#1C86C0","Inflow ผลจริง ต.ค.","bar"],[AG,"Inflow ผลจริง พ.ย.","bar"],["#7FC1E8","Inflow แผน ตามค่าเฉลี่ย","bar"],["#9B6BDF","Inflow แผน มากกว่าค่าเฉลี่ย 25%","bar"]]);
   // chart 3 outflow
   g=frame(1346,520,"3) การระบายน้ำ (Outflow) รายวัน และแผนปรับลดการระบาย","แท่งซ้อน: ระบายผ่านอาคาร + น้ำล้น Spillway · ตัวเลขด้านบน = อัตราระบายตามแผน (ลบ.ม./วินาที)",0,2,0.5,v=>v.toFixed(1));
   O.forEach((r,i)=>{c.fillStyle="#B85A1F";c.fillRect(X(i)-BW*.35,g.Y(r[4]),BW*.7,g.b-g.Y(r[4]))});
-  F.forEach((r,i)=>{const x=X(i+31),a=r[10],sp=r[11],e=r[12]-r[10];c.fillStyle="#F0A06A";c.fillRect(x-BW*.4,g.Y(a),BW*.4,g.b-g.Y(a));if(sp>0){c.fillStyle="#E5262B";c.fillRect(x-BW*.4,g.Y(a+sp),BW*.4,g.Y(a)-g.Y(a+sp))}
-    const b2=r[12]+r[13];c.fillStyle="#C9B5F0";c.fillRect(x,g.Y(b2),BW*.4,g.b-g.Y(b2))});
+  F.forEach((r,i)=>{const x=X(i+31),a=r[10],sp=r[11],e=r[12]-r[10],p0=PB(i,0),p1=PB(i,1);c.fillStyle="#F0A06A";c.fillRect(x+BW*p0[0],g.Y(a),BW*p0[1],g.b-g.Y(a));if(sp>0){c.fillStyle="#E5262B";c.fillRect(x+BW*p0[0],g.Y(a+sp),BW*p0[1],g.Y(a)-g.Y(a+sp))}
+    const b2=r[12]+r[13];c.fillStyle="#C9B5F0";c.fillRect(x+BW*p1[0],g.Y(b2),BW*p1[1],g.b-g.Y(b2))});
   SPD.plan.forEach((p,k)=>{const rg=[[0,2],[3,9],[10,29],[30,44],[45,60]][k],x0=X(rg[0]+31)-BW/2,x1=X(rg[1]+31)+BW/2,yy=g.t+40+(k%2)*30;c.fillStyle="#E07B39";c.fillRect(x0,yy+6,x1-x0,3);T(c,p[1].toFixed(2),(x0+x1)/2,yy,{s:18,w:700,c:"#B85A1F",a:"center"})});
   AQ.forEach(q=>{const a=SPD.act[q],sp=a[3]||0;aBar(X(31+q),0,a[1],AG,g.Y);if(sp>0)aBar(X(31+q),a[1],a[1]+sp,"#E5262B",g.Y)});if(AQ.length){const q=AQ[AQ.length-1],a=SPD.act[q];pill("Outflow จริง "+F[q][0].replace(" 69","")+" : "+a[1].toFixed(3)+(a[3]>0?" (ล้น "+a[3].toFixed(3)+")":""),X(31+q)+40,g.Y(a[1]+(a[3]||0))+30)}
   legend(1346+520-22,[["#B85A1F","Outflow ผลจริง ต.ค.","bar"],[AG,"Outflow ผลจริง พ.ย.","bar"],["#F0A06A","Outflow แผน (ระบายผ่านอาคาร)","bar"],["#E5262B","น้ำล้น Spillway","bar"],["#C9B5F0","Outflow แผน กรณี +25%","bar"]]);
