@@ -4903,27 +4903,29 @@ function drawFlood169(K){
     // legend
     let ly=ay+ah+30;Object.entries(F.types).forEach(([k,t],j)=>{const n=tot(k),x=M+24+(j%2)*((mw-48)/2),y=ly+Math.floor(j/2)*34;c.beginPath();c.arc(x+9,y-6,9,0,7);c.fillStyle=n?NV:"#B8C2CC";c.fill();T(c,`${t[0]} ${n} ${t[1]}`,x+26,y,{s:18,w:600,c:n?NV:"#9AA6B2"})});}
   // site cards
-  const MID=N>4&&N<=8,cols=N<=4?N:MID?4:3,rows=Math.ceil(N/cols),sx=M+mw+20,sw=(W-M-sx-(cols-1)*20)/cols,sh=(bh-(rows-1)*20)/rows;
+  const MID=N>4&&N<=8,cols=N<=4?N:MID?4:3,rows=Math.ceil(N/cols),CP=rows>=3,sx=M+mw+20,sw=(W-M-sx-(cols-1)*20)/cols,sh=(bh-(rows-1)*20)/rows;
   F.sites.forEach((s,i)=>{const x=sx+(i%cols)*(sw+20),y=by+Math.floor(i/cols)*(sh+20),col=NV,t=F.types[s.type];cardF(x,y,sw,sh);
     {const g=c.createLinearGradient(x,0,x+sw,0);g.addColorStop(0,"#0E2F66");g.addColorStop(1,"#1C86C0");c.fillStyle=g;rr(c,x,y,sw,8,4);c.fill()}
-    c.beginPath();c.arc(x+42,y+50,20,0,7);c.fillStyle=tc(s);c.fill();T(c,String(i+1),x+42,y+58,{s:22,w:700,c:"#fff",a:"center"});
-    fitT(c,s.title,x+74,y+60,sw-98,{s:28,w:700,c:NV});
-    fitT(c,`${s.place} ต.${s.tambon} อ.${s.amphoe}`,x+24,y+102,sw-48,{s:19,w:500,c:MUT});
+    const Q=CP?{cy:38,r:16,ns:18,tx:62,ts:22,ty:46,ps:15,py:74,gy:86,gh:26}:{cy:50,r:20,ns:22,tx:74,ts:28,ty:60,ps:19,py:102,gy:118,gh:32};
+    c.beginPath();c.arc(x+(CP?36:42),y+Q.cy,Q.r,0,7);c.fillStyle=tc(s);c.fill();T(c,String(i+1),x+(CP?36:42),y+Q.cy+Q.ns*.36,{s:Q.ns,w:700,c:"#fff",a:"center"});
+    fitT(c,s.title,x+Q.tx,y+Q.ty,sw-Q.tx-24,{s:Q.ts,w:700,c:NV});
+    fitT(c,`${s.place} ต.${s.tambon} อ.${s.amphoe}`,x+24,y+Q.py,sw-48,{s:Q.ps,w:500,c:MUT});
     // tags
-    let gx=x+24,TS=17;{const tl=[`${t[0]} ${s.count} ${t[1]}`,s.status,s.date];const tot=z=>{c.font=`700 ${z}px ${FF}`;return tl.reduce((a,q)=>a+c.measureText(q).width+z*1.65+8,0)};while(tot(TS)>sw-48&&TS>11)TS--}const tag=(txt,fg,bg)=>{c.font=`700 ${TS}px ${FF}`;const w=c.measureText(txt).width+TS*1.65;rr(c,gx,y+118,w,32,16);c.fillStyle=bg;c.fill();T(c,txt,gx+TS*.82,y+134+TS*.35,{s:TS,w:700,c:fg});gx+=w+8};
+    let gx=x+24,TS=CP?14:17;{const tl=[`${t[0]} ${s.count} ${t[1]}`,s.status,s.date];const tot=z=>{c.font=`700 ${z}px ${FF}`;return tl.reduce((a,q)=>a+c.measureText(q).width+z*1.65+8,0)};while(tot(TS)>sw-48&&TS>11)TS--}const tag=(txt,fg,bg)=>{c.font=`700 ${TS}px ${FF}`;const w=c.measureText(txt).width+TS*1.65;rr(c,gx,y+Q.gy,w,Q.gh,Q.gh/2);c.fillStyle=bg;c.fill();T(c,txt,gx+TS*.82,y+Q.gy+Q.gh/2+TS*.35,{s:TS,w:700,c:fg});gx+=w+8};
     tag(`${t[0]} ${s.count} ${t[1]}`,"#fff",NV);tag(s.status,"#1A4F9C","#DCE9F8");tag(s.date,NV,"#EAF2FC");
     // photos 2x2
-    const CMP=rows>1&&!MID,ROW=CMP||MID,NI=Math.min(MID?2:4,imgs[i].length)||1,py0=y+166,gp=10,pw=ROW?(sw-48-(NI-1)*gp)/NI:(sw-48-gp)/2,fh=CMP?sh-166-74:MID?sh-166-76:Math.max(130,Math.min(210,(sh-166-gp-96-86-74)/2));
+    const CMP=rows>1&&!MID,ROW=CMP||MID,NI=Math.min(MID?2:CP?3:4,imgs[i].length)||1,py0=y+(CP?122:166),gp=CP?8:10,pw=ROW?(sw-48-(NI-1)*gp)/NI:(sw-48-gp)/2,fh=CP?sh-122-52:CMP?sh-166-74:MID?sh-166-76:Math.max(130,Math.min(210,(sh-166-gp-96-86-74)/2));
     imgs[i].slice(0,NI).forEach((im,k)=>{const px=x+24+(ROW?k:k%2)*(pw+gp),py=py0+(ROW?0:Math.floor(k/2)*(fh+gp));c.save();rr(c,px,py,pw,fh,10);c.clip();c.fillStyle="#E4E8EC";c.fillRect(px,py,pw,fh);
       if(im.complete&&im.naturalWidth){const r=Math.max(pw/im.naturalWidth,fh/im.naturalHeight),iw=im.naturalWidth*r,ih=im.naturalHeight*r;c.drawImage(im,px+(pw-iw)/2,py+(fh-ih)/2,iw,ih)}
-      const cap=(s.cap||[])[k];if(cap){const g=c.createLinearGradient(0,py+fh-46,0,py+fh);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.65)");c.fillStyle=g;c.fillRect(px,py+fh-46,pw,46);capT(c,cap,px,pw,py+fh,15,9)}
+      const cap=CP?null:(s.cap||[])[k];if(cap){const g=c.createLinearGradient(0,py+fh-46,0,py+fh);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.65)");c.fillStyle=g;c.fillRect(px,py+fh-46,pw,46);capT(c,cap,px,pw,py+fh,15,9)}
       c.restore()});
-    let ky=py0+2*fh+gp+20;const tyb=y+sh-62;if(!CMP&&!MID){
+    let ky=py0+2*fh+gp+20;const tyb=y+sh-(CP?42:62);if(!CMP&&!MID){
     // facts
     const fs=s.facts.slice(0,4),fw=(sw-48-(fs.length-1)*10)/fs.length;fs.forEach((f,k)=>{const fx=x+24+k*(fw+10);rr(c,fx,ky,fw,78,12);c.fillStyle="#F2F7FD";c.fill();c.fillStyle="#1C86C0";c.fillRect(fx,ky+12,4,54);
       fitT(c,f[0],fx+14,ky+28,fw-24,{s:15,c:MUT});const w=fitT(c,f[1],fx+14,ky+64,fw*.62,{s:28,w:800,c:NV});fitT(c,f[2],fx+20+w,ky+62,fw-w-30,{s:14,c:MUT})});
     ky+=96;
     const TZ=sw<400?16:18,LH=TZ+7,LN=Math.max(0,Math.floor((tyb-6-ky)/LH));c.save();c.beginPath();c.rect(x,ky-2,sw,LN*LH+2);c.clip();wrapT(c,s.text[0],x+24,ky+TZ,sw-48,LH,{s:TZ,c:"#3A4F62"});c.restore();}
+    if(CP){rr(c,x+24,tyb,sw-48,32,10);c.fillStyle="#EAF2FC";c.fill();fitT(c,"➜  "+s.trend,x+36,tyb+22,sw-72,{s:14,w:700,c:NV});return}
     rr(c,x+24,tyb,sw-48,46,12);c.fillStyle="#EAF2FC";c.fill();{const tt="➜  "+s.trend;c.font=`700 15px ${FF}`;if(c.measureText(tt).width<=sw-80)fitT(c,tt,x+40,tyb+30,sw-80,{s:17,w:700,c:NV});else{c.save();c.beginPath();c.rect(x+24,tyb,sw-48,46);c.clip();wrapT(c,tt,x+38,tyb+19,sw-72,19,{s:14.5,w:700,c:NV});c.restore()}}});
   T(c,`ที่มา : โครงการชลประทานประจวบคีรีขันธ์ · ข้อมูล ณ วันที่ ${F.date}`,M,H-18,{s:18,w:600,c:"#3A4F62"});
   return cv;
