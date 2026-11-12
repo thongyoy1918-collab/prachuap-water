@@ -6298,7 +6298,7 @@ async function buildFloodReport(onStep,mode){const AS=mode==="assist";
   const contain=(img,x,yy,w,h)=>{c.fillStyle="#fff";c.fillRect(x,yy,w,h);if(ok(img)){const r=Math.min(w/img.naturalWidth,h/img.naturalHeight),iw=img.naturalWidth*r,ih=img.naturalHeight*r;c.drawImage(img,x+(w-iw)/2,yy+(h-ih)/2,iw,ih)}};
   // ---------- data
   const N=F.sites.length,tot=k=>F.sites.filter(s=>s.type===k).reduce((a,s)=>a+s.count,0),amps=[...new Set(F.sites.map(s=>s.amphoe))];
-  const fact=(s,re)=>{const f=(s.facts||[]).find(x=>re.test(x[0]));return f?`${f[1]} ${f[2]}`:""},hh=(F.sites.reduce((a,s)=>{const f=(s.facts||[]).find(x=>/ครัวเรือน/.test(x[0]));return a+(f?+f[1]||0:0)},0)+(F.area?F.area.hh:0));
+  const fact=(s,re)=>{const f=(s.facts||[]).find(x=>re.test(x[0]));return f?`${f[1]} ${f[2]}`:""},hh=(F.sites.reduce((a,s)=>{const f=[...(s.facts||[]),...(s.impact||[])].find(x=>/ครัวเรือน/.test(x[0]));return a+(f?+f[1]||0:0)},0)+(F.area?F.area.hh:0));
   const tname=s=>{const t=F.types[s.type];return `${t[0]} ${s.count} ${t[1]}`},tm=s=>{const f=(s.facts||[]).find(x=>/^เวลา/.test(x[0]));return f?`${s.date} เวลา ${f[1]} ${f[2]}`:s.date};
   const typeSum=Object.entries(F.types).filter(([k])=>tot(k)).map(([k,t])=>`${t[0]} ${tot(k)} ${t[1]}`).join(" และ ");
   // ---------- cover
