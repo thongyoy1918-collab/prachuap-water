@@ -331,7 +331,11 @@ for (const f of DATA.faces) {
   else if (isRoof) { key = 'soffit'; color = '#f3f1eb'; }                                   // flat soffits / vertical fascia
   else { key = 'default'; color = LAYER_COLOR[layer] || '#eeebe3'; }
   let cy = 0; outer.forEach(p => cy += p[1]); cy /= outer.length;
-  const level = levelOf(cy), part = partOf(layer, key, opacity < 1);
+  const part = partOf(layer, key, opacity < 1);
+  let miny = Infinity; outer.forEach(p => { if (p[1] < miny) miny = p[1]; });
+  // exploded-view level: main roof (+frame) = 2, eave/porch roof stays with floor 1, others by their lowest point
+  const isRoofPart = part === 'roofTile' || part === 'roofTrim' || part === 'roofFrame';
+  const level = isRoofPart ? (miny > 6.0 ? 2 : 0) : (miny < 3.55 ? 0 : miny < 6.9 ? 1 : 2);
   // remember which level the front-porch roof sits on, so the sign moves with it
   if (part === 'roofTile' || part === 'roofTrim') { let cx = 0, cz = 0; outer.forEach(p => { cx += p[0]; cz += p[2]; }); cx /= outer.length; cz /= outer.length;
     if (Math.abs(cx) < 3.5 && cz > 6.5 && cy < 5) porchLevel[level] = (porchLevel[level] || 0) + 1; }
@@ -543,6 +547,7 @@ PARTS.forEach((c, ci) => {
   box.querySelector('.fold').onclick = () => { box.classList.toggle('closed'); };
   sp.appendChild(box);
 });
+sp.addEventListener('mouseleave', () => clearHighlights());
 // solo: keep the chosen part solid, every other building part becomes x-ray (site stays)
 function toggleSolo(id) {
   if (solo === id) { Object.assign(MODE, soloBackup); solo = null; }
@@ -556,12 +561,14 @@ function toggleSolo(id) {
 document.getElementById('soloX').onclick = () => solo && toggleSolo(solo);
 // hover highlight
 const hlSaved = new Map();
+function clearHighlights() { hlSaved.forEach(([h, i], m) => { m.emissive.setHex(h); m.emissiveIntensity = i; }); hlSaved.clear(); }
 function highlight(id, on) {
+  if (on) clearHighlights();
   if ((MODE[id] || 'show') !== 'show') return;
   (PART_OBJS[id] || []).forEach(e => {
     if (e.edge || Array.isArray(e.orig) || !e.orig.emissive || winMats.includes(e.orig) || e.orig === curtainMat) return;
     const m = e.orig;
-    if (on) { hlSaved.set(m, [m.emissive.getHex(), m.emissiveIntensity]); m.emissive.set('#2f6bff'); m.emissiveIntensity = 0.45; }
+    if (on) { if (!hlSaved.has(m)) hlSaved.set(m, [m.emissive.getHex(), m.emissiveIntensity]); m.emissive.set('#2f6bff'); m.emissiveIntensity = 0.45; }
     else if (hlSaved.has(m)) { const [h, i] = hlSaved.get(m); m.emissive.setHex(h); m.emissiveIntensity = i; hlSaved.delete(m); }
   });
 }
@@ -586,12 +593,13 @@ function applyPreset(name) {
 }
 // exploded view: lift floor 2 and the roof apart
 let explode = 0;
+const EX_GAP = [0, 4.2, 10.5];   // lift of floor 2 and of the main roof at 100%
 const exEl = document.getElementById('explode');
 function setExplode(v) { explode = v; exEl.value = v; document.getElementById('exl').textContent = explode ? `${Math.round(explode * 100)}%` : 'ปิด'; }
 exEl.oninput = () => setExplode(+exEl.value);
 document.getElementById('exl').textContent = 'ปิด';
 function updateExplode(dt) {
-  for (let L = 0; L < 3; L++) { const target = L * 3.4 * explode;
+  for (let L = 0; L < 3; L++) { const target = EX_GAP[L] * explode;
     levelObjs[L].forEach(o => { const ty = (o.userData.baseY || 0) + target; o.position.y += (ty - o.position.y) * Math.min(1, dt * 8); }); }
 }
 Object.keys(PART_OBJS).forEach(applyPart); refreshCats();
@@ -707,8 +715,8 @@ function placeHotspots() {
   if (occFrame++ % 12 === 0) updateOcclusion();
   const w = canvas.clientWidth, hh = canvas.clientHeight;
   allLbl.forEach(l => {
-    tmp.copy(l.v3); if (l.si !== undefined && l.v3.y > 3.7) tmp.y += (l.v3.y > 7 ? 2 : 1) * 3.4 * explode;
-    tmp.project(camera); const off = tmp.z > 1 || Math.abs(tmp.x) > 1.02 || Math.abs(tmp.y) > 1.02 || (!l.main && l.si !== cur && explode > 0);
+    tmp.copy(l.v3); if (l.v3.y > 3.7) tmp.y += EX_GAP[l.v3.y > 8.5 ? 2 : 1] * explode;
+    tmp.project(camera); const off = tmp.z > 1 || Math.abs(tmp.x) > 1.02 || Math.abs(tmp.y) > 1.02 || (!l.main && l.si !== cur);
     l.el.style.display = off ? 'none' : 'flex'; l.el.style.left = (tmp.x * .5 + .5) * w + 'px'; l.el.style.top = (-tmp.y * .5 + .5) * hh + 'px';
   });
 }
@@ -720,7 +728,7 @@ tb('tbLbl').onclick = () => { const off = document.body.classList.toggle('nolbl'
 tb('tbXray').onclick = () => applyPreset(tb('tbXray').classList.contains('on') ? 'ทั้งหมด' : 'X-ray');
 const LIGHTS = [[9.5, 'กลางวัน'], [17.6, 'เย็น'], [20.5, 'กลางคืน']]; let li = 0;
 tb('tbLight').onclick = () => { li = (li + 1) % LIGHTS.length; setH(LIGHTS[li][0]); tb('tbLight').textContent = 'แสง: ' + LIGHTS[li][1]; tb('tbLight').classList.toggle('on', li > 0); };
-tb('tbTune').onclick = () => { const on = document.body.classList.toggle('tune'); tb('tbTune').classList.toggle('on', on); panel.classList.remove('fold'); };
+tb('tbTune').onclick = () => { clearHighlights(); const on = document.body.classList.toggle('tune'); tb('tbTune').classList.toggle('on', on); panel.classList.remove('fold'); };
 tb('tbInfo').onclick = () => tb('about').classList.add('show');
 tb('aboutX').onclick = () => tb('about').classList.remove('show');
 tb('about').onclick = e => { if (e.target.id === 'about') tb('about').classList.remove('show'); };
