@@ -5997,7 +5997,7 @@ function capT(c,t,px,pw,pb,s,pd){if(!t)return;s=Math.round(s*.7*10)/10;const w=p
 function mkFan(pts,i,R,D,A0){const p=pts[i],cl=pts.map((q,j)=>j).filter(j=>Math.hypot(pts[j][0]-p[0],pts[j][1]-p[1])<D),n=cl.length,k=cl.indexOf(i);if(n<2)return{x:p[0],y:p[1],n,k:0};const a=(A0||0)+(k-(n-1)/2)*Math.min(.8,2.2/(n-1||1));return{x:p[0]+R*Math.cos(a),y:p[1]+R*Math.sin(a),n,k}}
 function mkLead(c,X,Y,bx,by,col){c.strokeStyle=col;c.lineWidth=2.5;c.beginPath();c.moveTo(X,Y);c.lineTo(bx,by);c.stroke();c.beginPath();c.arc(X,Y,7,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=2.5;c.stroke()}
 function drawFlood(){
-  const F0=flView(),FCOL={pump:"#123B7A",backhoe:"#2E6FD1"},F={...F0,types:Object.fromEntries(Object.entries(F0.types).map(([k,t])=>{const u=[...t];u[2]=FCOL[k]||t[2];return [k,u]}))},N=F.sites.length,W=1600,C=Math.cos(12.2*Math.PI/180),P=(lon,lat)=>[(lon-98.9)*C*1000,(13.3-lat)*1000];
+  const F0=flView(),FCOL={pump:"#123B7A",backhoe:"#C98A0B"},F={...F0,types:Object.fromEntries(Object.entries(F0.types).map(([k,t])=>{const u=[...t];u[2]=FCOL[k]||t[2];return [k,u]}))},N=F.sites.length,W=1600,C=Math.cos(12.2*Math.PI/180),P=(lon,lat)=>[(lon-98.9)*C*1000,(13.3-lat)*1000];
   const NV="#123B7A",KFn='"Kanit","IBM Plex Sans Thai",sans-serif',KT=fn=>{const f=FF;FF=KFn;try{return fn()}finally{FF=f}},INK="#11283B",MUT="#4E6072",LN="#E0E7EE",tc=s=>F.types[s.type][2],imgs=flImgsSel();
   const top0=520,GAP=16,M=60,tw=W-2*M,mw=520,CL=N<=4?2:3,RN=Math.ceil(N/CL),LC=N>=5?2:1,LR=Math.ceil(N/LC),topH=Math.max(560,72+LR*62+160),cardsY=top0+topH+24,H=Math.round(W*420/297),cardH=Math.max(300,(H-170-cardsY-(RN-1)*GAP)/RN),mainH=topH+24+RN*cardH+(RN-1)*GAP;
   const cv=document.createElement("canvas"),S4=3840/W;cv.width=3840;cv.height=Math.round(H*S4);const c=cv.getContext("2d");c.scale(S4,S4);c.fillStyle="#F2F6F9";c.fillRect(0,0,W,H);
@@ -6019,9 +6019,9 @@ function drawFlood(){
   const SEA=new Path2D(F.sea);
   function mapIn(x,y,w,h,cx,cy,sc,opt){c.save();rr(c,x,y,w,h,16);c.clip();c.fillStyle=opt.bg||"#EEF1F4";c.fillRect(x,y,w,h);const OK=osmDraw(c,x,y,w,h,cx,cy,sc,0,1);
     c.translate(x+w/2,y+h/2);c.scale(sc,sc);c.translate(-cx,-cy);
-    if(OK){D.forEach(d=>{const s=F.sites.find(z=>z.amphoe===d.n);if(!s)return;const k=s.type==="pump"?"18,59,122":"46,111,209";c.fillStyle=`rgba(${k},.13)`;c.fill(d.p);c.lineWidth=(opt.lw||2)*1.4/sc;c.strokeStyle=`rgba(${k},.9)`;c.stroke(d.p)})}else{
+    if(OK){D.forEach(d=>{const s=F.sites.find(z=>z.amphoe===d.n);if(!s)return;const k=s.type==="pump"?"18,59,122":"201,138,11";c.fillStyle=`rgba(${k},.13)`;c.fill(d.p);c.lineWidth=(opt.lw||2)*1.4/sc;c.strokeStyle=`rgba(${k},.9)`;c.stroke(d.p)})}else{
     c.save();c.beginPath();c.rect(-5000,655,10000,1690);c.clip();const sg=c.createLinearGradient(cx,0,cx+400,0);sg.addColorStop(0,"#CFE8F6");sg.addColorStop(1,"#A9D6F0");c.fillStyle=sg;c.fill(SEA,"evenodd");c.restore();
-    D.forEach(d=>{const s=F.sites.find(z=>z.amphoe===d.n);c.fillStyle=s?(s.type==="pump"?"#DCE7F6":"#DCE9F8"):"#FFFFFF";c.fill(d.p);c.lineWidth=(opt.lw||2)/sc;c.strokeStyle=s?(s.type==="pump"?"#5C7FB5":"#6E9BD9"):"#B4BEC8";c.setLineDash(s?[]:[6/sc,4/sc]);c.stroke(d.p);c.setLineDash([])})}
+    D.forEach(d=>{const s=F.sites.find(z=>z.amphoe===d.n);c.fillStyle=s?(s.type==="pump"?"#DCE7F6":"#F6EBD3"):"#FFFFFF";c.fill(d.p);c.lineWidth=(opt.lw||2)/sc;c.strokeStyle=s?(s.type==="pump"?"#5C7FB5":"#D9A441"):"#B4BEC8";c.setLineDash(s?[]:[6/sc,4/sc]);c.stroke(d.p);c.setLineDash([])})}
     c.restore();if(OK){c.font=`500 11px ${FF}`;c.textAlign="right";c.fillStyle="rgba(255,255,255,.8)";const aw=c.measureText("© OpenStreetMap").width;c.fillRect(x+w-aw-12,y+h-18,aw+12,18);c.fillStyle="#55606B";c.fillText("© OpenStreetMap",x+w-6,y+h-5)}if(OK&&opt.nolab)return(px,py)=>[x+w/2+(px-cx)*sc,y+h/2+(py-cy)*sc];
     // labels
     c.save();rr(c,x,y,w,h,16);c.clip();const TX=(px,py)=>[x+w/2+(px-cx)*sc,y+h/2+(py-cy)*sc];
@@ -6073,7 +6073,7 @@ function drawFlood(){
   {const cw=(rw-(CL-1)*GAP)/CL;F.sites.forEach((s,i)=>{const rI=Math.floor(i/CL),inR=Math.min(CL,N-rI*CL),x=rx+(rw-(inR*cw+(inR-1)*GAP))/2+(i%CL)*(cw+GAP),y=cardsY+rI*(cardH+GAP),col=tc(s);box(x,y,cw,cardH);{c.save();rr(c,x,y,cw,cardH,22);c.clip();const tg=c.createLinearGradient(x,0,x+cw,0);tg.addColorStop(0,"#0E2F66");tg.addColorStop(1,"#2E86D1");c.fillStyle=tg;c.fillRect(x,y,cw,6);c.restore()}
     const SCc=["#123B7A","#1C86C0","#1A4F9C"][i%3];c.beginPath();c.arc(x+36,y+42,17,0,7);c.fillStyle=SCc;c.fill();KT(()=>T(c,String(i+1),x+36,y+50,{s:20,w:600,c:"#fff",a:"center"}));
     KT(()=>fitT(c,s.title,x+62,y+52,cw-82,{s:25,w:600,c:NV}));
-    {const t0=F.types[s.type],ch=[[`${t0[0]} ${s.count} ${t0[1]}`,NV,"#fff"],[s.status,"#DCE9F8",NV],[s.date,"#F1F5F9",INK]];let cx2=x+20;ch.forEach(([t,bg,fg])=>{c.font=`600 16px ${FF}`;const w=c.measureText(t).width+22;if(cx2+w>x+cw-14)return;rr(c,cx2,y+68,w,32,16);c.fillStyle=bg;c.fill();T(c,t,cx2+11,y+90,{s:16,w:600,c:fg});cx2+=w+6})}
+    {const t0=F.types[s.type],ch=[[`${t0[0]} ${s.count} ${t0[1]}`,t0[2],"#fff"],[s.status,"#DCE9F8",NV],[s.date,"#F1F5F9",INK]];let cx2=x+20;ch.forEach(([t,bg,fg])=>{c.font=`600 16px ${FF}`;const w=c.measureText(t).width+22;if(cx2+w>x+cw-14)return;rr(c,cx2,y+68,w,32,16);c.fillStyle=bg;c.fill();T(c,t,cx2+11,y+90,{s:16,w:600,c:fg});cx2+=w+6})}
     fitT(c,`${s.place} ต.${s.tambon} อ.${s.amphoe}`,x+20,y+128,cw-40,{s:19,w:500,c:INK});
     fitT(c,`พิกัด ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}${/ประมาณ/.test(s.utm)?" (โดยประมาณ)":""}`,x+20,y+153,cw-40,{s:17,c:MUT});
     rr(c,x+20,y+166,cw-40,38,10);c.fillStyle="#EEF4FB";c.fill();fitT(c,"➜  "+s.trend,x+32,y+191,cw-64,{s:17,w:600,c:NV});
@@ -6083,7 +6083,7 @@ function drawFlood(){
       if(m.complete&&m.naturalWidth){const r=Math.max(w2/m.naturalWidth,h2/m.naturalHeight),iw=m.naturalWidth*r,ih=m.naturalHeight*r;c.drawImage(m,px+(w2-iw)/2,py+(h2-ih)/2,iw,ih)}
       c.restore()})}})}
   // legend
-  let lx=M,ly=top0+mainH+42;[["เครื่องสูบน้ำ","#123B7A","d"],["เครื่องผลักดันน้ำ","#9AA6B2","d"],["รถขุด (แบคโฮ)","#2E6FD1","d"],["พื้นที่ประสบอุทกภัย","#D64532","o"],["อำเภอที่ดำเนินการ","#9AA6B2","s"]].forEach(([t,col,k])=>{
+  let lx=M,ly=top0+mainH+42;[["เครื่องสูบน้ำ","#123B7A","d"],["เครื่องผลักดันน้ำ","#9AA6B2","d"],["รถขุด (แบคโฮ)","#C98A0B","d"],["พื้นที่ประสบอุทกภัย","#D64532","o"],["อำเภอที่ดำเนินการ","#9AA6B2","s"]].forEach(([t,col,k])=>{
     if(k==="d"){c.beginPath();c.arc(lx+10,ly-7,10,0,7);c.fillStyle=col;c.fill()}else if(k==="o"){c.beginPath();c.arc(lx+10,ly-7,10,0,7);c.strokeStyle=col;c.lineWidth=2.5;c.stroke()}else{c.fillStyle="#DDF0E3";c.fillRect(lx,ly-17,20,20);c.strokeStyle=col;c.lineWidth=2;c.strokeRect(lx,ly-17,20,20)}
     lx+=34+T(c,t,lx+30,ly,{s:19,c:INK})+28});
   footer(c,W,H,"โครงการชลประทานประจวบคีรีขันธ์ · สำนักงานชลประทานที่ 14 · กรมชลประทาน",`ที่มา: ข้อมูลการปฏิบัติงานสนับสนุนเครื่องจักร-เครื่องมือ ณ ${F.date} · ขอบเขตการปกครอง OpenGISData-Thailand (CC BY 4.0)`);
