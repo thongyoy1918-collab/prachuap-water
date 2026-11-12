@@ -5026,7 +5026,7 @@ function drawFlood169(K){
       const TX=(px,py)=>[ax+aw/2+(px-cx)*sc,ay+ah/2+(py-cy)*sc];
       c.save();rr(c,ax,ay,aw,ah,12);c.clip();
       // land backdrop
-      c.fillStyle="#E9EDF1";c.fillRect(ax,ay,aw,ah);const OK=osmDraw(c,ax,ay,aw,ah,cx,cy,sc,0,2);
+      c.fillStyle="#E9EDF1";c.fillRect(ax,ay,aw,ah);const OK=osmDraw(c,ax,ay,aw,ah,cx,cy,sc,0,1);
       c.save();c.translate(ax+aw/2,ay+ah/2);c.scale(sc,sc);c.translate(-cx,-cy);
       if(OK){D.forEach(d=>{if(!F.sites.some(z=>z.amphoe===d.n))return;c.fillStyle="rgba(46,111,209,.12)";c.fill(d.p);c.lineWidth=3/sc;c.strokeStyle="#2E6FD1";c.stroke(d.p)})}else{
       // sea with depth gradient + wave lines
@@ -6097,9 +6097,9 @@ function osmDraw(c,x,y,w,h,cx,cy,sc,dry,zb){
   const[l0,a1]=inv(x,y),[l1,a0]=inv(x+w,y+h),z=Math.max(6,Math.min(17,Math.round(Math.log2(sc*C*1000*360/256))+(zb||0))),n=2**z;
   const tx=l=>(l+180)/360*n,ty=a=>{const r=a*Math.PI/180;return(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n},tl=X=>X/n*360-180,ta=Y=>Math.atan(Math.sinh(Math.PI*(1-2*Y/n)))*180/Math.PI;
   const T=[];for(let i=Math.floor(tx(l0));i<=Math.floor(tx(l1));i++)for(let j=Math.floor(ty(a1));j<=Math.floor(ty(a0));j++)T.push([i,j,osmTile(z,i,j)]);
-  if(T.length>200||T.some(q=>q[2].st!==1))return false;if(dry)return true;
-  c.save();c.imageSmoothingQuality="high";T.forEach(([i,j,t])=>{const[X0,Y0]=fw(tl(i),ta(j)),[X1,Y1]=fw(tl(i+1),ta(j+1));c.drawImage(t.im,X0,Y0,X1-X0+.6,Y1-Y0+.6)});c.restore();return true}
-async function osmWarm(fn){let cv=fn();if(OSM.pend.length){const p=OSM.pend.splice(0);await Promise.race([Promise.all(p),new Promise(r=>setTimeout(r,9000))]);cv=fn()}return cv}
+  if(T.length>200||T.some(q=>q[2].st===0)||T.every(q=>q[2].st!==1))return false;if(dry)return true;
+  c.save();c.imageSmoothingQuality="high";T.forEach(([i,j,t])=>{if(t.st!==1)return;const[X0,Y0]=fw(tl(i),ta(j)),[X1,Y1]=fw(tl(i+1),ta(j+1));c.drawImage(t.im,X0,Y0,X1-X0+.6,Y1-Y0+.6)});c.restore();return true}
+async function osmWarm(fn){let cv=fn();for(let k=0;k<4&&OSM.pend.length;k++){const p=OSM.pend.splice(0);await Promise.race([Promise.all(p),new Promise(r=>setTimeout(r,12000))]);cv=fn()}return cv}
 /* landscape per-site flood report */
 let FL_L=0;const FL_QR={};
 function flQr(i){const s=FLOOD.sites[i];if(!s||!s.qr)return null;if(!FL_QR[i]){const im=new Image();im.src=s.qr;FL_QR[i]=im}return FL_QR[i]}
