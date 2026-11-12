@@ -3380,7 +3380,7 @@ const FLOOD={"date": "12 พ.ย. 2569", "types": {"pump": ["เครื่อ�
     <div class="exp-prev"><img id="expImg" alt="ตัวอย่างภาพรายงาน"></div>
     <div class="exp-foot">
       <span class="exp-st"><span id="expStatus"></span><span id="expHint"></span><label class="mg-chk" id="hiPrWrap" hidden><input type="checkbox" class="hiPr" checked> แสดงเขื่อนปราณบุรีในภาพ</label></span>
-      <div class="exp-btns"><button class="btn-sec" id="expLine" type="button">บันทึกขนาด LINE (2000 px คมชัด)</button><button class="btn-sec" id="expPdf1" type="button">บันทึกภาพนี้เป็น PDF (ส่ง LINE ชัด)</button><button class="btn-sec" id="expPdf" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14h6M9 17h4"/></svg>บันทึก PDF ทุกอ่าง (10 หน้า)</button>
+      <div class="exp-btns"><button class="btn-primary" id="expHQ" type="button" title="บันทึก PNG 8K ลงโฟลเดอร์ D:\ภาพละเอียด แยกโฟลเดอร์ตามรายงานและวันที่">สร้างภาพความละเอียดสูง (8K) → D:\ภาพละเอียด</button><button class="btn-sec" id="expHQDir" type="button" title="เลือกโฟลเดอร์ปลายทางใหม่">เปลี่ยนโฟลเดอร์</button><button class="btn-sec" id="expLine" type="button">บันทึกขนาด LINE (2000 px คมชัด)</button><button class="btn-sec" id="expPdf1" type="button">บันทึกภาพนี้เป็น PDF (ส่ง LINE ชัด)</button><button class="btn-sec" id="expPdf" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14h6M9 17h4"/></svg>บันทึก PDF ทุกอ่าง (10 หน้า)</button>
       <button class="btn-primary" id="expSave" type="button" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>บันทึกไฟล์ PNG</button></div>
     </div>
   </div>
@@ -6262,6 +6262,28 @@ async function makePdf(canvases,onStep){
   put(x+`trailer\n<< /Size ${size} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
   return new Blob(parts,{type:"application/pdf"});
 }
+/* high-res export → D:\ภาพละเอียด\<รายงาน>\<วันที่>\ */
+const HQ={db:()=>new Promise((r,j)=>{const q=indexedDB.open("hqimg",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)}),
+  async get(){try{const d=await HQ.db();return await new Promise(r=>{const t=d.transaction("h").objectStore("h").get("dir");t.onsuccess=()=>r(t.result||null);t.onerror=()=>r(null)})}catch(e){return null}},
+  async put(h){try{const d=await HQ.db();d.transaction("h","readwrite").objectStore("h").put(h,"dir")}catch(e){}},
+  clean:t=>String(t||"").replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim().slice(0,80)||"รายงาน",
+  async root(force){if(!window.showDirectoryPicker)return null;let h=force?null:await HQ.get();
+    if(h){try{let p=await h.queryPermission({mode:"readwrite"});if(p!=="granted")p=await h.requestPermission({mode:"readwrite"});if(p!=="granted")h=null}catch(e){h=null}}
+    if(!h){h=await window.showDirectoryPicker({id:"hqimg",mode:"readwrite",startIn:"pictures"});await HQ.put(h)}
+    return h.name==="ภาพละเอียด"?h:await h.getDirectoryHandle("ภาพละเอียด",{create:true})}};
+document.getElementById("expHQDir").onclick=async()=>{const st=document.getElementById("expStatus");try{st.textContent="เลือกไดรฟ์ D: หรือโฟลเดอร์ D:\\ภาพละเอียด";const r=await HQ.root(true);if(r)st.textContent="ตั้งโฟลเดอร์ปลายทางแล้ว: …\\"+r.name;else st.textContent="เบราว์เซอร์นี้เลือกโฟลเดอร์ไม่ได้ (ใช้ Chrome/Edge บนคอมพิวเตอร์)"}catch(e){st.textContent=e&&e.name==="AbortError"?"ยกเลิกการเลือกโฟลเดอร์":"เลือกโฟลเดอร์ไม่ได้ในหน้านี้ · เปิดผ่านแอป/เว็บ ข้อมูลน้ำประจวบฯ ใน Chrome หรือ Edge"}};
+document.getElementById("expHQ").onclick=async()=>{const st=document.getElementById("expStatus"),b=document.getElementById("expHQ"),mk=window.__lastMk;if(!mk)return;b.disabled=true;
+  try{let dir=null,why="";try{st.textContent="เตรียมโฟลเดอร์ปลายทาง…";dir=await HQ.root(false)}catch(e){why=e&&e.name==="AbortError"?"ยกเลิกการเลือกโฟลเดอร์ · ":""}
+    st.textContent="กำลังสร้างภาพความละเอียดสูง (8K)…";await new Promise(z=>setTimeout(z,30));
+    const base=await mk(),L=Math.max(base.width,base.height),W0=base.width,k=Math.min(7680/W0,30000/L);let cv=k>1.05?await hiRes(k,mk):base;if(!cv||cv.width<W0)cv=base;
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png")),kb=document.querySelector('#expKinds button[aria-pressed="true"] b'),cat=HQ.clean(kb?kb.textContent:expKind);
+    const d=new Date(),day=`${d.getFullYear()+543}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,tm=`${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}`,
+      name=HQ.clean(expName.replace(/\.png$/i,""))+`_${cv.width}x${cv.height}_${tm}.png`,sz=(blob.size/1048576).toFixed(1)+" MB";
+    if(dir){const d1=await dir.getDirectoryHandle(cat,{create:true}),d2=await d1.getDirectoryHandle(day,{create:true}),fh=await d2.getFileHandle(name,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close();
+      st.textContent=`บันทึกแล้ว: ${dir.name}\\${cat}\\${day}\\${name} · ${cv.width}×${cv.height} · ${sz}`}
+    else if(typeof DL!=="undefined"&&DL){const res=await DL.save({filename:name,data:blob});st.textContent=why+(res.status==="saved"?`บันทึกแล้ว: ${name} · ${cv.width}×${cv.height} · ${sz} (หน้านี้เลือกโฟลเดอร์ไม่ได้ ย้ายไฟล์ไป D:\\ภาพละเอียด\\${cat}\\${day})`:"ส่งไฟล์แล้ว")}
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);st.textContent=why+`ดาวน์โหลดแล้ว: ${name} · ${cv.width}×${cv.height} · ${sz}`}
+  }catch(e){console.error(e);st.textContent="สร้างภาพความละเอียดสูงไม่ได้: "+(e&&e.message||e)}finally{b.disabled=false}};
 document.getElementById("expLine").onclick=async()=>{const st=document.getElementById("expStatus"),b=document.getElementById("expLine"),mk=window.__lastMk;if(!mk)return;b.disabled=true;
   try{st.textContent="กำลังสร้างภาพขนาด LINE…";const base=await mk(),L=Math.max(base.width,base.height),k=2000/L;let cv=k<1?await hiRes(k,mk):base;
     const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=expName.replace(/\.png$/i,"")+"_LINE.png";
