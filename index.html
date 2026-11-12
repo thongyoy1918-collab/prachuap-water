@@ -6378,9 +6378,10 @@ async function buildFloodReport(onStep,mode){const AS=mode==="assist";
     para(`ในปี 2569 จังหวัดประจวบคีรีขันธ์เกิดเหตุการณ์น้ำท่วมจากฝนตกหนัก รวม ${FI.EV.length} ครั้ง โครงการชลประทานประจวบคีรีขันธ์ได้ติดตามสถานการณ์และจัดทำรายงานสถานการณ์น้ำท่วมรวม ${FI.R.length} ฉบับ สรุปเหตุการณ์และผลกระทบสูงสุดของแต่ละเหตุการณ์ ดังตาราง`);
     const nf=v=>v?Number(v).toLocaleString():"–";
     table([{t:"วันที่เกิดเหตุ",w:.15},{t:"เหตุการณ์ / พื้นที่",w:.37},{t:"ฝนสูงสุด",w:.16},{t:"ครัวเรือน",w:.11},{t:"ประชาชน (คน)",w:.11},{t:"พื้นที่เกษตร (ไร่)",w:.10}],FI.EV.map(e=>{const p=FI.evPeak(e);return [e.d,`${e.t} · ${e.area}`,e.rain,nf(p.hh),nf(p.pop),nf(p.rai)]}));
-    FI.R.slice().reverse().forEach((rp,i)=>{onStep&&onStep(`รายงานน้ำท่วม ${i+1}/${FI.R.length}`);head(`${CH}.${i+1} รายงานสถานการณ์น้ำท่วม วันที่ ${rp.dateL} เวลา ${rp.time} น.`,2);
-      const bd=window.drawFloodRep(FI.R.indexOf(rp)),w=CW,h=w*9/16;figure((x,yy,ww,hh)=>c.drawImage(bd,x,yy,ww,hh),w,h,`รายงานสถานการณ์น้ำท่วม ${rp.title} (${rp.date} เวลา ${rp.time} น.)`);
-      para(rp.short)})}}catch(err){console.error(err)}
+    const RR=FI.R.slice().reverse(),OI=await Promise.all(RR.map(rp=>new Promise(r=>{if(!rp.orig)return r(null);const m=new Image();m.onload=()=>r(m);m.onerror=()=>r(null);m.src=rp.orig})));
+    RR.forEach((rp,i)=>{onStep&&onStep(`รายงานน้ำท่วม ${i+1}/${FI.R.length}`);head(`${CH}.${i+1} รายงานสถานการณ์น้ำท่วม วันที่ ${rp.dateL} เวลา ${rp.time} น.`,2);
+      const om=OI[i],bd=om||window.drawFloodRep(FI.R.indexOf(rp)),w=CW,h=om?w*om.naturalHeight/om.naturalWidth:w*9/16;figure((x,yy,ww,hh)=>c.drawImage(bd,x,yy,ww,hh),w,h,`รายงานสถานการณ์น้ำท่วม ${rp.title} (${rp.date} เวลา ${rp.time} น.)`);
+      })}}catch(err){console.error(err)}
   /* conclusion & notes removed by request */
   // sign-off
   y+=30;ensure(220);["ผู้จัดทำรายงาน","ฝ่ายจัดสรรน้ำและปรับปรุงระบบชลประทาน","โครงการชลประทานประจวบคีรีขันธ์","สำนักงานชลประทานที่ 14 กรมชลประทาน",`ข้อมูล ณ วันที่ ${F.date}`].forEach((t,i)=>{tx(t,W-MR-260,y+26,{s:i?21:23,w:i?400:700,a:"center"});y+=40});
@@ -6389,9 +6390,9 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
   let ov=document.getElementById("flPrev");if(!ov){ov=document.createElement("div");ov.id="flPrev";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label","ตัวอย่างรายงาน PDF");
     ov.style.cssText="position:fixed;inset:0;z-index:60;background:rgba(8,20,32,.72);display:flex;flex-direction:column";
     ov.innerHTML='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--line)"><b style="font-size:15px">ตัวอย่างรายงาน PDF</b><span id="flPrevSt" style="font-size:12.5px;color:var(--muted);flex:1;min-width:120px"></span><button class="btn-sec" id="flPrevX" type="button">ปิด</button><button class="btn-primary" id="flPrevSave" type="button" disabled>บันทึก PDF</button></div><div id="flPrevPages" style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px"></div>';
-    document.body.appendChild(ov);ov.querySelector("#flPrevX").onclick=()=>{ov.hidden=true;document.body.style.overflow=""};document.addEventListener("keydown",k=>{if(k.key==="Escape"&&!ov.hidden){ov.hidden=true;document.body.style.overflow=""}})}
+    document.body.appendChild(ov);const cls=()=>{ov.hidden=true;ov.style.display="none";document.body.style.overflow=""};ov.querySelector("#flPrevX").onclick=cls;document.addEventListener("keydown",k=>{if(k.key==="Escape"&&!ov.hidden)cls()})}
   const st=ov.querySelector("#flPrevSt"),box=ov.querySelector("#flPrevPages"),sv=ov.querySelector("#flPrevSave");
-  ov.hidden=false;document.body.style.overflow="hidden";box.innerHTML="";sv.disabled=true;st.textContent="กำลังสร้างรายงาน…";
+  ov.hidden=false;ov.style.display="flex";document.body.style.overflow="hidden";box.innerHTML="";sv.disabled=true;st.textContent="กำลังสร้างรายงาน…";
   try{const pages=await buildFloodReport(t=>{st.textContent=`กำลังสร้าง… ${t}`},MODE);
     for(let i=0;i<pages.length;i++){const im=new Image();im.alt=`หน้า ${i+1}`;im.style.cssText="width:min(820px,100%);height:auto;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.35);border-radius:2px";
       im.src=await new Promise(r=>pages[i].toBlob(bb=>r(URL.createObjectURL(bb)),"image/jpeg",.82));box.appendChild(im)}
