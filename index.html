@@ -6396,7 +6396,7 @@ async function buildFloodReport(onStep,mode){const AS=mode==="assist";
     const ims=IM[i]||[],gw=(CW-24)/2,gh=gw*0.68;for(let k=0;k<ims.length;k+=2){fig++;const pair=ims.slice(k,k+2);ensure(gh+90);pair.forEach((m,j)=>{const x=ML+j*(gw+24);cover(m,x,y,gw,gh);c.strokeStyle="#C8D0D8";c.strokeRect(x,y,gw,gh)});const y0=y+gh;let ym=y0;pair.forEach((m,j)=>{const L=wrap(`ภาพที่ ${fig}${pair.length>1?(j?"ข":"ก"):""} ${(s.cap||[])[k+j]||""}`,gw-10,21,600);L.forEach((l,q)=>tx(l,ML+j*(gw+24)+gw/2,y0+30+q*28,{s:21,w:600,c:"#333",a:"center"}));ym=Math.max(ym,y0+16+L.length*28)});y=ym+26}
   });
   /* flood situation reports (appendix chapter) */
-  try{const FI=window.FR_INFO;if(FI&&FI.R.length&&window.drawFloodRep){const CH=CN;onStep&&onStep("รายงานน้ำท่วม");newPage();head(`${CH}. รายงานสถานการณ์น้ำท่วม จังหวัดประจวบคีรีขันธ์ ปี 2569`,1);
+  try{const FI=window.FR_INFO;if(false&&FI&&FI.R.length&&window.drawFloodRep){const CH=CN;onStep&&onStep("รายงานน้ำท่วม");newPage();head(`${CH}. รายงานสถานการณ์น้ำท่วม จังหวัดประจวบคีรีขันธ์ ปี 2569`,1);
     para(`ในปี 2569 จังหวัดประจวบคีรีขันธ์เกิดเหตุการณ์น้ำท่วมจากฝนตกหนัก รวม ${FI.EV.length} ครั้ง โครงการชลประทานประจวบคีรีขันธ์ได้ติดตามสถานการณ์และจัดทำรายงานสถานการณ์น้ำท่วมรวม ${FI.R.length} ฉบับ สรุปเหตุการณ์และผลกระทบสูงสุดของแต่ละเหตุการณ์ ดังตาราง`);
     const nf=v=>v?Number(v).toLocaleString():"–";
     table([{t:"วันที่เกิดเหตุ",w:.15},{t:"เหตุการณ์ / พื้นที่",w:.37},{t:"ฝนสูงสุด",w:.16},{t:"ครัวเรือน",w:.11},{t:"ประชาชน (คน)",w:.11},{t:"พื้นที่เกษตร (ไร่)",w:.10}],FI.EV.map(e=>{const p=FI.evPeak(e);return [e.d,`${e.t} · ${e.area}`,e.rain,nf(p.hh),nf(p.pop),nf(p.rai)]}));
