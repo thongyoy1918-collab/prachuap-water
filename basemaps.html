@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เลือกแผนที่ฐาน</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;600&display=swap">
+<style>
+:root{--bg:#F2F5F9;--card:#fff;--ink:#11283B;--mut:#5B6B7A;--line:#D5DEEA;--nv:#123B7A;--ac:#2E6FD1;--fd:"Kanit","IBM Plex Sans Thai",sans-serif;--fb:"IBM Plex Sans Thai",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1622;--card:#162232;--ink:#E6EDF5;--mut:#9DB0C3;--line:#2A3A4E;--nv:#9CC3EE;--ac:#6EA8FF;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--fb)}
+header{background:linear-gradient(90deg,#0D2A4A,#16406B);color:#fff;padding:22px max(16px,env(safe-area-inset-left)) 20px}
+header h1{font:600 26px/1.2 var(--fd);margin:0}header p{margin:6px 0 0;color:#C9D8EA;font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px max(16px,env(safe-area-inset-left));max-width:1500px;margin:auto}
+.bar button{all:unset;cursor:pointer;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:13.5px}
+.bar button[aria-pressed="true"]{background:var(--nv);color:var(--card);border-color:var(--nv)}
+.bar button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.bar .hint{color:var(--mut);font-size:13px;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;padding:0 max(16px,env(safe-area-inset-left)) 32px;max-width:1500px;margin:auto}
+.c{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.c .m{height:280px;background:#dde3ea}
+.c .t{padding:12px 14px 14px;display:grid;gap:4px}
+.c h2{margin:0;font:600 17px/1.3 var(--fd);color:var(--nv);display:flex;gap:8px;align-items:center}
+.c h2 span{font:600 11px var(--fb);letter-spacing:.04em;background:var(--bg);color:var(--mut);padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.c p{margin:0;color:var(--mut);font-size:13.5px}.c code{font-size:11.5px;color:var(--mut);word-break:break-all}
+.pin{width:26px;height:26px;border-radius:50%;background:#123B7A;border:2.5px solid #fff;color:#fff;font:600 13px/21px var(--fd);text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pin.b{background:#2E6FD1}
+</style></head><body>
+<header><h1>เลือกแผนที่ฐาน (Basemap)</h1><p>ตัวอย่างพื้นที่จริง · จุดดำเนินการ อ.บางสะพาน จ.ประจวบคีรีขันธ์ · เลื่อน/ซูมแผนที่ใดก็ได้ ทุกแผนที่จะตามกัน</p></header>
+<div class="bar" id="bar"><button data-v="bs" aria-pressed="true">อ.บางสะพาน</button><button data-v="pv" aria-pressed="false">ทั้งจังหวัด</button><button data-v="hh" aria-pressed="false">อ.หัวหิน</button><span class="hint">บอก Claude ชื่อแผนที่ที่เลือก เช่น “ใช้ CARTO Positron”</span></div>
+<div class="grid" id="g"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const OSMA='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const B=[
+ ["OSM Carto","ค่าเริ่มต้น","สีมาตรฐาน OpenStreetMap ถนน ป่า น้ำ ชื่อสถานที่ภาษาไทย (ที่ใช้ในรายงานตอนนี้)","https://tile.openstreetmap.org/{z}/{x}/{y}.png",OSMA,19],
+ ["CARTO Positron","ทางการ","โทนเทาขาว เรียบ หมุดและเส้นเด่น เหมาะกับรายงานทางการ","https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",OSMA+' © CARTO',20],
+ ["CARTO Voyager","สะอาดตา","สีอ่อน คล้าย OSM แต่ลดรายละเอียด อ่านง่าย","https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",OSMA+' © CARTO',20],
+ ["CARTO Dark Matter","พื้นมืด","พื้นดำ เหมาะกับจอนำเสนอ/ห้องควบคุม","https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",OSMA+' © CARTO',20],
+ ["Esri World Imagery","ดาวเทียม","ภาพถ่ายดาวเทียม เห็นสภาพพื้นที่จริง","https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}","Esri, Maxar, Earthstar Geographics",19],
+ ["Esri World Topo","ภูมิประเทศ","ภูมิประเทศ แรเงาความสูง ถนน ชื่อสถานที่","https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}","Esri, HERE, Garmin, USGS",19],
+ ["OpenTopoMap","เส้นชั้นความสูง","เส้นชั้นความสูงและแรเงาภูเขา สไตล์แผนที่ภูมิประเทศ","https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",OSMA+', SRTM | © OpenTopoMap (CC-BY-SA)',17],
+ ["Esri Light Gray","เทาอ่อน","พื้นเทาอ่อนมาก แทบไม่มีสี ใช้เน้นข้อมูลที่วางทับ","https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}","Esri, HERE, Garmin",16]
+];
+const P=[[11.186812,99.511865,1,"b"],[12.563383,99.900385,2,""],[11.186812,99.511865,3,"b"],[11.2075,99.506,4,"b"],[11.203255,99.508988,5,""],[11.203255,99.508988,6,"b"],[11.226708,99.499064,7,""],[11.201625,99.508084,8,""],[11.226111,99.499675,9,""]];
+const V={bs:[[11.207,99.505],13],pv:[[11.85,99.7],8],hh:[[12.56,99.9],13]};
+const g=document.getElementById("g"),maps=[];let sync=false;
+B.forEach(([n,tag,d,u,a,mz],i)=>{const c=document.createElement("article");c.className="c";c.innerHTML=`<div class="m" id="m${i}" role="img" aria-label="ตัวอย่างแผนที่ ${n}"></div><div class="t"><h2>${n}<span>${tag}</span></h2><p>${d}</p><code>${u}</code></div>`;g.appendChild(c);
+ const m=L.map("m"+i,{zoomControl:i===0,attributionControl:true}).setView(...V.bs);L.tileLayer(u,{maxZoom:mz,attribution:a,subdomains:"abc"}).addTo(m);
+ P.forEach(([la,lo,k,t])=>L.marker([la,lo],{icon:L.divIcon({className:"",html:`<div class="pin ${t}">${k}</div>`,iconSize:[26,26],iconAnchor:[13,13]})}).addTo(m));
+ m.on("moveend",()=>{if(sync)return;sync=true;maps.forEach(o=>{if(o!==m)o.setView(m.getCenter(),m.getZoom(),{animate:false})});sync=false});maps.push(m)});
+document.getElementById("bar").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;document.querySelectorAll("#bar button").forEach(x=>x.setAttribute("aria-pressed",x===b));sync=true;maps.forEach(m=>m.setView(...V[b.dataset.v],{animate:false}));sync=false});
+</script></body></html>
