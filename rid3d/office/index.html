@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="th"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>อาคารที่ทำการ · RID Prachuap 3D</title>
-<meta property="og:title" content="อาคารที่ทำการ โครงการชลประทานประจวบคีรีขันธ์ — 3D">
-<meta property="og:description" content="แบบจำลอง 3 มิติจากไฟล์ SketchUp หมุน ซูม เปิด-ปิดโครงสร้าง แยกชั้น และเปลี่ยนเวลาได้">
+<meta name="theme-color" content="#203e35">
+<meta name="description" content="ทัวร์อาคารที่ทำการ โครงการชลประทานประจวบคีรีขันธ์ แบบ 3 มิติ จากไฟล์ SketchUp — 6 จุดแวะ ผังย่อ เปิด-ปิดโครงสร้าง แยกชั้น และตัดระดับดูภายใน">
+<meta property="og:title" content="อาคารที่ทำการ โครงการชลประทานประจวบคีรีขันธ์ · 3D">
+<meta property="og:description" content="ทัวร์ 6 จุดแวะ จากไฟล์ SketchUp ขนาดจริง — หมุน ซูม เปิด-ปิดโครงสร้าง แยกชั้น และตัดระดับดูภายใน">
 <meta property="og:image" content="https://thongyoy1918-collab.github.io/prachuap-water/rid3d/thumb-office.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="../../icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>อาคารที่ทำการ โครงการชลประทานประจวบคีรีขันธ์ — 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#efeae0;--ink:#2b2a26;--mute:#7a756a;--acc:#1f4fa8;--line:#ddd6c7;--card:#f8f5eeee}
+  :root{--bg:#e4e6dc;--ink:#203e35;--mute:#6c796c;--acc:#203e35;--line:#d3d9c8;--card:#f7f8efee;--sub:#e8f0e0;--rust:#b4552f}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink);overflow:hidden}
   #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
@@ -56,6 +57,65 @@
   .seg button{border:0;background:#fff;width:24px;height:22px;font-size:11px;cursor:pointer;color:#8b8578;padding:0}
   .seg button+button{border-left:1px solid var(--line)}
   .seg button.on{background:var(--acc);color:#fff}
+  /* ===== Story Tour ===== */
+  .title,.hint,#card{display:none!important}
+  button.b{border-radius:5px} .seg{border-radius:5px} .cat{border-radius:6px} .panel{border-radius:8px}
+  .panel{top:64px;display:none} body.tune .panel{display:block}
+  .tb{position:fixed;top:12px;right:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;z-index:6;max-width:calc(100vw - 430px)}
+  .tb button{border:1px solid #0000000f;background:#f7f8efeb;color:var(--ink);border-radius:5px;padding:6px 10px;font:inherit;font-size:12px;cursor:pointer;box-shadow:0 2px 8px #0000000d;backdrop-filter:blur(6px)}
+  .tb button.on{background:var(--ink);color:#f7f8ef}
+  .tb button:hover{border-color:#203e3555}
+  body.clean .tb button:not(#tbClean),body.clean #story,body.clean #lblLayer,body.clean .panel,body.clean #pop{display:none!important}
+  #story{position:fixed;left:14px;top:14px;bottom:14px;width:390px;background:var(--card);backdrop-filter:blur(10px);border-radius:8px;box-shadow:0 10px 40px #0000001a;display:flex;flex-direction:column;z-index:5;border:1px solid #fff9}
+  #story .sh{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--mute)}
+  #story .sh a{color:var(--mute);text-decoration:none;margin-left:auto} #story .sh a:hover{color:var(--ink)}
+  #stX{border:1px solid var(--line);background:#fff;border-radius:5px;width:26px;height:26px;cursor:pointer;color:var(--ink);font-size:13px}
+  #story .sb{overflow:auto;padding:16px 18px 10px;flex:1}
+  .kick{font-size:12px;color:var(--rust);letter-spacing:.02em}
+  #story h1{font-family:'Noto Serif Thai',serif;font-size:24px;line-height:1.3;margin:4px 0 12px;font-weight:700}
+  .map{border:1px solid var(--line);border-radius:6px;background:#fff;overflow:hidden;margin-bottom:12px}
+  .map svg{display:block;width:100%;height:auto;background:#f1f3ea}
+  .map .cap{font-size:11px;color:var(--mute);padding:6px 10px;border-top:1px solid var(--line)}
+  .map g.mk{cursor:pointer} .map g.mk circle{fill:#fff;stroke:var(--ink);stroke-width:.12} .map g.mk text{font:600 .62px 'IBM Plex Mono',monospace;fill:var(--ink)}
+  .map g.mk.on circle{fill:var(--ink)} .map g.mk.on text{fill:#fff}
+  #story p{font-size:14px;line-height:1.75;margin:0 0 10px;color:#2e3f39}
+  .src{font-size:11.5px;color:var(--mute);border-top:1px dashed var(--line);padding-top:8px;margin-top:6px}
+  .src a{color:var(--mute)}
+  .stops{margin-top:14px;border-top:1px solid var(--line)}
+  .stops .st{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);cursor:pointer;font-size:13px}
+  .stops .st:hover b{text-decoration:underline}
+  .code{font:600 11px 'IBM Plex Mono',monospace;background:var(--ink);color:#f7f8ef;border-radius:4px;padding:1px 6px;flex:none}
+  .code.s{background:var(--sub);color:var(--ink)}
+  .stops .st.on{background:#e8f0e0aa}
+  .stops small{display:block;color:var(--mute);font-size:11.5px}
+  #story .sf{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+  #story .sf button{border:1px solid var(--line);border-radius:5px;padding:9px;font:inherit;font-size:13px;cursor:pointer;background:#f7f8ef;color:var(--ink)}
+  #story .sf button.pri{background:var(--ink);color:#f7f8ef;border-color:var(--ink)}
+  #story .sf button:disabled{opacity:.4;cursor:default}
+  body.stmin #story .sb, body.stmin #story .sf{display:none} body.stmin #story{bottom:auto}
+  .lbl{position:fixed;transform:translate(-50%,calc(-100% - 7px));display:flex;align-items:center;gap:5px;background:#f7f8eff0;border:1px solid #203e3522;border-radius:4px;padding:3px 7px 3px 4px;font-size:12px;color:var(--ink);cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px #0000001a;transition:opacity .2s;user-select:none}
+  .lbl:after{content:"";position:absolute;left:50%;bottom:-7px;width:1px;height:7px;background:var(--ink)}
+  .lbl:before{content:"";position:absolute;left:calc(50% - 3px);bottom:-10px;width:6px;height:6px;border-radius:50%;background:var(--ink)}
+  .lbl.sub{background:#e8f0e0eb;font-size:10.5px}
+  .lbl.on{background:var(--ink);color:#f7f8ef} .lbl.on .code{background:#f7f8ef;color:var(--ink)}
+  body.nolbl #lblLayer{display:none}
+  #pop{position:fixed;z-index:7;width:250px;background:#f7f8ef;border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 30px #00000026;padding:10px 12px;display:none;font-size:13px}
+  #pop b{font-family:'Noto Serif Thai',serif;font-size:15px;display:block;margin-bottom:2px} #pop p{margin:0 0 8px;color:#3b4b45;line-height:1.6}
+  #pop .pb{display:flex;gap:6px} #pop button{flex:1;border:0;border-radius:5px;padding:6px;font:inherit;font-size:11.5px;cursor:pointer}
+  #pop .g1{background:var(--ink);color:#f7f8ef} #pop .g2{background:#dfe5d4;color:var(--ink)}
+  #pop .px{position:absolute;right:6px;top:4px;border:0;background:none;cursor:pointer;color:var(--mute);font-size:15px;flex:none;width:auto;padding:0}
+  #about{position:fixed;inset:0;background:#203e3555;display:none;place-items:center;z-index:9}
+  #about.show{display:grid} #about .in{background:#f7f8ef;border-radius:8px;max-width:460px;margin:16px;padding:18px 20px;font-size:13.5px;line-height:1.7;box-shadow:0 20px 60px #0004}
+  #about h3{font-family:'Noto Serif Thai',serif;margin:0 0 8px} #about button{margin-top:10px;border:0;background:var(--ink);color:#fff;border-radius:5px;padding:7px 14px;font:inherit;cursor:pointer}
+  @media (max-width:820px){
+    .tb{top:8px;right:8px;left:8px;max-width:none;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+    .tb button{flex:none;font-size:11.5px;padding:6px 9px}
+    #story{left:0;right:0;bottom:0;top:auto;width:auto;height:46vh;border-radius:12px 12px 0 0}
+    body.stmin #story{height:auto}
+    #story h1{font-size:21px}
+    .panel{top:52px!important;bottom:auto!important;max-height:58vh!important;z-index:6}
+    #pop{left:8px!important;right:8px;width:auto;top:56px!important}
+  }
   .foot{font-size:11px;color:var(--mute);margin-top:12px;line-height:1.5}
   .hs{position:fixed;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#fff;border:2px solid var(--acc);color:var(--acc);display:grid;place-items:center;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px #0003;transition:transform .15s;user-select:none}
   .hs:hover,.hs.on{transform:scale(1.18);background:var(--acc);color:#fff}
@@ -76,15 +136,12 @@
     .panel.fold{max-height:52px;overflow:hidden} #fold{display:block}
     #card{left:8px;bottom:auto;top:100px} .hint{display:none}
   }
-  .backlink{position:fixed;left:28px;bottom:22px;font-size:12.5px;color:#4a473f;background:#fffc;padding:6px 12px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px #0001}
-  @media (max-width:820px){.backlink{left:auto;right:10px;bottom:auto;top:10px;font-size:11.5px}}
 </style>
 <script type="importmap">{"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
   "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head><body>
 <canvas id="c"></canvas>
-<a href="../" class="backlink">← RID Prachuap 3D</a>
 <div id="load">กำลังประกอบโมเดลจากไฟล์ SketchUp…</div>
 <div class="title">
   <div class="k">แบบจำลองจากไฟล์ SketchUp · กรมชลประทาน</div>
@@ -115,7 +172,24 @@
   <label class="tg">หมุนอัตโนมัติ<span class="sw"><input type="checkbox" id="tRot"><span></span></span></label>
   <div class="foot">รูปทรงทั้งหมดดึงจากไฟล์ SketchUp ของผู้ใช้ (ไม่รวมเส้นกริดและเส้นบอกขนาด) · พื้นผิวที่ไม่ได้ลงสีในไฟล์ใช้สีตามชั้นข้อมูล · หลังคากระเบื้องสีแดง ผนังอิฐโทนส้มอ่อน และป้ายหน่วยงาน ปรับตามภาพถ่ายอาคารจริง</div>
 </aside>
-<div id="hsLayer"></div>
+<div class="tb" id="tb">
+  <button id="tbWide">มุมกว้าง</button><button id="tbRot">หมุนโมเดล</button><button id="tbLbl" class="on">ป้ายสถานที่</button>
+  <button id="tbXray">มองทะลุ: ปกติ</button><button id="tbLight">แสง: กลางวัน</button><button id="tbTune">⚙ โครงสร้าง</button>
+  <button id="tbInfo" aria-label="ที่มาและข้อจำกัด">ⓘ</button><button id="tbShot" aria-label="บันทึกภาพ 4K">📷 4K</button><button id="tbClean" aria-label="ซ่อน/แสดงหน้าจอควบคุม">👁</button>
+</div>
+<aside id="story">
+  <div class="sh"><button id="stX" aria-label="ซ่อน/แสดงแถบเรื่องเล่า">✕</button><span>อาคารที่ทำการ · คป.ประจวบคีรีขันธ์</span><a href="../">← RID Prachuap 3D</a></div>
+  <div class="sb" id="stBody"></div>
+  <div class="sf"><button id="stPrev">← ย้อนกลับ</button><button id="stNext" class="pri">จุดแวะถัดไป →</button></div>
+</aside>
+<div id="lblLayer"></div>
+<div id="pop"><button class="px" id="popX">×</button><b id="popT"></b><p id="popP"></p><div class="pb"><button class="g1" id="popGo">ดูมุมที่เกี่ยวข้อง ↗</button><button class="g2" id="popNext">จุดถัดไป →</button></div></div>
+<div id="about"><div class="in"><h3>ที่มาและข้อจำกัดของแบบจำลอง</h3>
+  <div>• รูปทรงอาคาร ขนาด ระดับพื้น และชั้นข้อมูล (Tag) ดึงจากไฟล์ SketchUp ของอาคารที่ทำการ โครงการชลประทานประจวบคีรีขันธ์ รวม 6,050 พื้นผิว (ไม่รวมเส้นกริดและเส้นบอกขนาด)</div>
+  <div>• สีหลังคา ผนังอิฐ ขอบเสา ป้ายหน่วยงาน และผ้าม่าน ปรับตามภาพถ่ายอาคารจริง</div>
+  <div>• ต้นไม้ ไม้พุ่ม สนามหญ้า ลาน และถนน เป็นการจัดฉากประกอบ ไม่ใช่ผังบริเวณจริง</div>
+  <div>• ตัวเลขพื้นที่ในแผงโครงสร้างเป็นพื้นที่ผิวของโมเดล ไม่ใช่ปริมาณงานก่อสร้าง</div>
+  <button id="aboutX">ปิด</button></div></div>
 <div id="card"><button class="x" id="cardX">×</button><h4><span class="n" id="cardN"></span><span id="cardT"></span></h4><p id="cardP"></p></div>
 <div class="hint">ลากเพื่อหมุน · เลื่อนล้อเพื่อซูม · คลิกขวาลากเพื่อเลื่อน</div>
 
@@ -501,14 +575,20 @@ const PRESETS = {
 const pb = document.getElementById('presets');
 Object.entries(PRESETS).forEach(([name, fn], i) => {
   const b = document.createElement('button'); b.className = 'b' + (i ? '' : ' on'); b.textContent = name;
-  b.onclick = () => { solo = null; pb.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on');
-    Object.keys(PART_OBJS).forEach(p => { MODE[p] = fn(p); applyPart(p); }); refreshCats(); };
+  b.onclick = () => applyPreset(name);
   pb.appendChild(b);
 });
+function applyPreset(name) {
+  solo = null; const fn = PRESETS[name];
+  pb.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === name));
+  Object.keys(PART_OBJS).forEach(p => { MODE[p] = fn(p); applyPart(p); }); refreshCats();
+  const x = document.getElementById('tbXray'); if (x) { x.classList.toggle('on', name === 'X-ray'); x.textContent = name === 'X-ray' ? 'มองทะลุ: โปร่ง' : 'มองทะลุ: ปกติ'; }
+}
 // exploded view: lift floor 2 and the roof apart
 let explode = 0;
 const exEl = document.getElementById('explode');
-exEl.oninput = () => { explode = +exEl.value; document.getElementById('exl').textContent = explode ? `${Math.round(explode * 100)}%` : 'ปิด'; };
+function setExplode(v) { explode = v; exEl.value = v; document.getElementById('exl').textContent = explode ? `${Math.round(explode * 100)}%` : 'ปิด'; }
+exEl.oninput = () => setExplode(+exEl.value);
 document.getElementById('exl').textContent = 'ปิด';
 function updateExplode(dt) {
   for (let L = 0; L < 3; L++) { const target = L * 3.4 * explode;
@@ -516,36 +596,143 @@ function updateExplode(dt) {
 }
 Object.keys(PART_OBJS).forEach(applyPart); refreshCats();
 
-// ---------- hotspots (positions in metres, three coords) ----------
-const HS = [
-  { p: [2.6, 2.0, 9.4], t: 'มุขทางเข้าหลัก', d: 'มุขยื่นด้านหน้ากว้าง 4.0 ม. ลึกประมาณ 3.9 ม. มีขั้นบันไดขึ้นสู่พื้นชั้น 1 ซึ่งสูงจากดินประมาณ 0.90 ม. ป้ายชื่อหน่วยงานติดที่ชายคาด้านหน้า', v: { pos: [5, 4, 18], tgt: [0, 2.5, 5] } },
-  { p: [-7, 5.3, 3.7], t: 'ชั้น 1 และชั้น 2', d: 'ตัวอาคารหลักกว้าง 20.0 ม. ลึก 6.2 ม. พื้นชั้น 2 อยู่ที่ระดับประมาณ +3.86 ม. หน้าต่างบานยาวเรียงตามช่วงเสา 4.0 ม.', v: { pos: [-14, 6, 20], tgt: [-6, 3.5, 2] } },
-  { p: [0, 9.6, 0], t: 'หลังคา', d: 'หลังคากระเบื้องสีแดง ชายคายื่นรอบอาคารประมาณ 1.6 ม. สูงถึงสันหลังคาประมาณ 10.1 ม. ปิด/เปิดชั้น "หลังคา" เพื่อดูโครงหลังคาด้านใน', v: { pos: [22, 18, 22], tgt: [0, 8, 0] } },
-  { p: [0, 3.5, -5.8], t: 'โถงบันไดด้านหลัง', d: 'มุขด้านหลังกว้าง 4.2 ม. ลึก 4.0 ม. เป็นที่ตั้งบันไดขึ้นชั้น 2 ใช้แถบ "ตัดระดับ" เพื่อดูบันไดภายใน', v: { pos: [-12, 9, -22], tgt: [0, 3, -5] } },
+// ---------- STORY TOUR: stops, labels, mini-map ----------
+// all coordinates in metres (three.js): x right, y up, z toward the front of the building
+const STOPS = [
+  { code: 'A', title: 'มุขทางเข้าหลัก', kicker: 'จุดแวะ 01 · ด้านหน้าอาคาร', p: [0, 5.6, 7.6], mapXY: [0, 5.2],
+    cam: { pos: [7, 4.5, 25], tgt: [0, 3, 4] }, state: { preset: 'ทั้งหมด', cut: 10.6, ex: 0 },
+    body: ['อาคารที่ทำการเป็นอาคาร 2 ชั้น กว้าง 20.0 ม. ลึก 14.0 ม. ด้านหน้ามีมุขยื่นออกมากว้าง 4.0 ม. ลึกประมาณ 3.9 ม. เป็นทางเข้าหลักของอาคาร',
+      'ใต้มุขมีขั้นบันไดขึ้นสู่พื้นชั้น 1 ซึ่งยกสูงจากระดับดินประมาณ 0.90 ม. ประตูทางเข้าเป็นบานกระจกกรอบสีเข้ม',
+      'ที่ชายคามุขติดป้ายสีน้ำเงิน "โครงการชลประทานประจวบคีรีขันธ์" และบรรทัดล่าง "สำนักงานชลประทานที่ 14 กรมชลประทาน" สองข้างทางเดินเป็นแปลงสนามหญ้าและไม้พุ่มดัดทรง'],
+    subs: [{ code: 'A1', name: 'ป้ายหน่วยงาน', p: [2.9, 4.6, 8.7], d: 'ป้ายพื้นน้ำเงินตัวอักษรขาว ติดที่ชายคาด้านหน้ามุขทางเข้า', cam: { pos: [3, 4.2, 15], tgt: [0, 3.8, 8] } },
+           { code: 'A2', name: 'ขั้นบันไดทางเข้า', p: [-1.4, 1.2, 3.6], d: 'ขั้นบันไดจากลานใต้มุขขึ้นสู่พื้นชั้น 1 ที่ระดับประมาณ +0.90 ม.', cam: { pos: [4, 2.4, 12], tgt: [0, 0.8, 3.5] } }] },
+  { code: 'B', title: 'ชั้น 1 และช่วงเสา', kicker: 'จุดแวะ 02 · ตัดระดับที่ชั้น 1', p: [-6, 2.4, 3.5], mapXY: [-6, 0],
+    cam: { pos: [15, 19, 21], tgt: [0, 1.2, 0] }, state: { preset: 'ทั้งหมด', cut: 2.9, ex: 0 },
+    body: ['ตัวอาคารหลักกว้าง 20.0 ม. ลึก 6.2 ม. วางตามเส้นกริดระยะ 4.0 ม. ในไฟล์แบบ ฉากนี้ตัดระดับไว้ที่ความสูง 2.9 ม. เพื่อมองเห็นผังภายในชั้น 1',
+      'ผนังภายนอกเป็นผนังสีขาวสลับกับแผงอิฐโชว์แนวโทนส้มอ่อน หน้าต่างบานยาวเรียงตามช่วงเสา และมีผ้าม่านสีขาวด้านใน',
+      'ใช้ปุ่ม ⚙ โครงสร้าง เพื่อเปิด-ปิดผนัง กรอบ กระจก และผ้าม่านทีละส่วน หรือคลิกชื่อชิ้นส่วนเพื่อแยกดู'],
+    subs: [{ code: 'B1', name: 'แผงอิฐโชว์แนว', p: [-9.5, 2.4, 3.3], d: 'แผงผนังอิฐระหว่างช่วงหน้าต่าง สีส้มอ่อนตามภาพถ่ายอาคารจริง', cam: { pos: [-6, 3, 14], tgt: [-9, 2.2, 3] } },
+           { code: 'B2', name: 'ช่วงเสา 4.0 ม.', p: [-2, 2.4, 3.3], d: 'เสาเรียงตามกริด 4.0 ม. ตลอดความยาวอาคาร 20.0 ม.', cam: { pos: [-2, 14, 14], tgt: [-2, 1, 0] } }] },
+  { code: 'C', title: 'มุขบันไดด้านหลัง', kicker: 'จุดแวะ 03 · ทางขึ้นชั้น 2', p: [0, 5.8, -6.4], mapXY: [0, -5.1],
+    cam: { pos: [-13, 9, -21], tgt: [0, 3, -5] }, state: { preset: 'X-ray', cut: 10.6, ex: 0 },
+    body: ['ด้านหลังอาคารมีมุขยื่นกว้าง 4.2 ม. ลึก 4.0 ม. เป็นที่ตั้งบันไดเชื่อมชั้น 1 กับชั้น 2',
+      'ฉากนี้เปิดโหมดมองทะลุ (X-ray) ให้ผนังและหลังคาโปร่ง เหลือเสา คาน พื้น และบันไดเป็นสีทึบ จึงเห็นแนวบันไดภายในมุข'],
+    subs: [{ code: 'C1', name: 'บันได', p: [0, 2.6, -5], d: 'บันไดภายในมุขด้านหลัง ขึ้นจากพื้นชั้น 1 (+0.90 ม.) ถึงพื้นชั้น 2 (+3.86 ม.)', cam: { pos: [-7, 5, -14], tgt: [0, 2.4, -5] } }] },
+  { code: 'D', title: 'ชั้น 2 และกันสาดรอบอาคาร', kicker: 'จุดแวะ 04 · ตัดระดับที่ชั้น 2', p: [7, 6.2, 3.4], mapXY: [6, 0],
+    cam: { pos: [17, 22, 22], tgt: [0, 4.2, 0] }, state: { preset: 'ทั้งหมด', cut: 6.5, ex: 0 },
+    body: ['พื้นชั้น 2 อยู่ที่ระดับประมาณ +3.86 ม. ผังชั้น 2 ใช้แนวเสาและช่วงหน้าต่างเดียวกับชั้น 1',
+      'ระหว่างชั้น 1 กับชั้น 2 มีหลังคากันสาดยื่นรอบอาคาร ช่วยกันแดดและฝนให้หน้าต่างชั้นล่าง และรับกับหลังคามุขทางเข้าด้านหน้า'],
+    subs: [{ code: 'D1', name: 'พื้นชั้น 2 (+3.86 ม.)', p: [-4, 4.3, 0], d: 'ระดับพื้นชั้น 2 จากไฟล์แบบ ประมาณ +3.86 ม. จากระดับดิน', cam: { pos: [-10, 12, 14], tgt: [-4, 3.9, 0] } },
+           { code: 'D2', name: 'หลังคากันสาด', p: [-11.5, 3.8, 4.6], d: 'หลังคากันสาดกระเบื้องยื่นรอบอาคาร อยู่ระหว่างชั้น 1 และชั้น 2', cam: { pos: [-20, 6, 16], tgt: [-10, 3.4, 3] } }] },
+  { code: 'E', title: 'หลังคาและโครงหลังคา', kicker: 'จุดแวะ 05 · ส่วนบนสุดของอาคาร', p: [0, 11, 0], mapXY: [0, -1.6],
+    cam: { pos: [22, 18, 22], tgt: [0, 8, 0] }, state: { preset: 'ทั้งหมด', cut: 10.6, ex: 0 },
+    body: ['หลังคาหลักปูกระเบื้องสีแดง ชายคายื่นรอบอาคารประมาณ 1.6 ม. ความสูงถึงสันหลังคาประมาณ 10.1 ม. มีจั่วระบายอากาศพร้อมยอดประดับ',
+      'กดป้าย E1 เพื่อเปิดหลังคาออก แล้วดูโครงหลังคาที่ซ่อนอยู่ด้านใน'],
+    subs: [{ code: 'E1', name: 'โครงหลังคา (เปิดหลังคา)', p: [6, 9.4, -1], d: 'ซ่อนกระเบื้องและฝ้าเพื่อดูโครงหลังคาภายใน', cam: { pos: [16, 16, 16], tgt: [0, 7.5, 0] }, preset: 'เปิดหลังคา' }] },
+  { code: 'F', title: 'โครงสร้างทั้งอาคาร', kicker: 'จุดแวะ 06 · แยกชั้นดู', p: [12.5, 8.5, -2], mapXY: [9, -2.6],
+    cam: { pos: [30, 20, 32], tgt: [0, 6, 0] }, state: { preset: 'X-ray', cut: 10.6, ex: 1 },
+    body: ['ภาพนี้แยกอาคารออกเป็น 3 ระดับ คือ ชั้น 1 ชั้น 2 และหลังคา และทำให้ผนังกับหลังคาโปร่ง เหลือเสา คาน พื้น และบันไดเป็นสีทึบ',
+      'แผงโครงสร้างแบ่งอาคารเป็น 4 หมวด 20 ส่วน ตามชั้นข้อมูล (Tag) ในไฟล์ SketchUp เปิดได้จากปุ่ม ⚙ โครงสร้าง แต่ละส่วนตั้งค่าได้ 3 แบบ คือ แสดง โปร่ง และซ่อน'],
+    subs: [] },
 ];
-const layer = document.getElementById('hsLayer'), card = document.getElementById('card');
-HS.forEach((h, i) => { h.el = document.createElement('div'); h.el.className = 'hs'; h.el.textContent = i + 1; h.v3 = new THREE.Vector3(...h.p); h.el.onclick = () => openCard(i); layer.appendChild(h.el); });
-function openCard(i) {
-  const h = HS[i]; HS.forEach(x => x.el.classList.remove('on')); h.el.classList.add('on');
-  document.getElementById('cardN').textContent = i + 1; document.getElementById('cardT').textContent = h.t; document.getElementById('cardP').textContent = h.d;
-  card.classList.add('show'); flyTo(h.v); vb.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+const SOURCES = 'อ่านจาก ไฟล์ SketchUp อาคารที่ทำการ (ขนาดจริง 1:1) · ภาพถ่ายอาคารจริง · ฉากนี้แสดงเฉพาะอาคารที่ทำการ ต้นไม้และลานเป็นการจัดฉาก';
+let cur = 0;
+const allLbl = [];
+const lblLayer = document.getElementById('lblLayer');
+function mkLabel(o, main, si) {
+  const el = document.createElement('div'); el.className = 'lbl' + (main ? '' : ' sub');
+  el.innerHTML = `<span class="code ${main ? '' : 's'}">${o.code}</span>${main ? o.title : o.name}`;
+  el.onclick = ev => { ev.stopPropagation(); if (main) goStop(si); else openPop(o, si, el); };
+  lblLayer.appendChild(el); allLbl.push({ o, el, v3: new THREE.Vector3(...o.p), si, main });
 }
-document.getElementById('cardX').onclick = () => { card.classList.remove('show'); HS.forEach(x => x.el.classList.remove('on')); };
+STOPS.forEach((s, i) => { mkLabel(s, true, i); s.subs.forEach(u => mkLabel(u, false, i)); });
+// mini-map: building footprint from the SketchUp model (main body 20 x 6.2, front porch 4 x 3.9, rear stair 4.2 x 4)
+function mapSVG() {
+  const mk = STOPS.map((s, i) => `<g class="mk ${i === cur ? 'on' : ''}" data-i="${i}" transform="translate(${s.mapXY[0]},${s.mapXY[1]})"><circle r=".72"/><text text-anchor="middle" dy=".23">${s.code}</text></g>`).join('');
+  return `<svg viewBox="-13 -9.6 26 18.6"><rect x="-11.6" y="-4.7" width="23.2" height="9.4" fill="none" stroke="#b4552f" stroke-width=".07" stroke-dasharray=".3 .2"/>
+    <rect x="-10" y="-3.1" width="20" height="6.2" fill="#dfe5d4" stroke="#203e35" stroke-width=".1"/>
+    <rect x="-2" y="3.1" width="4" height="3.9" fill="#dfe5d4" stroke="#203e35" stroke-width=".1"/>
+    <rect x="-2.1" y="-7.1" width="4.2" height="4" fill="#dfe5d4" stroke="#203e35" stroke-width=".1"/>
+    ${[-10, -6, -2, 2, 6, 10].map(x => `<line x1="${x}" y1="-3.1" x2="${x}" y2="3.1" stroke="#203e3533" stroke-width=".05"/>`).join('')}
+    <path d="M0 8.1 l-.5 .8 h1 z" fill="#203e35"/><text x="0" y="9.4" text-anchor="middle" style="font:.7px 'IBM Plex Sans Thai';fill:#203e35">ทางเข้า</text>${mk}</svg>`;
+}
+function renderStory() {
+  const s = STOPS[cur];
+  const subs = s.subs.length ? `<p style="font-size:13px;color:#4b5b55">จุดย่อย: ${s.subs.map(u => `<span class="code s">${u.code}</span> ${u.name}`).join(' · ')}</p>` : '';
+  document.getElementById('stBody').innerHTML = `<div class="kick">${s.kicker}</div><h1>${s.title}</h1>
+    <div class="map">${mapSVG()}<div class="cap">ผังพื้นอาคาร · ด้านหน้า (ทางเข้า) อยู่ด้านล่าง · เส้นประคือแนวชายคา · ช่วงเสา 4.0 ม. · แตะตัวอักษรเพื่อไปยังจุดนั้น</div></div>
+    ${s.body.map(p => `<p>${p}</p>`).join('')}${subs}<div class="src">${SOURCES} · <a href="#" id="srcMore">อ่านที่มาและข้อจำกัด</a></div>
+    <div class="stops">${STOPS.map((x, i) => `<div class="st ${i === cur ? 'on' : ''}" data-i="${i}"><span class="code">${x.code}</span><div><b>${x.title}</b><small>${x.subs.map(u => u.code + ' ' + u.name).join(' · ') || x.kicker}</small></div></div>`).join('')}</div>`;
+  document.querySelectorAll('#stBody .mk, #stBody .st').forEach(el => el.onclick = () => goStop(+el.dataset.i));
+  document.getElementById('srcMore').onclick = e => { e.preventDefault(); document.getElementById('about').classList.add('show'); };
+  document.getElementById('stPrev').disabled = cur === 0;
+  document.getElementById('stNext').textContent = cur === STOPS.length - 1 ? 'เริ่มใหม่ ↺' : 'จุดแวะถัดไป →';
+  document.getElementById('stBody').scrollTop = 0;
+  allLbl.forEach(l => l.el.classList.toggle('on', l.main && l.si === cur));
+}
+function applyState(st) { if (!st) return; if (st.preset) applyPreset(st.preset); if (st.cut != null) setCut(st.cut); if (st.ex != null) setExplode(st.ex); }
+function goStop(i) {
+  cur = (i + STOPS.length) % STOPS.length; closePop();
+  const s = STOPS[cur]; applyState(s.state); flyTo(s.cam); renderStory();
+  vb.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+}
+document.getElementById('stPrev').onclick = () => cur > 0 && goStop(cur - 1);
+document.getElementById('stNext').onclick = () => goStop(cur + 1);
+document.getElementById('stX').onclick = () => { document.body.classList.toggle('stmin'); document.getElementById('stX').textContent = document.body.classList.contains('stmin') ? '☰' : '✕'; resize(); };
+// sub-stop popover
+const pop = document.getElementById('pop'); let popSub = null;
+function openPop(u, si, el) {
+  popSub = { u, si }; document.getElementById('popT').textContent = `${u.code} · ${u.name}`; document.getElementById('popP').textContent = u.d;
+  const r = el.getBoundingClientRect(); pop.style.display = 'block';
+  pop.style.left = Math.min(innerWidth - 262, Math.max(8, r.left + r.width / 2 - 125)) + 'px'; pop.style.top = Math.max(56, r.top - pop.offsetHeight - 10) + 'px';
+}
+function closePop() { pop.style.display = 'none'; popSub = null; }
+document.getElementById('popX').onclick = closePop;
+document.getElementById('popGo').onclick = () => { if (!popSub) return; const { u, si } = popSub; if (cur !== si) { cur = si; renderStory(); }
+  applyState(STOPS[si].state); if (u.preset) applyPreset(u.preset); flyTo(u.cam); closePop(); };
+document.getElementById('popNext').onclick = () => { if (!popSub) return; const si = popSub.si, list = STOPS[si].subs, k = list.indexOf(popSub.u);
+  if (k < list.length - 1) { const n = list[k + 1]; const l = allLbl.find(x => x.o === n); openPop(n, si, l.el); } else goStop(si + 1); };
+// labels: project every frame, dim when hidden behind the building
 const tmp = new THREE.Vector3(), ray = new THREE.Raycaster(); let occFrame = 0;
 const occluders = []; building.children.forEach(o => { if (o.isMesh && !o.material.transparent) occluders.push(o); });
 function updateOcclusion() {
-  HS.forEach(h => {
-    const dir = h.v3.clone().sub(camera.position), dist = dir.length(); ray.set(camera.position, dir.normalize()); ray.far = dist - 0.4;
-    const hidden = ray.intersectObjects(occluders.filter(o => o.visible && !o.material.transparent), false).some(i => clip.distanceToPoint(i.point) >= 0);
-    h.el.style.opacity = hidden ? 0.18 : 1; h.el.style.pointerEvents = hidden ? 'none' : 'auto';
+  const occ = occluders.filter(o => o.visible && !o.material.transparent);
+  allLbl.forEach(l => {
+    const dir = l.v3.clone().sub(camera.position), dist = dir.length(); ray.set(camera.position, dir.normalize()); ray.far = dist - 0.4;
+    const hidden = ray.intersectObjects(occ, false).some(i => clip.distanceToPoint(i.point) >= 0);
+    l.el.style.opacity = hidden ? (l.main ? 0.35 : 0.15) : 1; l.el.style.pointerEvents = hidden && !l.main ? 'none' : 'auto';
   });
 }
 function placeHotspots() {
   if (occFrame++ % 12 === 0) updateOcclusion();
   const w = canvas.clientWidth, hh = canvas.clientHeight;
-  HS.forEach(h => { tmp.copy(h.v3).project(camera); const off = tmp.z > 1 || Math.abs(tmp.x) > 1.05 || Math.abs(tmp.y) > 1.05;
-    h.el.style.display = off ? 'none' : 'grid'; h.el.style.left = (tmp.x * .5 + .5) * w + 'px'; h.el.style.top = (-tmp.y * .5 + .5) * hh + 'px'; });
+  allLbl.forEach(l => {
+    tmp.copy(l.v3); if (l.si !== undefined && l.v3.y > 3.7) tmp.y += (l.v3.y > 7 ? 2 : 1) * 3.4 * explode;
+    tmp.project(camera); const off = tmp.z > 1 || Math.abs(tmp.x) > 1.02 || Math.abs(tmp.y) > 1.02 || (!l.main && l.si !== cur && explode > 0);
+    l.el.style.display = off ? 'none' : 'flex'; l.el.style.left = (tmp.x * .5 + .5) * w + 'px'; l.el.style.top = (-tmp.y * .5 + .5) * hh + 'px';
+  });
 }
+// toolbar
+const tb = id => document.getElementById(id);
+tb('tbWide').onclick = () => { applyState({ preset: 'ทั้งหมด', cut: 10.6, ex: 0 }); flyTo(VIEWS['ภาพรวม']); };
+tb('tbRot').onclick = () => { controls.autoRotate = !controls.autoRotate; tb('tbRot').classList.toggle('on', controls.autoRotate); };
+tb('tbLbl').onclick = () => { const off = document.body.classList.toggle('nolbl'); tb('tbLbl').classList.toggle('on', !off); };
+tb('tbXray').onclick = () => applyPreset(tb('tbXray').classList.contains('on') ? 'ทั้งหมด' : 'X-ray');
+const LIGHTS = [[9.5, 'กลางวัน'], [17.6, 'เย็น'], [20.5, 'กลางคืน']]; let li = 0;
+tb('tbLight').onclick = () => { li = (li + 1) % LIGHTS.length; setH(LIGHTS[li][0]); tb('tbLight').textContent = 'แสง: ' + LIGHTS[li][1]; tb('tbLight').classList.toggle('on', li > 0); };
+tb('tbTune').onclick = () => { const on = document.body.classList.toggle('tune'); tb('tbTune').classList.toggle('on', on); panel.classList.remove('fold'); };
+tb('tbInfo').onclick = () => tb('about').classList.add('show');
+tb('aboutX').onclick = () => tb('about').classList.remove('show');
+tb('about').onclick = e => { if (e.target.id === 'about') tb('about').classList.remove('show'); };
+tb('tbClean').onclick = () => { const on = document.body.classList.toggle('clean'); tb('tbClean').classList.toggle('on', on); resize(); };
+// 4K screenshot (renders off-screen at 3840 px wide, UI is never in the image)
+tb('tbShot').onclick = () => {
+  const w = 3840, h = Math.round(3840 / camera.aspect), pr = renderer.getPixelRatio();
+  camera.clearViewOffset(); renderer.setPixelRatio(1); renderer.setSize(w, h, false); composer.setSize(w, h); composer.render();
+  canvas.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'อาคารที่ทำการ-คปประจวบ-4K.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }, 'image/png');
+  renderer.setPixelRatio(pr); resize();
+};
+document.addEventListener('click', e => { if (!pop.contains(e.target) && !e.target.closest('.lbl')) closePop(); });
 
 // ---------- UI ----------
 const timeEl = document.getElementById('time');
@@ -553,14 +740,25 @@ const setH = h => { hour = h; timeEl.value = h; applyEnv(); };
 timeEl.oninput = () => setH(+timeEl.value);
 document.querySelectorAll('#tchips button').forEach(b => b.onclick = () => setH(+b.dataset.t));
 document.getElementById('tEdge').onchange = e => { edgesOn = e.target.checked; Object.keys(PART_OBJS).forEach(applyPart); };
-document.getElementById('tHs').onchange = e => document.body.classList.toggle('nohs', !e.target.checked);
+document.getElementById('tHs').onchange = e => { document.body.classList.toggle('nolbl', !e.target.checked); tb('tbLbl').classList.toggle('on', e.target.checked); };
 document.getElementById('tRot').onchange = e => controls.autoRotate = e.target.checked;
 const panel = document.getElementById('panel'), fold = document.getElementById('fold');
 fold.onclick = () => { panel.classList.toggle('fold'); fold.textContent = panel.classList.contains('fold') ? 'แสดง' : 'ซ่อน'; };
-if (isMobile) { panel.classList.add('fold'); fold.textContent = 'แสดง'; }
-function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+
+function resize() {
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h;
+  const st = document.getElementById('story'), hidden = document.body.classList.contains('clean');
+  if (!hidden && st) {
+    const r = st.getBoundingClientRect();
+    if (w > 820 && !document.body.classList.contains('stmin')) camera.setViewOffset(w + r.width + 14, h, 0, 0, w, h);   // shift scene right of the side panel
+    else if (w <= 820) camera.setViewOffset(w, h + r.height, 0, r.height, w, h);                                          // shift scene above the bottom sheet
+    else camera.clearViewOffset();
+  } else camera.clearViewOffset();
+  camera.updateProjectionMatrix();
+}
 addEventListener('resize', resize); resize();
-setH(9.5); setCut(10.6);
+setH(9.5); setCut(10.6); renderStory(); resize();
+setTimeout(() => goStop(0), 900);
 if (camera.aspect < 1.2) { camera.position.sub(controls.target).multiplyScalar(Math.min(2.2, Math.pow(1.2 / camera.aspect, 0.9))).add(controls.target); }
 
 const clock = new THREE.Clock();
