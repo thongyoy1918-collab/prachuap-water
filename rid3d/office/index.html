@@ -593,7 +593,7 @@ function applyPreset(name) {
 }
 // exploded view: lift floor 2 and the roof apart
 let explode = 0;
-const EX_GAP = [0, 4.2, 10.5];   // lift of floor 2 and of the main roof at 100%
+const EX_GAP = [0, 4.2, 8.8];   // lift of floor 2 and of the main roof at 100%
 const exEl = document.getElementById('explode');
 function setExplode(v) { explode = v; exEl.value = v; document.getElementById('exl').textContent = explode ? `${Math.round(explode * 100)}%` : 'ปิด'; }
 exEl.oninput = () => setExplode(+exEl.value);
