@@ -5999,7 +5999,7 @@ function mkLead(c,X,Y,bx,by,col){c.strokeStyle=col;c.lineWidth=2.5;c.beginPath()
 function drawFlood(){
   const F=flView(),N=F.sites.length,W=1600,C=Math.cos(12.2*Math.PI/180),P=(lon,lat)=>[(lon-98.9)*C*1000,(13.3-lat)*1000];
   const INK="#11283B",MUT="#4E6072",LN="#E0E7EE",tc=s=>F.types[s.type][2],imgs=flImgsSel();
-  const top0=520,GAP=16,M=60,tw=W-2*M,mw=520,CL=N<=4?2:3,RN=Math.ceil(N/CL),LC=N>=5?2:1,LR=Math.ceil(N/LC),topH=Math.max(720,72+LR*92+160),cardH=N<=4?420:380,cardsY=top0+topH+24,mainH=topH+24+RN*cardH+(RN-1)*GAP,H=top0+mainH+190;
+  const top0=520,GAP=16,M=60,tw=W-2*M,mw=520,CL=N<=4?2:3,RN=Math.ceil(N/CL),LC=N>=5?2:1,LR=Math.ceil(N/LC),topH=Math.max(560,72+LR*62+160),cardsY=top0+topH+24,H=Math.round(W*420/297),cardH=Math.max(300,(H-170-cardsY-(RN-1)*GAP)/RN),mainH=topH+24+RN*cardH+(RN-1)*GAP;
   const cv=document.createElement("canvas"),S4=3840/W;cv.width=3840;cv.height=Math.round(H*S4);const c=cv.getContext("2d");c.scale(S4,S4);c.fillStyle="#F2F6F9";c.fillRect(0,0,W,H);
   const tot=k=>F.sites.filter(s=>s.type===k).reduce((a,s)=>a+s.count,0),amps=[...new Set(F.sites.map(s=>s.amphoe))];
   header(c,W,"การดำเนินงานสนับสนุนเครื่องจักร-เครื่องมือ",`จังหวัดประจวบคีรีขันธ์ · ${N} จุดดำเนินการ ใน ${amps.length} อำเภอ (${amps.map(a=>"อ."+a).join(", ")})`,F.date);
@@ -6074,16 +6074,16 @@ function drawFlood(){
     c.beginPath();c.arc(x+34,y+38,16,0,7);c.fillStyle=col;c.fill();T(c,String(i+1),x+34,y+45,{s:18,w:700,c:"#fff",a:"center"});
     fitT(c,s.title,x+60,y+46,cw-80,{s:25,w:700});
     {c.font=`700 20px ${FF}`;const tx=`${s.status} ${s.date}`,w=c.measureText(tx).width+40;rr(c,x+20,y+64,w,36,18);c.fillStyle=col+"22";c.fill();c.beginPath();c.arc(x+37,y+82,5,0,7);c.fillStyle=col;c.fill();T(c,tx,x+48,y+89,{s:20,w:700,c:col})}
-    fitT(c,`${s.place} ต.${s.tambon} อ.${s.amphoe}`,x+20,y+130,cw-40,{s:20,w:500,c:INK});
-    fitT(c,`พิกัด ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}${/ประมาณ/.test(s.utm)?" (โดยประมาณ)":""}`,x+20,y+158,cw-40,{s:18,c:MUT});
-    rr(c,x+20,y+174,cw-40,42,10);c.fillStyle=col+"22";c.fill();fitT(c,"↘  "+s.trend,x+32,y+202,cw-64,{s:19,w:700,c:col});
-    const im=imgs[i]||[],gp=8,py0=y+228,AH=y+cardH-16-py0,W0=cw-40,nn=Math.max(1,Math.min(im.length,3)),L={cl:nn,n:nn,r2:1,pw:(W0-(nn-1)*gp)/nn,ph:AH};
+    fitT(c,`${s.place} ต.${s.tambon} อ.${s.amphoe}`,x+20,y+128,cw-40,{s:19,w:500,c:INK});
+    fitT(c,`พิกัด ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}${/ประมาณ/.test(s.utm)?" (โดยประมาณ)":""}`,x+20,y+153,cw-40,{s:17,c:MUT});
+    rr(c,x+20,y+166,cw-40,38,10);c.fillStyle=col+"22";c.fill();fitT(c,"↘  "+s.trend,x+32,y+191,cw-64,{s:18,w:700,c:col});
+    const im=imgs[i]||[],gp=8,py0=y+214,AH=y+cardH-14-py0,W0=cw-40,nn=Math.max(1,Math.min(im.length,3)),L={cl:nn,n:nn,r2:1,pw:(W0-(nn-1)*gp)/nn,ph:AH};
     if(L){const tot=L.r2*L.ph+(L.r2-1)*gp,oy=py0+(AH-tot)/2,lastN=L.n-(L.r2-1)*L.cl;
     im.slice(0,L.n).forEach((m,k)=>{const row=Math.floor(k/L.cl),inRow=row===L.r2-1?lastN:L.cl,ox=x+20+(W0-(inRow*L.pw+(inRow-1)*gp))/2,px=ox+(k%L.cl)*(L.pw+gp),py=oy+row*(L.ph+gp),w2=L.pw,h2=L.ph;c.save();rr(c,px,py,w2,h2,8);c.clip();c.fillStyle="#E4E8EC";c.fillRect(px,py,w2,h2);
       if(m.complete&&m.naturalWidth){const r=Math.max(w2/m.naturalWidth,h2/m.naturalHeight),iw=m.naturalWidth*r,ih=m.naturalHeight*r;c.drawImage(m,px+(w2-iw)/2,py+(h2-ih)/2,iw,ih)}
       c.restore()})}})}
   // legend
-  let lx=M,ly=top0+mainH+50;[["เครื่องสูบน้ำ","#1E9A52","d"],["เครื่องผลักดันน้ำ","#2F6FD1","d"],["รถขุด (แบคโฮ)","#E07A1F","d"],["พื้นที่ประสบอุทกภัย","#D64532","o"],["อำเภอที่ดำเนินการ","#9AA6B2","s"]].forEach(([t,col,k])=>{
+  let lx=M,ly=top0+mainH+42;[["เครื่องสูบน้ำ","#1E9A52","d"],["เครื่องผลักดันน้ำ","#2F6FD1","d"],["รถขุด (แบคโฮ)","#E07A1F","d"],["พื้นที่ประสบอุทกภัย","#D64532","o"],["อำเภอที่ดำเนินการ","#9AA6B2","s"]].forEach(([t,col,k])=>{
     if(k==="d"){c.beginPath();c.arc(lx+10,ly-7,10,0,7);c.fillStyle=col;c.fill()}else if(k==="o"){c.beginPath();c.arc(lx+10,ly-7,10,0,7);c.strokeStyle=col;c.lineWidth=2.5;c.stroke()}else{c.fillStyle="#DDF0E3";c.fillRect(lx,ly-17,20,20);c.strokeStyle=col;c.lineWidth=2;c.strokeRect(lx,ly-17,20,20)}
     lx+=34+T(c,t,lx+30,ly,{s:19,c:INK})+28});
   footer(c,W,H,"โครงการชลประทานประจวบคีรีขันธ์ · สำนักงานชลประทานที่ 14 · กรมชลประทาน",`ที่มา: ข้อมูลการปฏิบัติงานสนับสนุนเครื่องจักร-เครื่องมือ ณ ${F.date} · ขอบเขตการปกครอง OpenGISData-Thailand (CC BY 4.0)`);
