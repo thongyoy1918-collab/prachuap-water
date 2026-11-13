@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#203e35">
+<title>อ่างเก็บน้ำยางชุม · RID Prachuap 3D</title>
+<meta name="description" content="ทัวร์ 3 มิติ อ่างเก็บน้ำยางชุม อ.กุยบุรี จ.ประจวบคีรีขันธ์ — ระดับน้ำจริงจากรายงานประจำวัน โค้งความจุ อาคารท่อส่งน้ำ Spillway และท้ายน้ำถึงสถานี KY.3">
+<meta property="og:title" content="อ่างเก็บน้ำยางชุม · 3D">
+<meta property="og:description" content="ทัวร์ 6 จุดแวะ ตั้งแต่อ่างเก็บน้ำ ทำนบดิน อาคารท่อส่งน้ำ Spillway สะพานท่าข้าม ถึงฝายกุยบุรีและสถานี KY.3 พร้อมข้อมูลน้ำวันนี้">
+<meta property="og:image" content="https://thongyoy1918-collab.github.io/prachuap-water/rid3d/thumb-yangchum.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#e4e6dc;--ink:#203e35;--mute:#6c796c;--line:#d3d9c8;--card:#f7f8efee;--sub:#e8f0e0;--rust:#b4552f;--water:#2f7fa8}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink);overflow:hidden}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #load{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:20;font-family:'Noto Serif Thai',serif;font-size:18px;transition:opacity .6s}
+  .tb{position:fixed;top:12px;right:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;z-index:6;max-width:calc(100vw - 430px)}
+  .tb button{border:1px solid #0000000f;background:#f7f8efeb;color:var(--ink);border-radius:5px;padding:6px 10px;font:inherit;font-size:12px;cursor:pointer;box-shadow:0 2px 8px #0000000d;backdrop-filter:blur(6px)}
+  .tb button.on{background:var(--ink);color:#f7f8ef}
+  body.clean .tb button:not(#tbClean),body.clean #story,body.clean #lblLayer,body.clean #panel,body.clean #pop,body.clean #hud{display:none!important}
+  #story{position:fixed;left:14px;top:14px;bottom:14px;width:390px;background:var(--card);backdrop-filter:blur(10px);border-radius:8px;box-shadow:0 10px 40px #0000001a;display:flex;flex-direction:column;z-index:5;border:1px solid #fff9}
+  #story .sh{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--mute)}
+  #story .sh a{color:var(--mute);text-decoration:none;margin-left:auto}
+  #stX{border:1px solid var(--line);background:#fff;border-radius:5px;width:26px;height:26px;cursor:pointer;color:var(--ink);font-size:13px}
+  #story .sb{overflow:auto;padding:16px 18px 10px;flex:1}
+  .kick{font-size:12px;color:var(--rust)}
+  #story h1{font-family:'Noto Serif Thai',serif;font-size:24px;line-height:1.3;margin:4px 0 12px;font-weight:700}
+  .map{border:1px solid var(--line);border-radius:6px;background:#fff;overflow:hidden;margin-bottom:12px}
+  .map svg{display:block;width:100%;height:auto;background:#eef1e6}
+  .map .cap{font-size:11px;color:var(--mute);padding:6px 10px;border-top:1px solid var(--line)}
+  .map g.mk{cursor:pointer} .map g.mk circle{fill:#fff;stroke:var(--ink);stroke-width:1.2} .map g.mk text{font:600 7px 'IBM Plex Mono',monospace;fill:var(--ink)}
+  .map g.mk.on circle{fill:var(--ink)} .map g.mk.on text{fill:#fff}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px}
+  .facts div{background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:11.5px;color:var(--mute)}
+  .facts b{display:block;font-size:16px;color:var(--ink);font-family:'Noto Serif Thai',serif}
+  #story p{font-size:14px;line-height:1.75;margin:0 0 10px;color:#2e3f39}
+  .src{font-size:11.5px;color:var(--mute);border-top:1px dashed var(--line);padding-top:8px;margin-top:6px}
+  .src a{color:var(--mute)}
+  .stops{margin-top:14px;border-top:1px solid var(--line)}
+  .stops .st{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);cursor:pointer;font-size:13px}
+  .stops .st.on{background:#e8f0e0aa}
+  .stops small{display:block;color:var(--mute);font-size:11.5px}
+  .code{font:600 11px 'IBM Plex Mono',monospace;background:var(--ink);color:#f7f8ef;border-radius:4px;padding:1px 6px;flex:none}
+  .code.s{background:var(--sub);color:var(--ink)}
+  #story .sf{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+  #story .sf button{border:1px solid var(--line);border-radius:5px;padding:9px;font:inherit;font-size:13px;cursor:pointer;background:#f7f8ef;color:var(--ink)}
+  #story .sf button.pri{background:var(--ink);color:#f7f8ef;border-color:var(--ink)}
+  #story .sf button:disabled{opacity:.4;cursor:default}
+  body.stmin #story .sb, body.stmin #story .sf{display:none} body.stmin #story{bottom:auto}
+  .lbl{position:fixed;transform:translate(-50%,calc(-100% - 7px));display:flex;align-items:center;gap:5px;background:#f7f8eff0;border:1px solid #203e3522;border-radius:4px;padding:3px 7px 3px 4px;font-size:12px;color:var(--ink);cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px #0000001a;transition:opacity .2s;user-select:none}
+  .lbl:after{content:"";position:absolute;left:50%;bottom:-7px;width:1px;height:7px;background:var(--ink)}
+  .lbl:before{content:"";position:absolute;left:calc(50% - 3px);bottom:-10px;width:6px;height:6px;border-radius:50%;background:var(--ink)}
+  .lbl.sub{background:#e8f0e0eb;font-size:10.5px}
+  .lbl.on{background:var(--ink);color:#f7f8ef} .lbl.on .code{background:#f7f8ef;color:var(--ink)}
+  body.nolbl #lblLayer{display:none}
+  #pop{position:fixed;z-index:7;width:260px;background:#f7f8ef;border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 30px #00000026;padding:10px 12px;display:none;font-size:13px}
+  #pop b{font-family:'Noto Serif Thai',serif;font-size:15px;display:block;margin-bottom:2px} #pop p{margin:0 0 8px;color:#3b4b45;line-height:1.6}
+  #pop .pb{display:flex;gap:6px} #pop button{flex:1;border:0;border-radius:5px;padding:6px;font:inherit;font-size:11.5px;cursor:pointer}
+  #pop .g1{background:var(--ink);color:#f7f8ef} #pop .g2{background:#dfe5d4;color:var(--ink)}
+  #pop .px{position:absolute;right:6px;top:4px;border:0;background:none;cursor:pointer;color:var(--mute);font-size:15px;flex:none;width:auto;padding:0}
+  #panel{position:fixed;right:14px;top:60px;width:290px;background:var(--card);backdrop-filter:blur(10px);border-radius:8px;box-shadow:0 10px 40px #0000001a;padding:14px 16px;z-index:5;display:none;max-height:calc(100vh - 80px);overflow:auto}
+  body.tune #panel{display:block}
+  #panel h3{font-family:'Noto Serif Thai',serif;font-size:15px;margin:10px 0 6px}
+  #panel h3:first-child{margin-top:0}
+  .rd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+  .rd div{background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--mute)}
+  .rd b{display:block;font-size:15px;color:var(--ink)}
+  input[type=range]{width:100%;accent-color:var(--ink)}
+  .row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+  .row button{flex:1;border:1px solid var(--line);background:#fff;border-radius:5px;padding:6px 4px;font:inherit;font-size:12px;cursor:pointer;color:var(--ink)}
+  .row button.on{background:var(--ink);color:#fff}
+  .lv{font-size:12px;line-height:1.8}
+  .lv span{display:inline-block;width:10px;height:3px;margin-right:6px;vertical-align:middle}
+  #hud{position:fixed;right:14px;bottom:14px;background:var(--card);border-radius:8px;padding:9px 12px;font-size:12px;box-shadow:0 6px 20px #0000001a;z-index:4;min-width:200px}
+  #hud b{font-family:'Noto Serif Thai',serif;font-size:18px}
+  #hud .bar{height:6px;background:#dfe5d4;border-radius:4px;overflow:hidden;margin-top:5px} #hud .bar i{display:block;height:100%;background:var(--water)}
+  #about{position:fixed;inset:0;background:#203e3555;display:none;place-items:center;z-index:9}
+  #about.show{display:grid} #about .in{background:#f7f8ef;border-radius:8px;max-width:480px;margin:16px;padding:18px 20px;font-size:13.5px;line-height:1.7;box-shadow:0 20px 60px #0004}
+  #about h3{font-family:'Noto Serif Thai',serif;margin:0 0 8px} #about button{margin-top:10px;border:0;background:var(--ink);color:#fff;border-radius:5px;padding:7px 14px;font:inherit;cursor:pointer}
+  @media (max-width:820px){
+    .tb{top:8px;right:8px;left:8px;max-width:none;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}
+    .tb button{flex:none;font-size:11.5px;padding:6px 9px}
+    #story{left:0;right:0;bottom:0;top:auto;width:auto;height:46vh;border-radius:12px 12px 0 0}
+    body.stmin #story{height:auto}
+    #story h1{font-size:21px}
+    #panel{top:52px;left:8px;right:8px;width:auto;max-height:50vh}
+    #hud{top:50px;bottom:auto;right:8px;padding:6px 10px;min-width:0} #hud b{font-size:15px}
+    #pop{left:8px!important;right:8px;width:auto;top:56px!important}
+  }
+</style>
+<script type="importmap">{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<canvas id="c"></canvas>
+<div id="load">กำลังสร้างหุบเขาและอ่างเก็บน้ำ…</div>
+<div class="tb" id="tb">
+  <button id="tbWide">มุมกว้าง</button><button id="tbRot">หมุนโมเดล</button><button id="tbLbl" class="on">ป้ายสถานที่</button>
+  <button id="tbLight">แสง: กลางวัน</button><button id="tbTune">💧 ระดับน้ำ</button>
+  <button id="tbInfo" aria-label="ที่มาและข้อจำกัด">ⓘ</button><button id="tbShot" aria-label="บันทึกภาพ 4K">📷 4K</button><button id="tbClean" aria-label="ซ่อน/แสดงหน้าจอควบคุม">👁</button>
+</div>
+<aside id="story">
+  <div class="sh"><button id="stX" aria-label="ซ่อน/แสดงแถบเรื่องเล่า">✕</button><span>อ่างเก็บน้ำยางชุม · คป.ประจวบคีรีขันธ์</span><a href="../">← RID Prachuap 3D</a></div>
+  <div class="sb" id="stBody"></div>
+  <div class="sf"><button id="stPrev">← ย้อนกลับ</button><button id="stNext" class="pri">จุดแวะถัดไป →</button></div>
+</aside>
+<div id="panel">
+  <h3>ระดับน้ำในอ่าง</h3>
+  <input id="lvl" type="range" min="72" max="86.45" step="0.01">
+  <div class="rd"><div>ระดับน้ำ<b id="rL"></b></div><div>ปริมาณน้ำ<b id="rS"></b></div><div>% ความจุ<b id="rP"></b></div><div>รับน้ำได้อีก<b id="rF"></b></div></div>
+  <div class="row"><button id="bToday" class="on">วันนี้ (12 พ.ย. 69)</button><button data-l="72">ต่ำสุด</button><button data-l="84.8">เก็บกัก</button><button data-l="86.45">สูงสุด</button></div>
+  <div class="lv" style="margin-top:8px">
+    <div><span style="background:#7a4a2a"></span>สันเขื่อน +89.00 ม.รทก.</div>
+    <div><span style="background:#b4552f"></span>ระดับน้ำสูงสุด +86.45 (51.84 ล้าน ลบ.ม.)</div>
+    <div><span style="background:#2f7fa8"></span>ระดับเก็บกัก +84.80 (41.10 ล้าน ลบ.ม.)</div>
+    <div><span style="background:#8a8f87"></span>ระดับน้ำต่ำสุด +72.00 (3.21 ล้าน ลบ.ม.)</div>
+  </div>
+  <div style="font-size:11px;color:var(--mute);margin-top:6px">ปริมาณน้ำคำนวณจากโค้งความจุอ่างฯ ยางชุม (ตารางในรายงานประจำวัน) แบบเส้นตรงระหว่างช่วง 1 ม.</div>
+  <h3>เวลา</h3>
+  <div class="row" id="tchips"><button data-t="7" class="on">เช้า</button><button data-t="12">เที่ยง</button><button data-t="17.7">เย็น</button><button data-t="20.5">ค่ำ</button></div>
+</div>
+<div id="hud"><div style="color:var(--mute)">อ่างฯ ยางชุม · <span id="hT">วันนี้</span></div><b id="hL"></b> · <b id="hP"></b><div class="bar"><i id="hB"></i></div></div>
+<div id="lblLayer"></div>
+<div id="pop"><button class="px" id="popX">×</button><b id="popT"></b><p id="popP"></p><div class="pb"><button class="g1" id="popGo">ดูมุมที่เกี่ยวข้อง ↗</button><button class="g2" id="popNext">จุดถัดไป →</button></div></div>
+<div id="about"><div class="in"><h3>ที่มาและข้อจำกัดของแบบจำลอง</h3>
+  <div>• ตัวเลขน้ำวันนี้จาก <b>รายงานประจำวันที่ 12 พ.ย. 69</b> (แผ่น 1.0 และ รวม) ของโครงการชลประทานประจวบคีรีขันธ์</div>
+  <div>• ระดับอ้างอิง ความจุ พื้นที่รับน้ำ และโค้งความจุ จากแผ่น "อ่างฯ ยางชุม" ในไฟล์เดียวกัน</div>
+  <div>• ข้อมูลอาคารท่อส่งน้ำ ปตร.แบ่งน้ำ จุดผลกระทบที่สะพานท่าข้าม ฝายกุยบุรี และคลองระบาย D8 จากข้อมูลงานของผู้จัดทำ</div>
+  <div>• <b>ภูมิประเทศ ตำแหน่ง และระยะทางเป็นแผนภาพจำลอง ไม่ตามสเกลจริง</b> ย่อระยะท้ายน้ำให้อยู่ในฉากเดียว ความสูงขยาย 0.8 เท่าของสเกลแนวราบ</div>
+  <button id="aboutX">ปิด</button></div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+await Promise.race([document.fonts.load('600 40px "IBM Plex Sans Thai"'), new Promise(r => setTimeout(r, 2000))]);
+
+// ===== real data =====
+const TODAY = { date: '12 พ.ย. 2569', level: 84.66, storage: 40.267, pct: 97.97, cap: 41.10, free: 0.833, inflow: 0.579, relRiver: 0.25, relRiverM: 0.0216, spillQ: 5.76, spillM: 0.498, relQ: 6.01, rainYear: 930.8 };
+const KY3 = { q: 15.85, qmax: 340, bank: 4.40, wl: 1.13, trend: 'ทรงตัว' };
+const REF = { crest: 89.00, max: 86.45, maxS: 51.84, nrl: 84.80, nrlS: 41.10, min: 72.00, minS: 3.21, catch: 369.5, area: 5.725, rainAvg: 975.9, inflowAvg: 74.703 };
+const CURVE = [[68, .207], [69, .306], [70, .818], [71, 1.263], [72, 2.055], [73, 2.978], [74, 4.215], [75, 5.732], [76, 7.695], [77, 9.839], [78, 12.345], [79, 15.380], [80, 18.678], [81, 22.603], [82, 26.792], [83, 31.261], [84, 36.341], [84.8, 41.1], [85, 42.228], [86, 48.742], [87, 54.712], [88, 61.886]];
+const storageAt = L => { for (let i = 1; i < CURVE.length; i++) if (L <= CURVE[i][0]) { const [a, sa] = CURVE[i - 1], [b, sb] = CURVE[i]; return sa + (sb - sa) * (L - a) / (b - a); } return CURVE.at(-1)[1]; };
+
+// ===== renderer =====
+const isMobile = matchMedia('(max-width:820px)').matches;
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#e4e6dc');
+const camera = new THREE.PerspectiveCamera(35, 1, 0.5, 2000);
+camera.position.set(150, 120, 190);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.07; controls.maxPolarAngle = Math.PI * 0.47;
+controls.minDistance = 10; controls.maxDistance = 420; controls.target.set(0, 6, 0); controls.autoRotateSpeed = 0.5;
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .9, ...o });
+let rs = 11; const rnd = () => ((rs = (rs * 16807) % 2147483647) - 1) / 2147483646;
+const VS = 0.8;                          // vertical scale: 1 m of elevation = 0.8 scene units
+const Y = e => (e - 66) * VS;            // ม.รทก. -> scene y
+const DAMZ = 20;
+
+// ===== valley shape (schematic) =====
+function xc(z) { return z < DAMZ ? 8 * Math.sin(z * 0.045) + 2 : 2 + 8 * Math.sin(DAMZ * 0.045) + 3.5 * Math.sin((z - DAMZ) * 0.07) + (z - DAMZ) * 0.22; }
+function noise(x, z) { return Math.sin(x * .11 + z * .07) * .5 + Math.sin(x * .23 - z * .19 + 1.3) * .3 + Math.sin(x * .05 + z * .13 + 2.1) * .6 + Math.sin(x * .41 + z * .37) * .12; }
+const DAMXc = 2 + 8 * Math.sin(DAMZ * 0.045), SPX = DAMXc + 50;
+const SP_PTS = [[SPX, DAMZ - 9], [SPX + 1, DAMZ + 4], [SPX - 2, DAMZ + 18], [SPX - 12, DAMZ + 30], [null, DAMZ + 38]];
+const smooth = (a, b, t) => { t = Math.min(1, Math.max(0, (t - a) / (b - a))); return t * t * (3 - 2 * t); };
+function elev(x, z) {
+  const k = smooth(14, 26, z);                       // 0 = reservoir, 1 = downstream plain
+  const wRes = 32 + 8 * Math.sin(z * 0.08 + 1), d = Math.abs(x - xc(z));
+  const n = noise(x, z);
+  // reservoir basin with hills around
+  let dr = d / wRes, eR = dr < 1 ? 66.5 + 15 * dr * dr : 81.5 + (dr - 1) * 30 + n * 6;
+  eR += n * 1.2 * Math.min(1, dr);
+  if (z < -55) eR += (-55 - z) * 1.2;                // close the upstream end
+  // downstream: river channel in a flat plain, hills far out
+  const dw = d / 4.5, plain = 69.2 + n * 0.5 + Math.max(0, Math.abs(x) - 55) * 0.9;
+  const eD = dw < 1 ? 64.5 + 4.7 * dw * dw : plain;
+  let e = eR * (1 - k) + eD * k;
+  // abutments around the dam axis
+  const ab = Math.exp(-((z - DAMZ) ** 2) / 50);
+  if (Math.abs(x - xc(DAMZ)) > 44) e = Math.max(e, 89 + (Math.abs(x - xc(DAMZ)) - 44) * 0.6 * ab + 2 * ab);
+  e = Math.min(e, 104 + n * 3);
+  // carve the spillway corridor (approach channel + chute) into the right abutment
+  const sp = spDist(x, z); if (sp.d < 5.5) e = Math.min(e, spillE(sp.t) - 0.4 + Math.max(0, sp.d - 3.5) * 1.5);
+  return e;
+}
+
+function spillE(t) { return t < .2 ? 84.8 : 84.8 + (66.6 - 84.8) * smooth(.2, .85, t); }
+let SPL = null;
+function spDist(x, z) {
+  if (!SPL) { SP_PTS[4][0] = xc(DAMZ + 38) + 4; let L = 0; SPL = SP_PTS.map((p, i) => { if (i) L += Math.hypot(p[0] - SP_PTS[i - 1][0], p[1] - SP_PTS[i - 1][1]); return L; }); SPL.total = L; }
+  let best = { d: 1e9, t: 0 };
+  for (let i = 0; i < SP_PTS.length - 1; i++) { const [ax, az] = SP_PTS[i], [bx, bz] = SP_PTS[i + 1], vx = bx - ax, vz = bz - az, l2 = vx * vx + vz * vz;
+    const u = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / l2)), d = Math.hypot(x - ax - u * vx, z - az - u * vz);
+    if (d < best.d) best = { d, t: (SPL[i] + u * Math.sqrt(l2)) / SPL.total }; }
+  return best;
+}
+// ===== terrain =====
+const TW = 200, TD = 170, Z0 = -70;
+const terrGeo = new THREE.PlaneGeometry(TW, TD, 200, 170); terrGeo.rotateX(-Math.PI / 2); terrGeo.translate(0, 0, Z0 + TD / 2);
+{
+  const p = terrGeo.attributes.position, col = [];
+  const cLow = new THREE.Color('#c8b98f'), cGrass = new THREE.Color('#8fb35d'), cField = new THREE.Color('#a9c46e'), cHill = new THREE.Color('#5f8a46'), cHigh = new THREE.Color('#4d7340');
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), z = p.getZ(i), e = elev(x, z); p.setY(i, Y(e));
+    const c = new THREE.Color();
+    if (z > 26 && e < 71 && e > 68.5) c.copy(cField).lerp(cGrass, (Math.sin(x * .9) * Math.sin(z * .7) > 0) ? .5 : 0);   // paddy patchwork
+    else if (e < 85.5 && z < DAMZ) c.copy(cLow);                                // reservoir rim / exposed bank
+    else if (e < 90) c.copy(cGrass); else if (e < 96) c.copy(cHill); else c.copy(cHigh);
+    col.push(c.r, c.g, c.b);
+  }
+  terrGeo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); terrGeo.computeVertexNormals();
+}
+const terrain = new THREE.Mesh(terrGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true }));
+terrain.receiveShadow = true; terrain.castShadow = true; scene.add(terrain);
+// diorama skirt
+{
+  const sk = M('#8a6d50', { roughness: 1 }), base = new THREE.Mesh(new THREE.BoxGeometry(TW, 4, TD), [sk, sk, M('#8a6d50'), sk, sk, sk]);
+  base.position.set(0, -2.2, Z0 + TD / 2); scene.add(base);
+  // side walls following the terrain edge
+  const mkSide = (pts) => { const g = new THREE.BufferGeometry(), v = [];
+    for (let i = 0; i < pts.length - 1; i++) { const [a, b] = [pts[i], pts[i + 1]];
+      v.push(a.x, -0.2, a.z, b.x, -0.2, b.z, b.x, b.y, b.z, a.x, -0.2, a.z, b.x, b.y, b.z, a.x, a.y, a.z); }
+    g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.computeVertexNormals();
+    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: '#9a7b5c', roughness: 1, side: THREE.DoubleSide })); scene.add(m); };
+  const edge = (fx, fz, n) => { const a = []; for (let i = 0; i <= n; i++) { const [x, z] = [fx(i / n), fz(i / n)]; a.push({ x, z, y: Y(elev(x, z)) }); } return a; };
+  mkSide(edge(t => -TW / 2 + t * TW, () => Z0, 100)); mkSide(edge(t => -TW / 2 + t * TW, () => Z0 + TD, 100));
+  mkSide(edge(() => -TW / 2, t => Z0 + t * TD, 100)); mkSide(edge(() => TW / 2, t => Z0 + t * TD, 100));
+}
+
+// ===== reservoir water =====
+const waterMat = new THREE.MeshStandardMaterial({ color: '#2f7fa8', roughness: .15, metalness: .1, transparent: true, opacity: .9 });
+const resGeo = new THREE.PlaneGeometry(TW - 0.4, DAMZ - 4 - Z0, 80, 60); resGeo.rotateX(-Math.PI / 2);
+const reservoir = new THREE.Mesh(resGeo, waterMat); reservoir.position.set(0, 0, (Z0 + DAMZ - 4) / 2 + 0.2); reservoir.receiveShadow = true; scene.add(reservoir);
+const resBase = resGeo.attributes.position.array.slice();
+
+// ===== dam (earth fill) =====
+const damX = xc(DAMZ), CREST = Y(REF.crest);
+{
+  const s = new THREE.Shape(); s.moveTo(-11, -1); s.lineTo(11, -1); s.lineTo(1.1, CREST); s.lineTo(-1.1, CREST); s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth: 96, bevelEnabled: false }); g.translate(0, 0, -48); g.rotateY(Math.PI / 2);
+  const dam = new THREE.Mesh(g, M('#93a777')); dam.position.set(damX, 0, DAMZ); dam.castShadow = dam.receiveShadow = true; scene.add(dam);
+  // upstream riprap face
+  const rp = new THREE.Mesh(new THREE.PlaneGeometry(96, Math.hypot(9.9, CREST + 1)), M('#9c9a90', { roughness: 1 }));
+  rp.rotation.order = 'YXZ'; rp.rotation.y = 0; rp.rotation.x = -(Math.PI / 2 - Math.atan2(CREST + 1, 9.9)); rp.position.set(damX, (CREST - 1) / 2, DAMZ - 6.05 + 0.02); rp.receiveShadow = true; scene.add(rp);
+  const road = new THREE.Mesh(new THREE.BoxGeometry(96, .25, 2.3), M('#6e6f70')); road.position.set(damX, CREST + .12, DAMZ); scene.add(road);
+  // crest posts
+  const pg = new THREE.BoxGeometry(.25, .9, .25), pm = M('#f3f1ea'), posts = new THREE.InstancedMesh(pg, pm, 48), o = new THREE.Object3D();
+  for (let i = 0; i < 48; i++) { o.position.set(damX - 47 + i * 2, CREST + .7, DAMZ - 1.05); o.updateMatrix(); posts.setMatrixAt(i, o.matrix); } scene.add(posts);
+  // staff gauge on the upstream face
+  const gc = document.createElement('canvas'); gc.width = 64; gc.height = 512; const gg = gc.getContext('2d');
+  gg.fillStyle = '#fff'; gg.fillRect(0, 0, 64, 512); for (let i = 0; i < 17; i++) { gg.fillStyle = i % 2 ? '#c0392b' : '#203e35'; gg.fillRect(0, i * 32, 64, 16); }
+  const gt = new THREE.CanvasTexture(gc); gt.colorSpace = THREE.SRGBColorSpace;
+  const gauge = new THREE.Mesh(new THREE.BoxGeometry(.7, Y(89) - Y(72), .2), new THREE.MeshStandardMaterial({ map: gt }));
+  gauge.position.set(damX - 8, (Y(89) + Y(72)) / 2, DAMZ - 6.8); gauge.rotation.x = -.42; gauge.castShadow = true; scene.add(gauge);
+}
+// ===== left-bank canal outlet, canal and diversion gate =====
+const concrete = M('#cfcbc0'), dark = M('#4a5056');
+const IN = { x: damX - 30, z: DAMZ - 9 };          // intake tower in the reservoir
+const OUT = { x: damX - 30, z: DAMZ + 11 };         // outlet structure at the downstream toe
+{
+  const tower = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.7, CREST + 2, 16), concrete); tower.position.set(IN.x, (CREST + 2) / 2 - 1, IN.z); tower.castShadow = true; scene.add(tower);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, .6, 16), M('#b5552f')); cap.position.set(IN.x, CREST + 1.3, IN.z); scene.add(cap);
+  const br = new THREE.Mesh(new THREE.BoxGeometry(.9, .3, 7.5), concrete); br.position.set(IN.x, CREST + .9, IN.z + 4.6); scene.add(br);
+  const ob = new THREE.Mesh(new THREE.BoxGeometry(5, 3.2, 4), concrete); ob.position.set(OUT.x, Y(70.2) + 1.6, OUT.z); ob.castShadow = true; scene.add(ob);
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, 3, 12), dark); pipe.rotation.x = Math.PI / 2; pipe.position.set(OUT.x, Y(70.2) + 1.1, OUT.z - 2.6); scene.add(pipe);
+}
+// canal path: from the outlet along the left side of the plain
+const canalPts = [[OUT.x, OUT.z + 2], [OUT.x - 1, OUT.z + 10], [OUT.x - 4, OUT.z + 22], [OUT.x - 9, OUT.z + 34], [OUT.x - 15, OUT.z + 48], [OUT.x - 20, OUT.z + 60]].map(([x, z]) => new THREE.Vector3(x, Y(70.4), z));
+const canalCurve = new THREE.CatmullRomCurve3(canalPts);
+function ribbon(curve, w, y, mat, n = 120) {
+  const v = [], uv = [], idx = [];
+  for (let i = 0; i <= n; i++) { const t = i / n, p = curve.getPointAt(t), tg = curve.getTangentAt(t), nx = -tg.z, nz = tg.x, L = Math.hypot(nx, nz);
+    v.push(p.x + nx / L * w / 2, y ?? p.y, p.z + nz / L * w / 2, p.x - nx / L * w / 2, y ?? p.y, p.z - nz / L * w / 2); uv.push(0, t * curve.getLength() / 4, 1, t * curve.getLength() / 4);
+    if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, mat); m.receiveShadow = true; scene.add(m); return m;
+}
+// flowing-water texture
+const flowCv = document.createElement('canvas'); flowCv.width = 64; flowCv.height = 256; { const g = flowCv.getContext('2d'); g.fillStyle = '#3a8bb3'; g.fillRect(0, 0, 64, 256);
+  for (let i = 0; i < 40; i++) { g.fillStyle = `rgba(255,255,255,${.08 + rnd() * .18})`; g.fillRect(rnd() * 64, rnd() * 256, 2 + rnd() * 10, 1.5); } }
+const flowTex = new THREE.CanvasTexture(flowCv); flowTex.wrapS = flowTex.wrapT = THREE.RepeatWrapping; flowTex.colorSpace = THREE.SRGBColorSpace;
+const flowMat = new THREE.MeshStandardMaterial({ map: flowTex, roughness: .2, metalness: .1, transparent: true, opacity: .92 });
+ribbon(canalCurve, 3.4, Y(70.35), concrete);           // lined canal
+ribbon(canalCurve, 2.4, Y(70.55), flowMat);            // water in the canal
+// diversion gate (ปตร. 1.2 x 1.8 m) a short way down the canal, with a channel to the river
+const GATE = canalCurve.getPointAt(0.12);
+{
+  const fr = new THREE.Mesh(new THREE.BoxGeometry(.5, 2.4, 2.6), concrete); fr.position.set(GATE.x + 2.2, Y(70.4) + 1.1, GATE.z); scene.add(fr);
+  const fr2 = fr.clone(); fr2.position.x += 2.4; scene.add(fr2);
+  const gate = new THREE.Mesh(new THREE.BoxGeometry(2, 1.2, .15), M('#2f6fb0', { metalness: .4, roughness: .4 })); gate.position.set(GATE.x + 3.4, Y(70.4) + 1.4, GATE.z); scene.add(gate);
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(3.2, .3, 2.8), concrete); deck.position.set(GATE.x + 3.4, Y(70.4) + 2.4, GATE.z); scene.add(deck);
+}
+const divCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(GATE.x + 1.5, 0, GATE.z), new THREE.Vector3(GATE.x + 8, 0, GATE.z + 3), new THREE.Vector3(xc(GATE.z + 8) - 3, 0, GATE.z + 8)]);
+ribbon(divCurve, 2.2, Y(70.3), concrete, 40); ribbon(divCurve, 1.5, Y(70.45), flowMat, 40);
+
+// ===== river (แม่น้ำกุยบุรี) downstream =====
+const riverCurve = new THREE.CatmullRomCurve3(Array.from({ length: 16 }, (_, i) => { const z = DAMZ + 8 + i * 5; return new THREE.Vector3(xc(z), 0, z); }));
+const riverMesh = ribbon(riverCurve, 6.5, Y(66.2), flowMat, 160);
+// river outlet at the dam toe (ท่อลงสู่ลำน้ำเดิม)
+const ROUT = { x: xc(DAMZ + 10), z: DAMZ + 9.5 };
+{ const b = new THREE.Mesh(new THREE.BoxGeometry(4, 2.6, 3), concrete); b.position.set(ROUT.x + 4.5, Y(67) + 1.3, ROUT.z - 1); b.castShadow = true; scene.add(b); }
+
+// ===== spillway on the right abutment =====
+const spillCurve = new THREE.CurvePath(); for (let i = 0; i < SP_PTS.length - 1; i++) spillCurve.add(new THREE.LineCurve3(new THREE.Vector3(SP_PTS[i][0], 0, SP_PTS[i][1]), new THREE.Vector3(SP_PTS[i + 1][0], 0, SP_PTS[i + 1][1])));
+let spillChute, spillWater;
+{
+  // chute: ribbon that follows the curve and drops from crest level to the river
+  const n = 90, v = [], uv = [], idx = [], vw = [], w = 6;
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, p = spillCurve.getPointAt(t), tg = spillCurve.getTangentAt(t), nx = -tg.z, nz = tg.x, L = Math.hypot(nx, nz);
+    const e = spillE(t), y = Y(e);
+    v.push(p.x + nx / L * w / 2, y, p.z + nz / L * w / 2, p.x - nx / L * w / 2, y, p.z - nz / L * w / 2); uv.push(0, t * 12, 1, t * 12);
+    vw.push(p.x + nx / L * (w - 1.2) / 2, y + .18, p.z + nz / L * (w - 1.2) / 2, p.x - nx / L * (w - 1.2) / 2, y + .18, p.z - nz / L * (w - 1.2) / 2);
+    if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.setIndex(idx); g.computeVertexNormals();
+  spillChute = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: '#d4d0c4', roughness: .9, side: THREE.DoubleSide })); spillChute.receiveShadow = true; scene.add(spillChute);
+  const gw = new THREE.BufferGeometry(); gw.setAttribute('position', new THREE.Float32BufferAttribute(vw, 3)); gw.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); gw.setIndex(idx); gw.computeVertexNormals();
+  spillWater = new THREE.Mesh(gw, new THREE.MeshStandardMaterial({ map: flowTex, transparent: true, opacity: .85, roughness: .2, color: '#cfe8f3' })); scene.add(spillWater);
+  // chute walls
+  const wallMat = M('#bdb8ab');
+  for (let s of [-1, 1]) { const wv = [], wi = [];
+    for (let i = 0; i <= n; i++) { const a = new THREE.Vector3(v[i * 6 + (s > 0 ? 0 : 3)], v[i * 6 + (s > 0 ? 1 : 4)], v[i * 6 + (s > 0 ? 2 : 5)]); wv.push(a.x, a.y, a.z, a.x, a.y + 1.1, a.z); if (i < n) { const k = i * 2; wi.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } }
+    const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wv, 3)); wg.setIndex(wi); wg.computeVertexNormals();
+    const wm = new THREE.Mesh(wg, new THREE.MeshStandardMaterial({ color: '#bdb8ab', side: THREE.DoubleSide })); wm.castShadow = true; scene.add(wm); }
+  // ogee crest block
+  const crest = new THREE.Mesh(new THREE.BoxGeometry(6.4, 1.2, 1.4), concrete); const cp = spillCurve.getPointAt(.18); crest.position.set(cp.x, Y(REF.nrl) - .3, cp.z); scene.add(crest);
+}
+spillWater.visible = TODAY.spillQ > 0;
+
+// ===== bridge (สะพานท่าข้าม), weir (ฝายกุยบุรี), D8, KY.3 =====
+const BRZ = DAMZ + 34, WEIRZ = DAMZ + 56, KYZ = DAMZ + 68;
+{
+  const bx = xc(BRZ), deck = new THREE.Mesh(new THREE.BoxGeometry(14, .6, 3.2), concrete); deck.position.set(bx, Y(70.8), BRZ); deck.castShadow = true; scene.add(deck);
+  [-3, 0, 3].forEach(dx => { const p = new THREE.Mesh(new THREE.CylinderGeometry(.35, .35, Y(70.8) - Y(64.5), 8), concrete); p.position.set(bx + dx, (Y(70.8) + Y(64.5)) / 2, BRZ); scene.add(p); });
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(14, .5, .15), M('#f2efe7')); rail.position.set(bx, Y(70.8) + .5, BRZ - 1.5); scene.add(rail); const r2 = rail.clone(); r2.position.z += 3; scene.add(r2);
+  // road across the plain
+  const road = new THREE.Mesh(new THREE.BoxGeometry(150, .12, 3), M('#6b6c6e')); road.position.set(bx, Y(69.6), BRZ); road.receiveShadow = true; scene.add(road);
+  // weir
+  const wx = xc(WEIRZ), weir = new THREE.Mesh(new THREE.BoxGeometry(10, 1.6, 2.2), concrete); weir.position.set(wx, Y(66.6), WEIRZ); weir.castShadow = true; scene.add(weir);
+  const fall = new THREE.Mesh(new THREE.PlaneGeometry(9, 1.6), new THREE.MeshStandardMaterial({ map: flowTex, transparent: true, opacity: .8, color: '#e6f3f8' }));
+  fall.position.set(wx, Y(66.2), WEIRZ + 1.25); fall.rotation.x = -.5; scene.add(fall);
+  // D8 drainage canal branching off upstream of the weir
+  const d8 = new THREE.CatmullRomCurve3([new THREE.Vector3(wx + 3, 0, WEIRZ - 4), new THREE.Vector3(wx + 14, 0, WEIRZ - 2), new THREE.Vector3(wx + 30, 0, WEIRZ + 4), new THREE.Vector3(wx + 46, 0, WEIRZ + 12)]);
+  ribbon(d8, 2.8, Y(69.15), M('#b9b39f'), 60); ribbon(d8, 1.8, Y(69.3), flowMat, 60);
+  // KY.3 gauge station
+  const kx = xc(KYZ) + 6, hut = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2, 2.2), M('#f2efe7')); hut.position.set(kx, Y(69.4) + 1, KYZ); hut.castShadow = true; scene.add(hut);
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(1.9, 1, 4), M('#2f6fb0')); roof.rotation.y = Math.PI / 4; roof.position.set(kx, Y(69.4) + 2.5, KYZ); scene.add(roof);
+  const staff = new THREE.Mesh(new THREE.BoxGeometry(.25, 4, .25), M('#f6d34a')); staff.position.set(kx - 3.4, Y(66.5) + 1.2, KYZ); scene.add(staff);
+}
+
+// ===== village, trees =====
+{
+  const houseG = new THREE.BoxGeometry(2.2, 1.6, 2.8), roofG = new THREE.ConeGeometry(2.1, 1.2, 4); roofG.rotateY(Math.PI / 4);
+  const wallM = M('#efe7d6'), roofCols = ['#b4552f', '#8a5a3c', '#5d6f7a'];
+  for (let i = 0; i < 26; i++) {
+    const z = BRZ - 6 + rnd() * 22, side = rnd() < .5 ? -1 : 1, x = xc(z) + side * (9 + rnd() * 22);
+    const e = elev(x, z); if (e > 71) continue;
+    const h = new THREE.Mesh(houseG, wallM); h.position.set(x, Y(e) + .8, z); h.rotation.y = rnd() * .5; h.castShadow = true; scene.add(h);
+    const r = new THREE.Mesh(roofG, M(roofCols[i % 3])); r.position.set(x, Y(e) + 2.2, z); r.rotation.y = h.rotation.y; r.castShadow = true; scene.add(r);
+  }
+  const N = 900, trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(.12, .18, 1, 5), M('#6d5440'), N), crown = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), M('#ffffff', { flatShading: true }), N);
+  const greens = ['#4f7a43', '#5f8a4b', '#6f9a52', '#466d3c'].map(c => new THREE.Color(c)); const o = new THREE.Object3D(); let n = 0, tries = 0;
+  while (n < N && tries++ < 9000) {
+    const x = -TW / 2 + 2 + rnd() * (TW - 4), z = Z0 + 2 + rnd() * (TD - 4), e = elev(x, z);
+    if (z < DAMZ + 2 && e < REF.max + 1) continue; if (Math.abs(z - DAMZ) < 13 && Math.abs(x - damX) < 55) continue; if (spDist(x, z).d < 7) continue;
+    if (z > DAMZ && e < 71 && rnd() < .85) continue; if (Math.abs(x - xc(z)) < 6 && z > DAMZ) continue;
+    const s = .7 + rnd() * .8, th = 1.2 * s;
+    o.position.set(x, Y(e) + th / 2, z); o.rotation.set(0, 0, 0); o.scale.set(s, th, s); o.updateMatrix(); trunk.setMatrixAt(n, o.matrix);
+    o.position.y = Y(e) + th + .7 * s; o.rotation.set(rnd(), rnd() * 3, 0); o.scale.set(1.3 * s, 1.1 * s, 1.3 * s); o.updateMatrix(); crown.setMatrixAt(n, o.matrix); crown.setColorAt(n, greens[n % 4]); n++;
+  }
+  trunk.count = crown.count = n; [trunk, crown].forEach(m => { m.castShadow = true; m.receiveShadow = true; scene.add(m); });
+}
+
+// ===== lights, post =====
+const hemi = new THREE.HemisphereLight('#fffaf0', '#6d6a55', .9); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#ffffff', 2.6); sun.castShadow = true; sun.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -130, right: 130, top: 130, bottom: -130, near: 1, far: 600 }); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .05; scene.add(sun, sun.target);
+const composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0, .5, .82); composer.addPass(bloom); composer.addPass(new OutputPass());
+const C = c => new THREE.Color(c); let hour = 7;
+function applyEnv() {
+  const ang = ((hour - 6) / 12) * Math.PI, up = Math.sin(ang);
+  sun.position.set(Math.cos(ang) * 260, Math.max(up, .05) * 240 + 10, 120);
+  const day = THREE.MathUtils.smoothstep(up, -.05, .28), dusk = Math.max(0, 1 - Math.abs(up - .08) / .22) * (up > -.15 ? 1 : 0);
+  sun.intensity = 2.7 * day; sun.color.copy(C('#ffffff')).lerp(C('#ff9a55'), dusk * .85);
+  hemi.intensity = .4 + .58 * day; hemi.color.copy(C('#9fb2d9')).lerp(C('#fffaf0'), day);
+  scene.background.copy(C('#141c2e').lerp(C('#e4e6dc'), day).lerp(C('#e9a27a'), dusk * .25));
+  waterMat.color.copy(C('#1d3a52').lerp(C('#2f7fa8'), day));
+}
+
+// ===== water level =====
+let level = TODAY.level, isToday = true;
+const lvlEl = document.getElementById('lvl');
+function setLevel(L, today = false) {
+  level = L; isToday = today; lvlEl.value = L; reservoir.position.y = Y(L);
+  const S = today ? TODAY.storage : storageAt(L), P = S / REF.nrlS * 100;
+  const f = n => n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('rL').textContent = '+' + f(L); document.getElementById('rS').textContent = f(S) + ' ล้าน';
+  document.getElementById('rP').textContent = f(P) + '%'; document.getElementById('rF').textContent = S < REF.nrlS ? f(REF.nrlS - S) + ' ล้าน' : 'เต็มอ่าง';
+  document.getElementById('hL').textContent = '+' + f(L) + ' ม.รทก.'; document.getElementById('hP').textContent = f(P) + '%';
+  document.getElementById('hB').style.width = Math.min(100, P) + '%'; document.getElementById('hT').textContent = today ? 'วันนี้ ' + TODAY.date : 'จำลองระดับน้ำ';
+  document.querySelectorAll('#panel .row button[data-l], #bToday').forEach(b => b.classList.toggle('on', today ? b.id === 'bToday' : +b.dataset.l === L));
+  spillWater.visible = today ? TODAY.spillQ > 0 : L > REF.nrl;
+}
+lvlEl.oninput = () => setLevel(+lvlEl.value);
+document.getElementById('bToday').onclick = () => setLevel(TODAY.level, true);
+document.querySelectorAll('#panel .row button[data-l]').forEach(b => b.onclick = () => setLevel(+b.dataset.l));
+
+// ===== camera fly =====
+let fly = null;
+function flyTo(v, dur = 1.4) {
+  const t1 = new THREE.Vector3(...v.tgt), p1 = new THREE.Vector3(...v.pos);
+  if (camera.aspect < 1.2) p1.sub(t1).multiplyScalar(Math.min(1.9, Math.pow(1.2 / camera.aspect, .8))).add(t1);
+  fly = { t: 0, dur, p0: camera.position.clone(), t0: controls.target.clone(), p1, t1 }; controls.enabled = false;
+}
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const P3 = (x, e, z, up = 0) => [x, Y(e) + up, z];
+
+// ===== STORY =====
+const f2 = n => n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+const STOPS = [
+  { code: 'A', title: 'อ่างเก็บน้ำยางชุม', kicker: `จุดแวะ 01 · ข้อมูลวันที่ ${TODAY.date}`, p: P3(-10, 86, -20, 4), mapXY: [-10, -20],
+    cam: { pos: [120, 95, 150], tgt: [0, 8, 5] }, lvl: 'today',
+    facts: [['ปริมาณน้ำวันนี้', `${f2(TODAY.storage)} ล้าน ลบ.ม.`], ['% ความจุ', `${f2(TODAY.pct)}%`], ['ระดับน้ำ', `+${TODAY.level} ม.รทก.`], ['น้ำไหลลงอ่าง', `${f2(TODAY.inflow)} ล้าน ลบ.ม.`]],
+    body: [`อ่างเก็บน้ำยางชุม อ.กุยบุรี จ.ประจวบคีรีขันธ์ ความจุที่ระดับเก็บกัก ${REF.nrlS.toFixed(2)} ล้าน ลบ.ม. พื้นที่รับน้ำฝน ${REF.catch} ตร.กม. พื้นที่ผิวน้ำที่ระดับเก็บกัก ${REF.area} ตร.กม.`,
+      `ตามรายงานประจำวันที่ ${TODAY.date} มีน้ำ ${f2(TODAY.storage)} ล้าน ลบ.ม. คิดเป็น ${f2(TODAY.pct)}% ของความจุ รับน้ำได้อีก ${f2(TODAY.free)} ล้าน ลบ.ม. น้ำไหลลงอ่าง ${f2(TODAY.inflow)} ล้าน ลบ.ม.`,
+      `ปริมาณน้ำไหลลงอ่างเฉลี่ยทั้งปี ${REF.inflowAvg} ล้าน ลบ.ม. ฝนสะสมเฉลี่ยทั้งปี ${REF.rainAvg} มม. ปีนี้ฝนสะสมถึงวันรายงาน ${TODAY.rainYear} มม.`],
+    subs: [] },
+  { code: 'B', title: 'ทำนบดินและระดับน้ำสำคัญ', kicker: 'จุดแวะ 02 · ตัวเขื่อน', p: P3(damX - 8, 89, DAMZ, 3), mapXY: [damX - 8, DAMZ],
+    cam: { pos: [damX - 30, Y(90) + 12, DAMZ - 34], tgt: [damX - 6, Y(82), DAMZ - 4] }, lvl: 'today',
+    facts: [['สันเขื่อน', '+89.00 ม.รทก.'], ['ระดับน้ำสูงสุด', '+86.45 · 51.84 ล้าน'], ['ระดับเก็บกัก', '+84.80 · 41.10 ล้าน'], ['ระดับน้ำต่ำสุด', '+72.00 · 3.21 ล้าน']],
+    body: ['ทำนบดินขวางลำน้ำ ระดับสันเขื่อน +89.00 ม.รทก. ด้านเหนือน้ำปูหินทิ้ง มีแผ่นวัดระดับน้ำติดที่ลาดเขื่อน',
+      'ระดับสำคัญจากโค้งความจุ: ระดับน้ำสูงสุด +86.45 (51.84 ล้าน ลบ.ม.) · ระดับเก็บกัก +84.80 (41.10 ล้าน ลบ.ม.) · ระดับน้ำต่ำสุด +72.00 (3.21 ล้าน ลบ.ม.)',
+      'เปิดปุ่ม 💧 ระดับน้ำ แล้วเลื่อนแถบเพื่อดูผิวน้ำและปริมาณน้ำที่ระดับต่าง ๆ คำนวณจากโค้งความจุของอ่าง'],
+    subs: [{ code: 'B1', name: 'แผ่นวัดระดับน้ำ', p: P3(damX - 8, 86, DAMZ - 7, 1), d: 'แผ่นวัดระดับน้ำที่ลาดเขื่อนด้านเหนือน้ำ วันนี้ระดับน้ำ +84.66 ม.รทก.', cam: { pos: [damX - 14, Y(86) + 4, DAMZ - 20], tgt: [damX - 8, Y(84), DAMZ - 7] } }] },
+  { code: 'C', title: 'อาคารท่อส่งน้ำฝั่งซ้าย', kicker: 'จุดแวะ 03 · ปากคลองส่งน้ำสายใหญ่', p: P3(OUT.x, 71, OUT.z, 4), mapXY: [OUT.x, OUT.z],
+    cam: { pos: [OUT.x - 22, Y(80) + 8, OUT.z + 26], tgt: [OUT.x + 2, Y(70), OUT.z + 4] }, lvl: 'today',
+    facts: [['ท่อ Steel Liner', 'Ø 0.80 ม.'], ['ระดับธรณีท่อ', '+72.00 ม.รทก.'], ['อัตราออกแบบ', '3.500 ลบ.ม./วินาที'], ['ปตร.แบ่งน้ำ', '1.2 × 1.8 ม.']],
+    body: ['อาคารท่อส่งน้ำปากคลองส่งน้ำสายใหญ่ฝั่งซ้าย รับน้ำจากหอรับน้ำในอ่าง ผ่านท่อ Steel Liner ขนาด Ø 0.80 ม. ระดับธรณีท่อ +72.00 ม.รทก. อัตราการไหลออกแบบ 3.500 ลบ.ม./วินาที',
+      'น้ำจากท่อไหลลงคลองดาดคอนกรีต ซึ่งมีบานประตูระบายน้ำ (ปตร.) ขนาด 1.2 × 1.8 ม. แบ่งน้ำส่วนหนึ่งลงแม่น้ำกุยบุรี ที่เหลือส่งต่อเข้าระบบคลองส่งน้ำ'],
+    subs: [{ code: 'C1', name: 'ปตร. แบ่งน้ำลงแม่น้ำ', p: [GATE.x + 3.4, Y(70.4) + 3, GATE.z], d: 'บานประตูระบายน้ำ 1.2 × 1.8 ม. แบ่งน้ำจากคลองดาดลงแม่น้ำกุยบุรี', cam: { pos: [GATE.x - 8, Y(72) + 6, GATE.z + 12], tgt: [GATE.x + 3, Y(70.5), GATE.z] } },
+           { code: 'C2', name: 'หอรับน้ำ', p: [IN.x, CREST + 3, IN.z], d: 'หอรับน้ำในอ่าง ต่อท่อลอดใต้ทำนบไปยังอาคารท่อส่งน้ำด้านท้าย', cam: { pos: [IN.x - 14, CREST + 8, IN.z - 16], tgt: [IN.x, Y(84), IN.z] } }] },
+  { code: 'D', title: 'อาคารระบายน้ำล้น (Spillway)', kicker: `จุดแวะ 04 · การระบายน้ำวันนี้`, p: P3(SPX, 86, DAMZ, 3), mapXY: [SPX, DAMZ],
+    cam: { pos: [SPX + 30, Y(92) + 14, DAMZ + 34], tgt: [SPX - 4, Y(78), DAMZ + 8] }, lvl: 'today',
+    facts: [['ล้น Spillway', `${TODAY.spillQ} ลบ.ม./วินาที`], ['ปริมาณล้นวันนี้', `${TODAY.spillM} ล้าน ลบ.ม.`], ['ระบายท้ายอ่าง', `${TODAY.relRiver} ลบ.ม./วินาที`], ['ระบายรวม', `${TODAY.relQ} ลบ.ม./วินาที`]],
+    body: [`รายงานประจำวันที่ ${TODAY.date} มีน้ำล้นอาคารระบายน้ำล้น ${TODAY.spillQ} ลบ.ม./วินาที (${TODAY.spillM} ล้าน ลบ.ม.) และระบายท้ายอ่าง ${TODAY.relRiver} ลบ.ม./วินาที (${TODAY.relRiverM} ล้าน ลบ.ม.) รวมระบาย ${TODAY.relQ} ลบ.ม./วินาที`,
+      'น้ำที่ล้นจะไหลลงรางเทและลงสู่แม่น้ำกุยบุรีด้านท้ายเขื่อน ซึ่งไหลผ่านชุมชนต่อไปยังสะพานท่าข้าม'],
+    subs: [] },
+  { code: 'E', title: 'แม่น้ำกุยบุรีและสะพานท่าข้าม', kicker: 'จุดแวะ 05 · จุดเฝ้าระวังท้ายน้ำ', p: [xc(BRZ), Y(71) + 3, BRZ], mapXY: [xc(BRZ), BRZ],
+    cam: { pos: [xc(BRZ) + 26, Y(80) + 8, BRZ + 26], tgt: [xc(BRZ), Y(68), BRZ] }, lvl: 'today',
+    facts: [['เกณฑ์เฝ้าระวัง', 'น้ำล้นสัน 40 ซม.'], ['จุดสังเกต', 'สะพานท่าข้าม']],
+    body: ['น้ำจาก Spillway และท่อลงสู่ลำน้ำเดิมไหลลงแม่น้ำกุยบุรี ผ่านพื้นที่ชุมชนและพื้นที่เกษตรด้านท้ายเขื่อน',
+      'ผลกระทบด้านท้ายน้ำเริ่มเกิดขึ้นเมื่อน้ำล้นสันอาคารระบายน้ำล้นประมาณ 40 ซม. โดยใช้บริเวณสะพานท่าข้ามเป็นจุดสังเกต'],
+    subs: [{ code: 'E1', name: 'ท่อลงสู่ลำน้ำเดิม', p: [ROUT.x + 4.5, Y(67) + 4, ROUT.z - 1], d: `ท่อระบายน้ำลงลำน้ำเดิมที่ตีนเขื่อน วันนี้ระบาย ${TODAY.relRiver} ลบ.ม./วินาที`, cam: { pos: [ROUT.x + 18, Y(78), ROUT.z + 16], tgt: [ROUT.x + 3, Y(67), ROUT.z] } }] },
+  { code: 'F', title: 'ฝายกุยบุรีและสถานี KY.3', kicker: 'จุดแวะ 06 · ปลายทางท้ายน้ำ', p: [xc(WEIRZ), Y(68) + 4, WEIRZ], mapXY: [xc(WEIRZ), WEIRZ],
+    cam: { pos: [xc(WEIRZ) + 34, Y(84), WEIRZ + 30], tgt: [xc(WEIRZ) + 6, Y(67), WEIRZ + 4] }, lvl: 'today',
+    facts: [['KY.3 ปริมาณน้ำ', `${KY3.q} ลบ.ม./วินาที`], ['ความจุลำน้ำ', `${KY3.qmax} ลบ.ม./วินาที`], ['ระดับน้ำ / ตลิ่ง', `${KY3.wl} / ${KY3.bank} ม.`], ['แนวโน้ม', KY3.trend]],
+    body: ['ฝายกุยบุรีทดน้ำในแม่น้ำกุยบุรี เหนือฝายมีแยกไปคลองระบาย D8 เพื่อช่วยระบายน้ำส่วนเกินออกจากลำน้ำ',
+      `สถานีวัดน้ำท่า KY.3 คลองกุย (บ้านทุ่งแฝก) วันนี้มีน้ำไหล ${KY3.q} ลบ.ม./วินาที จากความจุลำน้ำ ${KY3.qmax} ลบ.ม./วินาที ระดับน้ำ ${KY3.wl} ม. ต่ำกว่าตลิ่ง ${(KY3.bank - KY3.wl).toFixed(2)} ม. สถานการณ์${KY3.trend}`],
+    subs: [{ code: 'F1', name: 'คลองระบาย D8', p: [xc(WEIRZ) + 20, Y(70) + 2, WEIRZ], d: 'คลองระบายที่แยกจากแม่น้ำกุยบุรีด้านเหนือฝาย', cam: { pos: [xc(WEIRZ) + 34, Y(80), WEIRZ - 14], tgt: [xc(WEIRZ) + 14, Y(68), WEIRZ] } },
+           { code: 'F2', name: 'สถานี KY.3', p: [xc(KYZ) + 6, Y(72) + 2, KYZ], d: `คลองกุย (บ้านทุ่งแฝก) · ${KY3.q} ลบ.ม./วินาที · ต่ำกว่าตลิ่ง ${(KY3.bank - KY3.wl).toFixed(2)} ม.`, cam: { pos: [xc(KYZ) + 20, Y(76), KYZ + 14], tgt: [xc(KYZ) + 4, Y(68), KYZ] } }] },
+];
+const SOURCES = `อ่านจาก รายงานประจำวันที่ ${TODAY.date} (แผ่น 1.0, รวม, อ่างฯ ยางชุม) · โครงการชลประทานประจวบคีรีขันธ์ · ภูมิประเทศเป็นแผนภาพจำลอง ไม่ตามสเกล`;
+let cur = 0; const allLbl = [], lblLayer = document.getElementById('lblLayer');
+function mkLabel(o, main, si) {
+  const el = document.createElement('div'); el.className = 'lbl' + (main ? '' : ' sub');
+  el.innerHTML = `<span class="code ${main ? '' : 's'}">${o.code}</span>${main ? o.title : o.name}`;
+  el.onclick = ev => { ev.stopPropagation(); if (main) goStop(si); else openPop(o, si, el); };
+  lblLayer.appendChild(el); allLbl.push({ o, el, v3: new THREE.Vector3(...o.p), si, main });
+}
+STOPS.forEach((s, i) => { mkLabel(s, true, i); s.subs.forEach(u => mkLabel(u, false, i)); });
+// schematic mini-map (same coordinates as the scene: x across, z downstream)
+function mapSVG() {
+  let res = 'M'; for (let z = -66; z <= DAMZ - 6; z += 4) res += `${(xc(z) - 40 - 6 * Math.sin(z * .08 + 1)).toFixed(1)},${z} `;
+  for (let z = DAMZ - 6; z >= -66; z -= 4) res += `L${(xc(z) + 40 + 6 * Math.sin(z * .08 + 1)).toFixed(1)},${z} `;
+  const riv = Array.from({ length: 15 }, (_, i) => { const z = DAMZ + 6 + i * 5; return `${xc(z).toFixed(1)},${z}`; }).join(' ');
+  const can = canalPts.map(p => `${p.x.toFixed(1)},${p.z.toFixed(1)}`).join(' ');
+  const mk = STOPS.map((s, i) => `<g class="mk ${i === cur ? 'on' : ''}" data-i="${i}" transform="translate(${s.mapXY[0]},${s.mapXY[1]})"><circle r="5.4"/><text text-anchor="middle" dy="2.4">${s.code}</text></g>`).join('');
+  return `<svg viewBox="-80 -72 160 170"><path d="${res}Z" fill="#9cc6dc" stroke="#2f7fa8" stroke-width=".8"/>
+    <polyline points="${riv}" fill="none" stroke="#2f7fa8" stroke-width="3"/><polyline points="${can}" fill="none" stroke="#7f8a83" stroke-width="1.6" stroke-dasharray="3 2"/>
+    <line x1="${damX - 48}" y1="${DAMZ}" x2="${damX + 48}" y2="${DAMZ}" stroke="#7a4a2a" stroke-width="3"/>
+    <line x1="${xc(BRZ) - 16}" y1="${BRZ}" x2="${xc(BRZ) + 16}" y2="${BRZ}" stroke="#555" stroke-width="2"/>
+    <line x1="${xc(WEIRZ) - 6}" y1="${WEIRZ}" x2="${xc(WEIRZ) + 6}" y2="${WEIRZ}" stroke="#203e35" stroke-width="2.4"/>
+    <text x="0" y="-60" text-anchor="middle" style="font:6px 'IBM Plex Sans Thai';fill:#2f7fa8">อ่างเก็บน้ำยางชุม</text>${mk}</svg>`;
+}
+function renderStory() {
+  const s = STOPS[cur];
+  const subs = s.subs.length ? `<p style="font-size:13px;color:#4b5b55">จุดย่อย: ${s.subs.map(u => `<span class="code s">${u.code}</span> ${u.name}`).join(' · ')}</p>` : '';
+  document.getElementById('stBody').innerHTML = `<div class="kick">${s.kicker}</div><h1>${s.title}</h1>
+    ${s.facts ? `<div class="facts">${s.facts.map(([a, b]) => `<div>${a}<b>${b}</b></div>`).join('')}</div>` : ''}
+    <div class="map">${mapSVG()}<div class="cap">แผนภาพจำลอง ไม่ตามสเกล · ต้นน้ำอยู่ด้านบน ท้ายน้ำอยู่ด้านล่าง · เส้นประคือคลองส่งน้ำ · แตะตัวอักษรเพื่อไปยังจุดนั้น</div></div>
+    ${s.body.map(p => `<p>${p}</p>`).join('')}${subs}<div class="src">${SOURCES} · <a href="#" id="srcMore">อ่านที่มาและข้อจำกัด</a></div>
+    <div class="stops">${STOPS.map((x, i) => `<div class="st ${i === cur ? 'on' : ''}" data-i="${i}"><span class="code">${x.code}</span><div><b>${x.title}</b><small>${x.subs.map(u => u.code + ' ' + u.name).join(' · ') || x.kicker}</small></div></div>`).join('')}</div>`;
+  document.querySelectorAll('#stBody .mk, #stBody .st').forEach(el => el.onclick = () => goStop(+el.dataset.i));
+  document.getElementById('srcMore').onclick = e => { e.preventDefault(); document.getElementById('about').classList.add('show'); };
+  document.getElementById('stPrev').disabled = cur === 0;
+  document.getElementById('stNext').textContent = cur === STOPS.length - 1 ? 'เริ่มใหม่ ↺' : 'จุดแวะถัดไป →';
+  document.getElementById('stBody').scrollTop = 0;
+  allLbl.forEach(l => l.el.classList.toggle('on', l.main && l.si === cur));
+}
+function goStop(i) { cur = (i + STOPS.length) % STOPS.length; closePop(); if (STOPS[cur].lvl === 'today') setLevel(TODAY.level, true); flyTo(STOPS[cur].cam); renderStory(); }
+document.getElementById('stPrev').onclick = () => cur > 0 && goStop(cur - 1);
+document.getElementById('stNext').onclick = () => goStop(cur + 1);
+document.getElementById('stX').onclick = () => { document.body.classList.toggle('stmin'); document.getElementById('stX').textContent = document.body.classList.contains('stmin') ? '☰' : '✕'; resize(); };
+const pop = document.getElementById('pop'); let popSub = null;
+function openPop(u, si, el) {
+  popSub = { u, si }; document.getElementById('popT').textContent = `${u.code} · ${u.name}`; document.getElementById('popP').textContent = u.d;
+  const r = el.getBoundingClientRect(); pop.style.display = 'block';
+  pop.style.left = Math.min(innerWidth - 272, Math.max(8, r.left + r.width / 2 - 130)) + 'px'; pop.style.top = Math.max(56, r.top - pop.offsetHeight - 10) + 'px';
+}
+function closePop() { pop.style.display = 'none'; popSub = null; }
+document.getElementById('popX').onclick = closePop;
+document.getElementById('popGo').onclick = () => { if (!popSub) return; const { u, si } = popSub; if (cur !== si) { cur = si; renderStory(); } flyTo(u.cam); closePop(); };
+document.getElementById('popNext').onclick = () => { if (!popSub) return; const si = popSub.si, list = STOPS[si].subs, k = list.indexOf(popSub.u);
+  if (k < list.length - 1) { const n = list[k + 1]; openPop(n, si, allLbl.find(x => x.o === n).el); } else goStop(si + 1); };
+document.addEventListener('click', e => { if (!pop.contains(e.target) && !e.target.closest('.lbl')) closePop(); });
+// labels
+const tmp = new THREE.Vector3(), ray = new THREE.Raycaster(); let occFrame = 0;
+function updateOcclusion() {
+  allLbl.forEach(l => { const dir = l.v3.clone().sub(camera.position), dist = dir.length(); ray.set(camera.position, dir.normalize()); ray.far = dist - 1;
+    const hidden = ray.intersectObject(terrain, false).length > 0; l.el.style.opacity = hidden ? (l.main ? .4 : .15) : 1; l.el.style.pointerEvents = hidden && !l.main ? 'none' : 'auto'; });
+}
+function placeLabels() {
+  if (occFrame++ % 15 === 0) updateOcclusion();
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  allLbl.forEach(l => { tmp.copy(l.v3).project(camera); const off = tmp.z > 1 || Math.abs(tmp.x) > 1.02 || Math.abs(tmp.y) > 1.02 || (!l.main && l.si !== cur);
+    l.el.style.display = off ? 'none' : 'flex'; l.el.style.left = (tmp.x * .5 + .5) * w + 'px'; l.el.style.top = (-tmp.y * .5 + .5) * h + 'px'; });
+}
+// toolbar
+const $ = id => document.getElementById(id);
+const OVER = { pos: [120, 95, 150], tgt: [0, 8, 5] };
+$('tbWide').onclick = () => flyTo(OVER);
+$('tbRot').onclick = () => { controls.autoRotate = !controls.autoRotate; $('tbRot').classList.toggle('on', controls.autoRotate); };
+$('tbLbl').onclick = () => { const off = document.body.classList.toggle('nolbl'); $('tbLbl').classList.toggle('on', !off); };
+const LIGHTS = [[7, 'เช้า'], [12, 'กลางวัน'], [17.7, 'เย็น'], [20.5, 'กลางคืน']]; let li = 0;
+const setHour = h => { hour = h; applyEnv(); document.querySelectorAll('#tchips button').forEach(b => b.classList.toggle('on', +b.dataset.t === h)); };
+$('tbLight').onclick = () => { li = (li + 1) % LIGHTS.length; setHour(LIGHTS[li][0]); $('tbLight').textContent = 'แสง: ' + LIGHTS[li][1]; };
+document.querySelectorAll('#tchips button').forEach(b => b.onclick = () => setHour(+b.dataset.t));
+$('tbTune').onclick = () => { const on = document.body.classList.toggle('tune'); $('tbTune').classList.toggle('on', on); };
+$('tbInfo').onclick = () => $('about').classList.add('show'); $('aboutX').onclick = () => $('about').classList.remove('show');
+$('about').onclick = e => { if (e.target.id === 'about') $('about').classList.remove('show'); };
+$('tbClean').onclick = () => { const on = document.body.classList.toggle('clean'); $('tbClean').classList.toggle('on', on); resize(); };
+$('tbShot').onclick = () => {
+  const w = 3840, h = Math.round(3840 / camera.aspect), pr = renderer.getPixelRatio();
+  camera.clearViewOffset(); camera.updateProjectionMatrix(); renderer.setPixelRatio(1); renderer.setSize(w, h, false); composer.setSize(w, h); composer.render();
+  canvas.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `อ่างเก็บน้ำยางชุม-3D-${TODAY.date}-4K.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }, 'image/png');
+  renderer.setPixelRatio(pr); resize();
+};
+function resize() {
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h;
+  const st = $('story');
+  if (!document.body.classList.contains('clean')) { const r = st.getBoundingClientRect();
+    if (w > 820 && !document.body.classList.contains('stmin')) camera.setViewOffset(w + r.width + 14, h, 0, 0, w, h);
+    else if (w <= 820) camera.setViewOffset(w, h + r.height, 0, r.height, w, h); else camera.clearViewOffset();
+  } else camera.clearViewOffset();
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+setHour(7); setLevel(TODAY.level, true); renderStory(); resize();
+setTimeout(() => goStop(0), 900);
+
+const clock = new THREE.Clock(); let T = 0;
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), .05); T += dt;
+  if (fly) { fly.t = Math.min(fly.t + dt / fly.dur, 1); const k = ease(fly.t); camera.position.lerpVectors(fly.p0, fly.p1, k); controls.target.lerpVectors(fly.t0, fly.t1, k); if (fly.t === 1) { fly = null; controls.enabled = true; } }
+  flowTex.offset.y -= dt * .35;
+  const p = resGeo.attributes.position; for (let i = 0; i < p.count; i++) p.setY(i, Math.sin(resBase[i * 3] * .3 + T * 1.2) * .05 + Math.cos(resBase[i * 3 + 2] * .25 + T) * .05); p.needsUpdate = true;
+  controls.update(); composer.render(); placeLabels();
+});
+const ld = $('load'); ld.style.opacity = 0; setTimeout(() => ld.remove(), 700);
+</script></body></html>
