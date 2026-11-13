@@ -21,6 +21,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font-family:
 header{height:56px;display:flex;align-items:center;gap:12px;padding:0 14px;background:linear-gradient(90deg,#0d1b33,#10284a);border-bottom:1px solid var(--ln)}
 header .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#6366f1);display:grid;place-items:center;font-size:19px;flex:none}
 header h1{font-size:15px;margin:0;line-height:1.2;font-weight:600}
+header h1 .sh{display:none}
 header h1 small{display:block;font-size:11.5px;color:var(--mu);font-weight:400}
 header .sp{flex:1}
 .live{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu);white-space:nowrap}
@@ -99,7 +100,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
 .src small{color:var(--mu);display:block}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0369a1;color:#fff;padding:8px 16px;border-radius:20px;z-index:2000;display:none}
 @media (max-width:900px){
- header h1{font-size:13px} header h1 small{display:none}
+ header h1{font-size:14px} header h1 small{display:none} header h1 .lg{display:none} header h1 .sh{display:inline} #prov{max-width:130px}
  main{flex-direction:column;height:auto}
  #mapwrap{height:62vh;flex:none}
  aside{width:100%;border-left:0;border-top:1px solid var(--ln)}
@@ -116,7 +117,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
 <body>
 <header>
  <div class="logo">🌧️</div>
- <h1>ระบบติดตามน้ำท่วม-น้ำฝน และพยากรณ์อากาศแบบบูรณาการ<small>Real-time &amp; Forecast Monitoring · จังหวัดประจวบคีรีขันธ์</small></h1>
+ <h1><span class="lg">ระบบติดตามน้ำท่วม-น้ำฝน และพยากรณ์อากาศแบบบูรณาการ</span><span class="sh">ติดตามน้ำท่วม-น้ำฝน</span><small>Real-time &amp; Forecast Monitoring · จังหวัดประจวบคีรีขันธ์</small></h1>
  <div class="sp"></div>
  <select id="prov" title="เลือกจังหวัด"></select>
  <div class="live"><span class="dot" id="ldot"></span><span class="lt">อัปเดต</span> <span id="lastUpd">–</span></div>
@@ -158,7 +159,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
    </select></div>
    <h4>อื่น ๆ</h4>
    <label><input type="checkbox" id="ovLab" checked> ป้ายค่าบนแผนที่</label>
-   <label><input type="checkbox" id="ovAmp" checked> 🔮 จุดพยากรณ์รายอำเภอ</label>
+   <label><input type="checkbox" id="ovAmp"> 🔮 จุดพยากรณ์รายอำเภอ</label>
    <div class="mut" style="margin-top:6px">แตะแผนที่ตรงไหนก็ได้ เพื่อดูพยากรณ์ฝน ณ จุดนั้น</div>
   </div>
   <div id="tbar" class="mp">
@@ -315,12 +316,12 @@ function drawRain(){
  const arr=(S.raw[S.rainMode]||[]).filter(inProv);
  $('cRain').textContent=arr.length?arr.length+' สถานี':'';
  if(!$('ovRain').checked)return;
- const lab=$('ovLab').checked&&(S.prov!=='all');
+ const lab=$('ovLab').checked&&(S.prov!=='all');const lmin=map.getZoom()>=11?0.1:map.getZoom()>=10?5:10;
  arr.slice().sort((a,b)=>a.v-b.v).forEach(r=>{
   const rad=r.v<=0?4:Math.min(16,5+Math.sqrt(r.v)*1.2);
   const m=L.circleMarker([r.lat,r.lng],{radius:rad,color:'#fff',weight:1,fillColor:rainCol(r.v),fillOpacity:.92});
   m.bindPopup(`<b>${r.name}</b> <span class="mut">${r.code}</span><br>ต.${r.tam} อ.${r.amp} จ.${r.provName}<br>${modeName()}: <b style="color:${rainCol(r.v)}">${fmt(r.v)} มม.</b> (${rainTxt(r.v)})${S.rainMode==='r24'&&r.r1!=null?`<br>ฝน 1 ชม.: ${fmt(r.r1)} มม.`:''}<br><span class="mut">${r.ag} · ${r.t||''}</span><br><a href="#" onclick="fcAt(${r.lat},${r.lng},'${r.name.replace(/'/g,'')}');return false" style="color:#7dd3fc">ดูพยากรณ์ ณ จุดนี้ →</a>`);
-  if(lab&&r.v>=1)m.bindTooltip(fmt(r.v),{permanent:true,direction:'right',className:'rlab',offset:[rad,0]});
+  if(lab&&r.v>=lmin)m.bindTooltip(fmt(r.v),{permanent:true,direction:'right',className:'rlab',offset:[rad,0]});
   m.addTo(gRain)});
 }
 function modeName(){return{r24:'ฝนสะสม 24 ชม.',r1:'ฝน 1 ชม.',today:'ฝนวันนี้',yday:'ฝนเมื่อวาน'}[S.rainMode]}
@@ -508,6 +509,7 @@ $('rainMode').onchange=e=>setMode(e.target.value);
 document.querySelectorAll('#rainSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 $('ovRain').onchange=drawRain;$('ovWl').onchange=drawWl;$('ovLab').onchange=()=>{drawRain();drawWl()};$('ovAmp').onchange=drawAmp;
 $('ovRadar').onchange=showRadar;$('ovSat').onchange=loadSat;$('satProd').onchange=loadSat;$('ovFlood').onchange=loadFlood;$('floodProd').onchange=loadFlood;
+map.on('zoomend',()=>{drawRain()});
 $('lyrToggle').onclick=()=>$('lyr').classList.toggle('open');
 $('prov').onchange=e=>{S.prov=e.target.value;try{localStorage.setItem('fm_prov',S.prov)}catch(x){}renderAll();fitProv()};
 function fitProv(){const pts=[...(S.raw.r24||[]),...(S.raw.wl||[])].filter(inProv).map(x=>[x.lat,x.lng]);if(pts.length&&S.prov!=='all')map.fitBounds(pts,{padding:[30,30],maxZoom:11});else if(S.prov==='all')map.setView([13.2,100.9],6)}
