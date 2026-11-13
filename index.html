@@ -2388,7 +2388,7 @@ el.innerHTML=`<h3>สรุปพื้นที่ประสบอุทก�
         <ul class="wx-list"><li><b>ฝนสะสม 24 ชม.</b>สูงสุดรายอำเภอ</li><li><b>ระดับน้ำ</b>สถานการณ์สถานีวัดน้ำ</li><li><b>ฝน 2 ชม. ข้างหน้า</b>ราย 15 นาที</li><li><b>ฝน 24 ชม. ข้างหน้า</b>รายชั่วโมง</li><li><b>แนวโน้ม 5 วัน</b>พยากรณ์รายวัน</li><li><b>ข้อความรายงาน</b>สำหรับส่ง LINE</li></ul></div>
         <div class="wx-frame" id="wxFrame" hidden></div>
         <p class="wx-note" id="wxNote">ระบบเปิดในแท็บใหม่ · ถ้าเปิดจากแอปข้อมูลน้ำประจวบฯ จะแสดงระบบในหน้านี้ด้วย</p>
-        <script>document.addEventListener("DOMContentLoaded",()=>{try{if(/github\.io$/.test(location.hostname)){const f=document.getElementById("wxFrame");f.innerHTML='<iframe src="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/" title="ระบบติดตามและพยากรณ์อากาศ" loading="lazy"></iframe>';f.hidden=false;document.getElementById("wxNote").textContent="แสดงระบบจริงด้านบน · กดปุ่มเพื่อเปิดเต็มจอ"}}catch(e){}})</script>
+        <script>document.addEventListener("click",e=>{const el=e.target.closest('[data-t="wxmon"],[data-id="wxmon"],[data-o="wxmon"],a[href="#wxmon"]');if(!el||el.closest("#wxmon"))return;e.preventDefault();e.stopImmediatePropagation();if(/github\.io$/.test(location.hostname)){location.href="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/"}else{const a=document.createElement("a");a.href="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/";a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}},true);</script><script>document.addEventListener("DOMContentLoaded",()=>{try{if(/github\.io$/.test(location.hostname)){const f=document.getElementById("wxFrame");f.innerHTML='<iframe src="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/" title="ระบบติดตามและพยากรณ์อากาศ" loading="lazy"></iframe>';f.hidden=false;document.getElementById("wxNote").textContent="แสดงระบบจริงด้านบน · กดปุ่มเพื่อเปิดเต็มจอ"}}catch(e){}})</script>
       </section>
       <section id="floodrep">
         <style>
@@ -6593,6 +6593,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
   }
   const h1=document.querySelector(".top .crumb h1"),cs=document.querySelector(".top .crumb .tx span"),secs=[...document.querySelectorAll(".content>section")];
   function show(id,push){
+    if(id==="wxmon"){const U="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/";if(/github\.io$/.test(location.hostname)){location.href=U}else{const a=document.createElement("a");a.href=U;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}return}
     const t=T.find(x=>x.id===id);const sec=t&&document.getElementById(id);
     secs.forEach(s=>s.classList.toggle("cur",s===sec));
     document.body.classList.toggle("in-topic",!!sec);
