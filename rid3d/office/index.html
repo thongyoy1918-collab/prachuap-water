@@ -754,12 +754,12 @@ const panel = document.getElementById('panel'), fold = document.getElementById('
 fold.onclick = () => { panel.classList.toggle('fold'); fold.textContent = panel.classList.contains('fold') ? 'แสดง' : 'ซ่อน'; };
 
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h;
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h; camera.fov = 35;
   const st = document.getElementById('story'), hidden = document.body.classList.contains('clean');
   if (!hidden && st) {
     const r = st.getBoundingClientRect();
     if (w > 820 && !document.body.classList.contains('stmin')) camera.setViewOffset(w + r.width + 14, h, 0, 0, w, h);   // shift scene right of the side panel
-    else if (w <= 820) camera.setViewOffset(w, h + r.height, 0, r.height, w, h);                                          // shift scene above the bottom sheet
+    else if (w <= 820) { camera.setViewOffset(w, h + r.height, 0, r.height, w, h); camera.fov = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(17.5)) * (h + r.height) / h) * 180 / Math.PI; }                                          // shift scene above the bottom sheet
     else camera.clearViewOffset();
   } else camera.clearViewOffset();
   camera.updateProjectionMatrix();

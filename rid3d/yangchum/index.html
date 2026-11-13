@@ -451,7 +451,7 @@ const STOPS = [
     subs: [{ code: 'C1', name: 'ปตร. แบ่งน้ำลงแม่น้ำ', p: [GATE.x + 3.4, Y(70.4) + 3, GATE.z], d: 'บานประตูระบายน้ำ 1.2 × 1.8 ม. แบ่งน้ำจากคลองดาดลงแม่น้ำกุยบุรี', cam: { pos: [GATE.x - 8, Y(72) + 6, GATE.z + 12], tgt: [GATE.x + 3, Y(70.5), GATE.z] } },
            { code: 'C2', name: 'หอรับน้ำ', p: [IN.x, CREST + 3, IN.z], d: 'หอรับน้ำในอ่าง ต่อท่อลอดใต้ทำนบไปยังอาคารท่อส่งน้ำด้านท้าย', cam: { pos: [IN.x - 14, CREST + 8, IN.z - 16], tgt: [IN.x, Y(84), IN.z] } }] },
   { code: 'D', title: 'อาคารระบายน้ำล้น (Spillway)', kicker: `จุดแวะ 04 · การระบายน้ำวันนี้`, p: P3(SPX, 86, DAMZ, 3), mapXY: [SPX, DAMZ],
-    cam: { pos: [SPX + 30, Y(92) + 14, DAMZ + 34], tgt: [SPX - 4, Y(78), DAMZ + 8] }, lvl: 'today',
+    cam: { pos: [SPX + 14, Y(104) + 12, DAMZ + 52], tgt: [SPX - 6, Y(77), DAMZ + 12] }, lvl: 'today',
     facts: [['ล้น Spillway', `${TODAY.spillQ} ลบ.ม./วินาที`], ['ปริมาณล้นวันนี้', `${TODAY.spillM} ล้าน ลบ.ม.`], ['ระบายท้ายอ่าง', `${TODAY.relRiver} ลบ.ม./วินาที`], ['ระบายรวม', `${TODAY.relQ} ลบ.ม./วินาที`]],
     body: [`รายงานประจำวันที่ ${TODAY.date} มีน้ำล้นอาคารระบายน้ำล้น ${TODAY.spillQ} ลบ.ม./วินาที (${TODAY.spillM} ล้าน ลบ.ม.) และระบายท้ายอ่าง ${TODAY.relRiver} ลบ.ม./วินาที (${TODAY.relRiverM} ล้าน ลบ.ม.) รวมระบาย ${TODAY.relQ} ลบ.ม./วินาที`,
       'น้ำที่ล้นจะไหลลงรางเทและลงสู่แม่น้ำกุยบุรีด้านท้ายเขื่อน ซึ่งไหลผ่านชุมชนต่อไปยังสะพานท่าข้าม'],
@@ -557,11 +557,11 @@ $('tbShot').onclick = () => {
   renderer.setPixelRatio(pr); resize();
 };
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h;
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w / 2, h / 2); camera.aspect = w / h; camera.fov = 35;
   const st = $('story');
   if (!document.body.classList.contains('clean')) { const r = st.getBoundingClientRect();
     if (w > 820 && !document.body.classList.contains('stmin')) camera.setViewOffset(w + r.width + 14, h, 0, 0, w, h);
-    else if (w <= 820) camera.setViewOffset(w, h + r.height, 0, r.height, w, h); else camera.clearViewOffset();
+    else if (w <= 820) { camera.setViewOffset(w, h + r.height, 0, r.height, w, h); camera.fov = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(17.5)) * (h + r.height) / h) * 180 / Math.PI; } else camera.clearViewOffset();
   } else camera.clearViewOffset();
   camera.updateProjectionMatrix();
 }
