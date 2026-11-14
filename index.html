@@ -6238,10 +6238,13 @@ function openExport(){
   const r=RES.find(x=>x.id===sel);
   document.getElementById("expOne").textContent=(r.type==="large"?"":"อ่าง")+r.name;
   document.querySelectorAll("#expKinds button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===expKind));
+  {const G=[["exec"],["all"],["daily","dw"],["hi"],["u7"],["fl","flL"],["tr"],["rain169","rain"],["r24","r24a4","r24169"],["hw"],["small"],["one","one169"],["pr"]],g=EXP_ALL?null:(G.find(x=>x.includes(expKind))||[]),kb=document.getElementById("expKinds");
+   kb.querySelectorAll("button[data-k]").forEach(b=>b.style.display=(!!g&&!g.includes(b.dataset.k))?"none":"");let mo=document.getElementById("expMore");if(!mo){mo=document.createElement("button");mo.type="button";mo.id="expMore";mo.innerHTML="<b>รายงานอื่น ๆ</b><span>แสดงรายการบันทึกภาพทั้งหมด</span>";mo.onclick=()=>{kb.querySelectorAll("button[data-k]").forEach(b=>b.style.display="");mo.style.display="none"};kb.appendChild(mo)}
+   mo.style.display=g?"":"none";EXP_ALL=false}
   dlg.hidden=false;try{const kb=document.querySelector('#expKinds button[aria-pressed="true"]');kb.parentNode.scrollLeft=kb.offsetLeft-12}catch(e){} document.body.style.overflow="hidden"; buildExport(); document.getElementById("expSave").focus();
 }
 function closeExport(){dlg.hidden=true;document.body.style.overflow=""}
-document.getElementById("btnExport").onclick=openExport;
+let EXP_ALL=false;document.getElementById("btnExport").onclick=()=>{EXP_ALL=true;openExport()};
 document.getElementById("mgSave").onclick=()=>{expKind="hi";openExport()};
 document.getElementById("trSave").onclick=()=>{expKind="tr";openExport()};
 document.getElementById("expClose").onclick=closeExport;
