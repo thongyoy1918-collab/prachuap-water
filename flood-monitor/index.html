@@ -600,7 +600,7 @@ async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)ret
  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;A.forEach(a=>a.r.forEach(r=>r.forEach(([x,y])=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)})));
  const st=(S.raw[S.rainMode]||[]).filter(r=>r.v!=null&&r.lng>x0-.3&&r.lng<x1+.3&&r.lat>y0-.3&&r.lat<y1+.3);
  const W=420,H=Math.round(W*(y1-y0)/(x1-x0)*1.02),cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
- if(!st.length){$('rmLeg').innerHTML=`<b>แผนที่ปริมาณ${modeName()}</b><div style="color:#b91c1c;margin-top:3px">${(S.rainMode==='r3'||S.rainMode==='r6')&&S.rnBusy?'กำลังคำนวณจากข้อมูลรายชั่วโมง…':'ยังไม่มีข้อมูลฝนจาก ThaiWater '+((ST.rain&&ST.rain.s==='er')?'('+ST.rain.msg+') ลองกดรีเฟรชอีกครั้ง':'— กำลังโหลด…')}</div>`;$('rmLeg').style.display='block';$('rmPan').style.display='none';rmLayout();return}
+ if(!st.length){$('rmLeg').innerHTML=`<div class="tc"><div class="tx"><b>แผนที่ปริมาณ${modeName()}</b><small style="color:#b91c1c">${(S.rainMode==='r3'||S.rainMode==='r6')&&S.rnBusy?'กำลังคำนวณจากข้อมูลรายชั่วโมง…':'ยังไม่มีข้อมูลฝนจาก ThaiWater '+((ST.rain&&ST.rain.s==='er')?'('+ST.rain.msg+') ลองกดรีเฟรชอีกครั้ง':'— กำลังโหลด…')}</small></div></div>`;$('rmLeg').style.display='block';$('rmPan').style.display='none';rmLayout();return}
  if(st.length){const im=g.createImageData(W,H),D=im.data,kx=Math.cos((y0+y1)/2*Math.PI/180);
   for(let py=0;py<H;py++){const la=y1-(py+.5)/H*(y1-y0);for(let px=0;px<W;px++){const lo=x0+(px+.5)/W*(x1-x0);let sw=0,sv=0,hit=null;
    for(const r of st){const dx=(r.lng-lo)*kx,dy=r.lat-la,d2=dx*dx+dy*dy;if(d2<1e-7){hit=r.v;break}const w=1/(d2*d2);sw+=w;sv+=w*r.v}
