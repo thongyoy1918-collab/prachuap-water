@@ -103,8 +103,11 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #rmPan .sr .v{text-align:center;font:700 13px Kanit,sans-serif;border-radius:6px;padding:3px 0}#rmPan .sr .t{color:#64748b;font-size:11px;text-align:center}
 #rmPan .ft{padding:6px 12px 9px;color:#64748b;font-size:10.5px;border-top:1px solid #eef2f7}#rmPan .sv{background:#123B7A;color:#fff;border:0;border-radius:8px;padding:5px 9px;font:600 12px Kanit,sans-serif;cursor:pointer;white-space:nowrap}#rmPan .sv:hover{background:#1d5aa0}#rmPan .x{background:none;border:0;font-size:16px;color:#64748b;cursor:pointer;padding:0 2px}
 .rmv{background:#fff;color:#0f172a;border:0;border-radius:6px;padding:0 4px;font:700 11px Kanit,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.4)}.rmv:before{display:none}
-#rmLeg{position:absolute;left:12px;right:12px;top:10px;z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;}
-#rmLeg b{font-family:Kanit,sans-serif;font-size:13.5px}#rmLeg .bar{display:flex;margin-top:5px}#rmLeg .bar span{flex:1;min-width:38px;text-align:center}#rmLeg .bar i{display:block;height:10px}
+#rmLeg{position:absolute;left:12px;top:10px;z-index:650;display:none;font-size:12px;color:#0f172a;pointer-events:none}#rmLeg>*{pointer-events:auto}
+#rmLeg .tc{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:10px 16px 10px 10px;box-shadow:0 4px 16px rgba(0,0,0,.35)}#rmLeg .ic{width:48px;height:48px;border-radius:12px;background:linear-gradient(#38a5f5,#1d6fd8);display:flex;align-items:center;justify-content:center;flex:none}
+#rmLeg .tx b{display:block;font:700 clamp(15px,1.6vw,22px)/1.2 Kanit,sans-serif;color:#0f172a}#rmLeg .tx small{display:block;color:#475569;font-size:clamp(10.5px,.85vw,12.5px);margin-top:2px}
+#rmLeg .r2{display:flex;gap:10px;margin-top:8px;align-items:stretch;flex-wrap:wrap}#rmLeg .bc{background:#fff;border-radius:10px;padding:7px 12px;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;gap:4px;color:#334155;white-space:nowrap}#rmLeg .bc b{color:#0f172a}
+#rmLeg .lb{background:#fff;border-radius:10px;padding:7px 12px;box-shadow:0 4px 16px rgba(0,0,0,.3)}#rmLeg .bar{display:flex}#rmLeg .bar span{width:44px;text-align:center;font-size:11px;color:#334155}#rmLeg .bar i{display:block;height:10px;margin-bottom:3px}
 .alab{background:none;border:0;box-shadow:none;color:#fff;font:700 13px Kanit,sans-serif;text-shadow:0 0 3px #000,0 0 6px #000}.alab:before{display:none}
 .seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
 .seg button{padding:4px 9px;font-size:12px}
@@ -610,7 +613,9 @@ async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)ret
   L.marker([a.c[1],a.c[0]],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip('อ.'+a.n,{permanent:true,direction:'center',className:'alab'}).addTo(gAmpB)});
  st.filter(r=>r.prov==='77'&&r.v>0).forEach(r=>L.marker([r.lat,r.lng],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip(fmt(r.v,1),{permanent:true,direction:'top',offset:[0,-7],className:'rmv'}).addTo(gAmpB));
  const mx=st.filter(r=>r.prov==='77').reduce((m,r)=>Math.max(m,r.v),0),tt=((st.find(r=>r.prov==='77')||{}).t)||'';
- $('rmLeg').innerHTML=`<b>แผนที่ปริมาณ${modeName()}${S.rainMode==='r24'||S.rainMode==='r6'||S.rainMode==='r3'?' ย้อนหลัง':''}</b> <span style="color:#64748b">· จ.ประจวบคีรีขันธ์ · ${st.filter(r=>r.prov==='77').length} สถานี · สูงสุด ${fmt(mx)} มม.${tt?' · ข้อมูลถึง '+tt:''}</span><div class="bar">${RMC.map(c=>`<span><i style="background:${c[1]}"></i>${c[2]}</span>`).join('')}</div><div style="color:#64748b;margin-top:3px">มม. · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น</div>`;$('rmLeg').style.display='block';rmPanel(st.filter(r=>r.prov==='77'),A)}
+ {const TH=['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'],mm=String(tt).match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+)/),dd=mm?`${+mm[3]} ${TH[+mm[2]]} ${+mm[1]+543} ${mm[4]}:${mm[5]} น.`:'–';
+ $('rmLeg').innerHTML=`<div class="tc"><div class="ic"><svg viewBox="0 0 24 24" width="30" height="30"><path fill="#fff" d="M12 2.5C9 7 6 10.4 6 14a6 6 0 0 0 12 0c0-3.6-3-7-6-11.5z"/></svg></div><div class="tx"><b>แผนที่ปริมาณ${modeName().replace('ชม.','ชั่วโมง')}${['r24','r6','r3'].includes(S.rainMode)?' ย้อนหลัง':''}</b><small>จังหวัดประจวบคีรีขันธ์ · โครงการชลประทานประจวบคีรีขันธ์ · ข้อมูลถึง ${dd}</small></div></div>
+ <div class="r2"><div class="bc">ประเทศไทย › <b>ประจวบคีรีขันธ์</b></div><div class="lb"><div class="bar">${RMC.map(c=>`<span><i style="background:${c[1]}"></i>${c[2]}</span>`).join('')}</div></div></div>`}$('rmLeg').style.display='block';rmPanel(st.filter(r=>r.prov==='77'),A)}
 function pipA(x,y,rs){let ins=false;for(const r of rs){for(let i=0,j=r.length-1;i<r.length;j=i++){const[xi,yi]=r[i],[xj,yj]=r[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)ins=!ins}}return ins}
 function rmPanel(st,A){const P=$('rmPan');if(!S.rmap){P.style.display='none';return}
  const tt=(st.map(r=>r.t).filter(Boolean).sort().pop())||'',m=tt.match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+)/),TH=['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -690,7 +695,7 @@ function rmLayout(){const L0=$('rmLeg'),P=$('rmPan'),m=$('map').getBoundingClien
  const ly=$('lyr'),lr=ly&&ly.offsetParent&&getComputedStyle(ly).display!=='none'?ly.getBoundingClientRect():null;
  let left=12,right=12;if(lr&&lr.right>m.left&&lr.top<m.top+140)left=Math.max(12,lr.right-m.left+10);
  if(P.style.display!=='none'&&P.offsetParent){const pr=P.getBoundingClientRect();if(pr.top<m.top+140)right=m.right-pr.left+10}
- if(m.width-left-right<260){left=12}L0.style.left=left+'px';L0.style.right=right+'px'}
+ if(m.width-left-right<260){left=12}L0.style.left=left+'px';L0.style.maxWidth=(m.width-left-right)+'px'}
 addEventListener('resize',()=>S.rmap&&rmLayout());document.addEventListener('click',e=>{if(S.rmap&&e.target.closest('#lyrToggle,#rmPan .x'))setTimeout(rmLayout,50)});
 function setRmap(on){if(on===S.rmap)return;S.rmap=on;document.querySelectorAll('#rmapBtn,.rmctl a').forEach(b=>b.classList.toggle('on',on));
  RM_HIDE.forEach(id=>{const c=$(id);if(!c)return;if(on){rmSaved[id]=c.checked;if(c.checked){c.checked=false;c.dispatchEvent(new Event('change'))}}else if(rmSaved[id]&&!c.checked){c.checked=true;c.dispatchEvent(new Event('change'))}});
