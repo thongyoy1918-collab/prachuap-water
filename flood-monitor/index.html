@@ -496,7 +496,7 @@ function loadFlood(){
 function legend(){
  const rr=[[0,'ไม่มีฝน'],[5,'0.1–10 เล็กน้อย'],[20,'10–35 ปานกลาง'],[50,'35–90 หนัก'],[120,'90–150 หนักมาก'],[200,'>150 หนักมากที่สุด']];
  const ww=[[120,'>100% ล้นตลิ่ง'],[80,'70–100% น้ำมาก'],[50,'30–70% ปกติ'],[20,'10–30% น้ำน้อย'],[5,'≤10% วิกฤติ']];
- $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('');
+ $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">สถานี ชป. (ระยะถึงตลิ่ง)</b>`+[['#FF0000','ล้นตลิ่ง'],['#f97316','ต่ำกว่าตลิ่ง ≤1 ม.'],['#facc15','1–2 ม.'],['#22c55e','>2 ม.']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:2px;transform:rotate(45deg) scale(.85);outline:1.5px solid #fff"></i>${r[1]}</div>`).join('');
 }
 
 /* ---------- LINE report ---------- */
@@ -594,7 +594,7 @@ function close(){md.classList.remove('on')}
 document.getElementById('wlX').onclick=close;md.addEventListener('click',e=>{if(e.target===md)close()});addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 md.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{W.days=+b.dataset.d;md.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('on',x===b));draw()});
 function open(list,title,sub){W.list=list;W.sel=list.map(x=>x.src+x.id);W.title=title;W.sub=sub;
- document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-k="${x.src+x.id}" checked><span style="width:10px;height:10px;border-radius:50%;background:${COL[i%COL.length]}"></span>${x.code||x.name}${x.name&&x.code?' · '+x.name:''}</label>`).join('');
+ document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-k="${x.src+x.id}" checked><span style="width:10px;height:10px;border-radius:50%;background:${COL[i%COL.length]}"></span>${x.code||x.name}${x.name&&x.code?' · '+x.name:''}${x.src==='rid'&&x.amp?' · อ.'+x.amp:''}</label>`).join('');
  document.getElementById('wlCmp').querySelectorAll('input').forEach(c=>c.onchange=()=>{W.sel=[...document.querySelectorAll('#wlCmp input:checked')].map(i=>i.dataset.k);draw()});
  md.classList.add('on');draw()}
 window.ridChart=function(id){const st=RID.st.find(x=>String(x.id)===String(id));if(!st)return;const g=st.group;
