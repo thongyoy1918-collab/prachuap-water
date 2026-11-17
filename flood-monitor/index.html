@@ -50,6 +50,21 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{position:sticky;top:-12px;background:var(--pn);text-align:left;color:var(--mu);font-weight:500;padding:6px 4px;border-bottom:1px solid var(--ln)}
 td{padding:6px 4px;border-bottom:1px solid #1b2a47;vertical-align:top}
 tr.cl{cursor:pointer}
+.wlg{padding:1px 7px;font-size:11.5px;border-radius:99px;margin-left:4px;background:#0f2a4a;border-color:#2b4c7a;color:#7dd3fc}
+#wlMod{position:fixed;inset:0;z-index:3000;background:rgba(3,8,18,.72);display:none;align-items:center;justify-content:center;padding:16px}
+#wlMod.on{display:flex}
+#wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#fff;color:#1f2937;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#wlMod .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e5e7eb}
+#wlMod .hd b{font-size:17px;color:#374151;font-weight:500}#wlMod .hd .sp{flex:1}
+#wlMod .hd button{background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:4px 10px}
+#wlMod .hd button.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+#wlMod .x{font-size:20px;line-height:1;border:0!important;background:none!important;color:#9ca3af!important}
+#wlMod .ttl{text-align:center;padding:12px 8px 0}#wlMod .ttl h4{margin:0;font-size:18px;color:#111827;font-weight:600}#wlMod .ttl div{font-size:12.5px;color:#6b7280}
+#wlMod .cmp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px 12px 0;font-size:12.5px;color:#374151}
+#wlMod .cmp label{display:flex;gap:5px;align-items:center;background:#f3f4f6;border-radius:99px;padding:3px 10px;cursor:pointer}
+#wlSvg{display:block;width:100%;height:auto}
+#wlMod .ft{font-size:12px;color:#6b7280;padding:4px 16px 12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
 tr.cl:hover td{background:#18294a}
 td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mut{color:var(--mu);font-size:11.5px}
@@ -297,7 +312,7 @@ async function loadTW(){
  if(tod.status==='fulfilled')S.raw.today=normRain(tod.value.data,d=>d.rainfall_value);
  if(yd.status==='fulfilled')S.raw.yday=normRain(yd.value.data,d=>d.rainfall_value);
  if(wl.status==='fulfilled'){S.raw.wl=(wl.value.waterlevel_data.data||[]).map(d=>{const st=d.station||{},g=d.geocode||{};return{
-  name:th(st.tele_station_name),code:st.tele_station_oldcode||'',lat:+st.tele_station_lat,lng:+st.tele_station_long,prov:g.province_code,amp:th(g.amphoe_name).replace(/^อำเภอ/,''),tam:th(g.tumbon_name),
+  id:st.id,name:th(st.tele_station_name),code:st.tele_station_oldcode||'',lat:+st.tele_station_lat,lng:+st.tele_station_long,prov:g.province_code,amp:th(g.amphoe_name).replace(/^อำเภอ/,''),tam:th(g.tumbon_name),
   wl:d.waterlevel_msl!=null?+d.waterlevel_msl:null,prev:d.waterlevel_msl_previous!=null?+d.waterlevel_msl_previous:null,pct:d.storage_percent!=null?+d.storage_percent:null,
   bank:st.min_bank,diff:d.diff_wl_bank,diffT:d.diff_wl_bank_text,ag:(d.agency&&d.agency.agency_shortname&&d.agency.agency_shortname.th)||'',t:d.waterlevel_datetime,q:d.discharge,basin:th(d.basin&&d.basin.basin_name)}}).filter(x=>x.lat&&x.lng);
   setSt('wl','ok',(S.raw.wl[0]||{}).t||'')}else setSt('wl','er',wl.reason&&wl.reason.message);
@@ -334,7 +349,7 @@ function drawWl(){
   const ic=L.divIcon({className:'',html:`<div class="wlm" style="background:${wlCol(w.pct)}"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
   const tr=w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲ เพิ่มขึ้น':w.wl<w.prev?'▼ ลดลง':'■ ทรงตัว')+' '+fmt(Math.abs(w.wl-w.prev),2)+' ม.':'';
   const m=L.marker([w.lat,w.lng],{icon:ic,zIndexOffset:500});
-  m.bindPopup(`<b>${w.name}</b> <span class="mut">${w.code}</span><br>ต.${w.tam} อ.${w.amp}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.รทก.</b> ${tr}<br>${w.pct!=null?`ความจุลำน้ำ: <b style="color:${wlCol(w.pct)}">${fmt(w.pct,1)}%</b> (${wlTxt(w.pct)})<br>`:''}${w.bank!=null?`ระดับตลิ่ง: ${fmt(w.bank,2)} ม.รทก.<br>`:''}${w.diff!=null?`${w.diffT||''} ${w.diff}<br>`:''}${w.q!=null?`ปริมาณน้ำ: ${fmt(w.q,2)} ลบ.ม./วินาที<br>`:''}<span class="mut">${w.ag} · ${w.t||''}</span>`);
+  m.bindPopup(`<b>${w.name}</b> <span class="mut">${w.code}</span><br>ต.${w.tam} อ.${w.amp}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.รทก.</b> ${tr}<br>${w.pct!=null?`ความจุลำน้ำ: <b style="color:${wlCol(w.pct)}">${fmt(w.pct,1)}%</b> (${wlTxt(w.pct)})<br>`:''}${w.bank!=null?`ระดับตลิ่ง: ${fmt(w.bank,2)} ม.รทก.<br>`:''}${w.diff!=null?`${w.diffT||''} ${w.diff}<br>`:''}${w.q!=null?`ปริมาณน้ำ: ${fmt(w.q,2)} ลบ.ม./วินาที<br>`:''}<span class="mut">${w.ag} · ${w.t||''}</span><br><a href="#" onclick="wlChart(${w.id});return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง →</a>`);
   if($('ovLab').checked&&S.prov!=='all')m.bindTooltip(w.pct!=null?fmt(w.pct,0)+'%':fmt(w.wl,2),{permanent:true,direction:'left',className:'rlab',offset:[-10,0]});
   m.addTo(gWl)});
 }
@@ -347,7 +362,7 @@ function renderRainTable(){
 }
 function renderWlTable(){
  const arr=(S.raw.wl||[]).filter(inProv).sort((a,b)=>(b.pct??-1)-(a.pct??-1));
- const row=w=>`<tr class="cl" data-lat="${w.lat}" data-lng="${w.lng}"><td>${w.name}<div class="mut">${w.code} · อ.${w.amp} · ${w.ag}</div></td><td class="n">${fmt(w.wl,2)}<div class="mut">${w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲':w.wl<w.prev?'▼':'■')+fmt(Math.abs(w.wl-w.prev),2):''}</div></td><td class="n">${w.pct!=null?`<span class="chip" style="background:${wlCol(w.pct)}">${fmt(w.pct,0)}%</span><div class="mut">${wlTxt(w.pct)}</div>`:'<span class="mut">–</span>'}</td></tr>`;
+ const row=w=>`<tr class="cl" data-lat="${w.lat}" data-lng="${w.lng}"><td>${w.name} <button class="wlg" type="button" onclick="event.stopPropagation();wlChart(${w.id})" title="กราฟระดับน้ำรายชั่วโมง">📈 กราฟ</button><div class="mut">${w.code} · อ.${w.amp} · ${w.ag}</div></td><td class="n">${fmt(w.wl,2)}<div class="mut">${w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲':w.wl<w.prev?'▼':'■')+fmt(Math.abs(w.wl-w.prev),2):''}</div></td><td class="n">${w.pct!=null?`<span class="chip" style="background:${wlCol(w.pct)}">${fmt(w.pct,0)}%</span><div class="mut">${wlTxt(w.pct)}</div>`:'<span class="mut">–</span>'}</td></tr>`;
  $('wlTb').innerHTML=arr.map(row).join('')||'<tr><td colspan=3 class="mut">ไม่มีข้อมูล</td></tr>';
  $('ovWlList').innerHTML=arr.length?`<table><tbody>${arr.slice(0,12).map(row).join('')}</tbody></table>`:'<div class="mut">ไม่มีสถานีโทรมาตรในพื้นที่</div>';
 }
@@ -526,6 +541,65 @@ $('btnRef').onclick=()=>{refreshAll();toast('กำลังโหลดข้�
 renderSrc();legend();refreshAll();
 setInterval(refreshAll,5*60*1000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+<div id="wlMod" role="dialog" aria-modal="true" aria-label="กราฟระดับน้ำรายชั่วโมง"><div class="box"><div class="hd"><b>กราฟระดับน้ำรายชั่วโมง</b><span class="sp"></span><button type="button" data-d="3">3 วัน</button><button type="button" data-d="7" class="on">7 วัน</button><button type="button" data-d="14">14 วัน</button><button type="button" class="x" id="wlX" aria-label="ปิด">✕</button></div>
+<div class="ttl"><h4 id="wlT"></h4><div id="wlS"></div></div><div class="cmp" id="wlCmp"></div><div style="position:relative"><svg id="wlSvg" viewBox="0 0 1000 460"></svg></div><div class="ft"><span id="wlF"></span><span>ที่มา: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net)</span></div></div></div>
+<script>
+(function(){
+const COL=['#1f77b4','#2ca02c','#f4511e','#8e44ad','#d4a017'];
+const W={st:null,days:7,sel:[],cache:{}};
+const md=document.getElementById('wlMod'),svg=document.getElementById('wlSvg');
+const pad=n=>String(n).padStart(2,'0'),dstr=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const THm=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+async function get(id,days){const k=id+'_'+days;if(W.cache[k])return W.cache[k];const e=new Date(),s=new Date(Date.now()-days*864e5);
+ const j=await getJ(TW+`waterlevel_graph?station_type=tele_waterlevel&station_id=${id}&start_date=${dstr(s)}&end_date=${dstr(e)}`);return W.cache[k]=j.data||{graph_data:[]}}
+function close(){md.classList.remove('on')}
+document.getElementById('wlX').onclick=close;md.addEventListener('click',e=>{if(e.target===md)close()});addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+md.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{W.days=+b.dataset.d;md.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('on',x===b));draw()});
+window.wlChart=function(id){const all=S.raw.wl||[];const st=all.find(x=>x.id==id);if(!st)return;W.st=st;
+ // same amphoe (fallback: same basin) stations for comparison
+ let nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.amp===st.amp);if(nb.length<1)nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.basin&&x.basin===st.basin);
+ nb=nb.sort((a,b)=>Math.hypot(a.lat-st.lat,a.lng-st.lng)-Math.hypot(b.lat-st.lat,b.lng-st.lng)).slice(0,4);
+ W.list=[st,...nb];W.sel=[st.id,...nb.slice(0,2).map(x=>x.id)];
+ document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-id="${x.id}" ${W.sel.includes(x.id)?'checked':''} ${i===0?'disabled':''}><span style="width:10px;height:10px;border-radius:50%;background:${COL[i]}"></span>${x.code||x.name}${x.code?' · '+x.name:''}</label>`).join('');
+ document.getElementById('wlCmp').querySelectorAll('input').forEach(c=>c.onchange=()=>{W.sel=[...document.querySelectorAll('#wlCmp input:checked')].map(i=>+i.dataset.id);draw()});
+ md.classList.add('on');draw()};
+async function draw(){const st=W.st;const L=W.list.filter(x=>W.sel.includes(x.id));
+ document.getElementById('wlT').textContent=`ระดับน้ำรายชั่วโมง ${st.amp?('อ.'+st.amp):st.name}`;
+ document.getElementById('wlS').textContent=(st.basin?st.basin+' · ':'')+`${W.days} วันย้อนหลัง`;
+ svg.innerHTML='<text x="500" y="230" text-anchor="middle" fill="#6b7280" font-size="16">กำลังโหลดข้อมูล…</text>';
+ let D;try{D=await Promise.all(L.map(x=>get(x.id,W.days)))}catch(e){svg.innerHTML=`<text x="500" y="230" text-anchor="middle" fill="#b91c1c" font-size="15">โหลดข้อมูลไม่ได้ (${e.message})</text>`;return}
+ const ser=L.map((x,i)=>({st:x,c:COL[W.list.indexOf(x)],bank:D[i].min_bank??x.bank,pts:(D[i].graph_data||[]).filter(p=>p.value!=null).map(p=>({t:new Date(p.datetime.replace(' ','T')+':00+07:00'),v:+p.value}))}));
+ const ap=ser.flatMap(s=>s.pts);if(!ap.length){svg.innerHTML='<text x="500" y="230" text-anchor="middle" fill="#6b7280" font-size="16">ไม่มีข้อมูลรายชั่วโมงในช่วงนี้</text>';return}
+ const t0=new Date(Date.now()-W.days*864e5);t0.setHours(0,0,0,0);const t1=new Date();t1.setHours(24,0,0,0);
+ let lo=Math.min(...ap.map(p=>p.v)),hi=Math.max(...ap.map(p=>p.v));ser.forEach(s=>{if(s.bank!=null){hi=Math.max(hi,+s.bank);}});
+ const span=hi-lo||1;lo=Math.floor((lo-span*.1)*2)/2;hi=Math.ceil((hi+span*.08)*2)/2;
+ const X0=70,X1=975,Y0=24,Y1=400,x=t=>X0+(t-t0)/(t1-t0)*(X1-X0),y=v=>Y1-(v-lo)/(hi-lo)*(Y1-Y0);
+ const stp=(()=>{const r=(hi-lo)/6,c=[.1,.2,.25,.5,1,2,2.5,5,10];return c.find(v=>v>=r)||10})();
+ let g='';for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp){g+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#e5e7eb"/><text x="${X0-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#6b7280">${(+v.toFixed(2))} ม.</text>`}
+ const ndays=Math.round((t1-t0)/864e5),every=ndays>8?2:1;
+ for(let k=0;k<=ndays;k++){const d=new Date(+t0+k*864e5);const xx=x(d);g+=`<line x1="${xx}" x2="${xx}" y1="${Y1}" y2="${Y1+5}" stroke="#9ca3af"/>`;if(k%every===0&&k<ndays)g+=`<text x="${xx}" y="${Y1+22}" font-size="12" text-anchor="middle" fill="#4b5563">${d.getDate()} ${THm[d.getMonth()]}</text>`}
+ g+=`<line x1="${X0}" x2="${X1}" y1="${Y1}" y2="${Y1}" stroke="#9ca3af"/>`;
+ ser.forEach(s=>{if(s.bank==null)return;const yy=y(+s.bank);g+=`<line x1="${X0}" x2="${X1}" y1="${yy}" y2="${yy}" stroke="${s.c}" stroke-opacity=".45" stroke-width="1.5"/><text x="${X0+6}" y="${yy-6}" font-size="13" font-weight="600" fill="${s.c}">ระดับตลิ่ง ${s.st.code||s.st.name} : ${(+s.bank).toFixed(2)} ม.</text>`});
+ ser.forEach(s=>{let d='',prev=null;s.pts.forEach(p=>{const gap=prev&&(p.t-prev.t)>3*36e5;d+=(d===''||gap?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);prev=p});
+  g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="${s.st.id===st.id?3.2:2.2}" stroke-linejoin="round"/>`;const lp=s.pts[s.pts.length-1];g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}" stroke="#fff" stroke-width="1.5"/>`;
+  const fp=s.pts[0];g+=`<text x="${x(fp.t)+4}" y="${y(fp.v)-8}" font-size="13" font-weight="700" fill="${s.c}">${s.st.code||''}</text>`});
+ g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#9ca3af" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="4" fill="#fff" stroke="#9ca3af"/><text id="wlTt" font-size="12.5" fill="#111827"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
+ g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="3"/><text x="28" y="0" font-size="13" fill="#374151">${s.st.code||s.st.name}</text></g>`).join('');
+ svg.innerHTML=g;
+ const lastT=Math.max(...ap.map(p=>+p.t));document.getElementById('wlF').textContent=`ข้อมูลล่าสุด ${new Date(lastT).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})} น.`;
+ const hit=document.getElementById('wlHit'),H=document.getElementById('wlH'),tip=document.getElementById('wlTip'),tt=document.getElementById('wlTt'),tr=document.getElementById('wlTr');
+ const mv=ev=>{const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*1000,t=+t0+(px-X0)/(X1-X0)*(t1-t0);
+  const rows=ser.map(s=>{let b=null;for(const p of s.pts){if(!b||Math.abs(p.t-t)<Math.abs(b.t-t))b=p}return[s,b]}).filter(r=>r[1]&&Math.abs(r[1].t-t)<2*36e5);if(!rows.length){tip.setAttribute('visibility','hidden');H.setAttribute('visibility','hidden');return}
+  const tm=rows[0][1].t,xx=x(tm);H.setAttribute('x1',xx);H.setAttribute('x2',xx);H.setAttribute('visibility','visible');
+  const lines=[`${tm.getDate()} ${THm[tm.getMonth()]} ${tm.getFullYear()+543} เวลา ${pad(tm.getHours())}:00 น.`,...rows.map(([s,p])=>`● ${s.st.code||s.st.name}: ${p.v.toFixed(2)} เมตร`)];
+  tt.innerHTML=lines.map((l,i)=>`<tspan x="0" dy="${i?18:0}" ${i?`fill="${rows[i-1][0].c}" font-weight="600"`:''}>${l}</tspan>`).join('');
+  const bw=Math.max(...lines.map(l=>l.length))*7.2+20,bh=lines.length*18+12,bx=Math.min(xx+12,X1-bw),by=Y0+6;
+  tr.setAttribute('x',bx-10);tr.setAttribute('y',by-16);tr.setAttribute('width',bw);tr.setAttribute('height',bh);tt.setAttribute('transform',`translate(${bx},${by})`);[...tt.children].forEach(c=>c.setAttribute('x',0));tip.setAttribute('visibility','visible')};
+ hit.addEventListener('mousemove',mv);hit.addEventListener('touchstart',e=>mv(e.touches[0]),{passive:true});hit.addEventListener('touchmove',e=>mv(e.touches[0]),{passive:true});
+ hit.addEventListener('mouseleave',()=>{tip.setAttribute('visibility','hidden');H.setAttribute('visibility','hidden')});
+}
+})();
 </script>
 </body>
 </html>
