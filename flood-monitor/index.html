@@ -167,6 +167,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
    </select></div>
    <label><input type="checkbox" id="ovWl" checked> 🌊 โทรมาตรระดับน้ำ <small id="cWl"></small></label>
    <label><input type="checkbox" id="ovRes" checked> 💧 อ่างเก็บน้ำ ใหญ่/กลาง/เล็ก <small id="cRes"></small></label>
+   <label><input type="checkbox" id="ovTH"> 🇹🇭 อ่างเก็บน้ำทั่วประเทศ (ชป.) <small id="cTH"></small></label>
    <label><input type="checkbox" id="ovRid" checked> ◆ สถานีวัดน้ำ ชป. (ศูนย์อุทกวิทยาฯ ตะวันตก) <small id="cRid"></small></label>
    <h4>เรดาร์ / ดาวเทียม</h4>
    <label><input type="checkbox" id="ovRadar" checked> 📡 เรดาร์ฝน + พยากรณ์</label>
@@ -304,6 +305,7 @@ const SRC={
  wl:{n:'โทรมาตรระดับน้ำ (สสน. ThaiWater)',d:'ระดับน้ำจริงเทียบระดับตลิ่ง (% ความจุลำน้ำ) และสถานะเฝ้าระวังรายสถานี',u:'https://www.thaiwater.net'},
  rid:{n:'สถานีวัดน้ำท่า กรมชลประทาน (ศูนย์อุทกวิทยาชลประทานภาคตะวันตก)',d:'ระดับน้ำรายชั่วโมงย้อนหลัง 7 วัน เทียบระดับตลิ่ง ลุ่มน้ำชายฝั่งทะเลตะวันตก (เช่น Gt.7, Gt.20, Gt.21 คลองบางสะพาน) ใช้ทำกราฟรวมสถานี',u:'http://hydro-7.rid.go.th/index4.html'},
  res:{n:'อ่างเก็บน้ำ (โครงการชลประทานประจวบคีรีขันธ์)',d:'อ่างขนาดใหญ่/กลาง 9 แห่ง จากรายงานประจำวัน พร้อมกราฟ Rule Curve และภาพรายงาน 4K · อ่างขนาดเล็ก 33 แห่ง',u:'https://thongyoy1918-collab.github.io/prachuap-water/'},
+ rsv:{n:'อ่างเก็บน้ำทั่วประเทศ (กรมชลประทาน)',d:'ระบบฐานข้อมูลน้ำในอ่างเก็บน้ำ: เขื่อน/อ่างขนาดใหญ่ และอ่างขนาดกลางทุกภาค ปริมาณน้ำ ร้อยละความจุ น้ำใช้การได้ ไหลเข้า/ระบายรายวัน',u:'https://app.rid.go.th/reservoir/'},
  radar:{n:'เรดาร์ฝน + พยากรณ์ 3 ชม. (กรมอุตุนิยมวิทยา / สทนช.)',d:'ภาพเรดาร์คอมโพสิตทั้งประเทศของกรมอุตุฯ ราย 15 นาที ย้อนหลัง 1 ชม. และคาดการณ์กลุ่มฝนล่วงหน้า 3 ชม. (Nowcast) · สำรอง: RainViewer ย้อนหลัง 2 ชม.',u:'https://clpp-radar.onwr.go.th'},
  sat:{n:'ดาวเทียม Himawari-9 (JMA)',d:'ภาพเมฆอินฟราเรด / Sandwich / True Color อัปเดตทุก 10 นาที',u:'https://www.jma.go.jp/bosai/map.html#contents=himawari'},
  fc:{n:'พยากรณ์ฝน (Open-Meteo)',d:'ฝนราย 15 นาที 2 ชม., รายชั่วโมง 24 ชม., รายวัน 5 วัน (ECMWF/GFS/JMA/ICON)',u:'https://open-meteo.com'},
@@ -716,6 +718,33 @@ function rcMini(r){const R=r.rc,W=280,H=160,L=30,Rr=6,T=8,B=20,st=R.step,n=R.urc
 document.addEventListener('click',e=>{const b=e.target.closest('.rcbig');if(!b)return;$('rcImg').src=b.dataset.img+'?v='+(RESV&&RESV.date_ls||'');$('rcT').textContent=b.dataset.t;$('rcOpen').href=b.dataset.img;$('rcMod').classList.add('on')});
 $('rcX').onclick=()=>$('rcMod').classList.remove('on');$('rcMod').addEventListener('click',e=>{if(e.target.id==='rcMod')$('rcMod').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('rcMod').classList.remove('on')});
+
+/* ---------- อ่างเก็บน้ำทั่วประเทศ (กรมชลประทาน app.rid.go.th/reservoir) ---------- */
+const RSVB='https://app.rid.go.th/reservoir/api/',gTH=L.layerGroup().addTo(map);let THR=null;
+const nz=v=>{const n=parseFloat(String(v).replace(/,/g,''));return isFinite(n)?n:null};
+async function rsvPost(k,d){const r=await fetch(RSVB+k,{method:'POST',body:new URLSearchParams({date:d,region:'',percent:''})});if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+async function loadTH(){setSt('rsv','ld');try{let d=new Date(),big=[],mid=[],ds='';
+ for(let k=0;k<4&&!big.length;k++){ds=new Date(d-k*864e5+7*36e5).toISOString().slice(0,10);
+  const[a,b]=await Promise.all([rsvPost('dams',ds),rsvPost('rsvmiddles',ds)]);
+  big=(a.regions||[]).flatMap(g=>(g.dams||[]).map(x=>({sz:'l',id:x.DAM_ID,name:x.DAM_Name,reg:g.region_name,lat:+x.DAM_Lat,lon:+x.DAM_Lon,cap:nz(x.DAM_QStore),stor:nz(x.DMD_QUse),pct:nz(x.PERCENT_v_QStore)!=null?nz(x.DMD_QUse)/nz(x.DAM_QStore)*100:null,use:nz(x.v_QUsage),pu:nz(x.PERCENT_v_QUsage),inf:nz(x.DMD_Inflow),out:nz(x.DMD_Outflow),prev:nz(x.PERCENT_DMD_QUse_prev),d:x.DMD_Date}))).filter(x=>x.stor!=null);
+  mid=(b.region||[]).flatMap(g=>(g.reservoir||[]).map(x=>({sz:'m',id:x.cresv,name:x.nresv,reg:g.region_name_th,prov:x.tprov,proj:x.project_name,rid:x.rid,lat:+x.cresv_lat,lon:+x.cresv_lng,cap:nz(x.cap_resv),stor:nz(x.qdisc_curr),pct:nz(x.percent_resv_curr),use:nz(x.water_workable),inf:nz(x.q_info),out:nz(x.q_outfo),prev:nz(x.percent_resv_prev),d:x.date})))}
+ big.concat(mid).forEach(x=>{if(x.pct==null&&x.cap&&x.stor!=null)x.pct=x.stor/x.cap*100});
+ THR={date:ds,big,mid:mid.filter(x=>x.lat&&x.lon)};drawTH();
+ const dt=new Date(ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
+ setSt('rsv','ok',`ขนาดใหญ่ ${THR.big.length} · ขนาดกลาง ${THR.mid.length} แห่ง · ข้อมูล ${dt}`)}catch(e){console.warn('rsv',e);setSt('rsv','er',e.message)}}
+function drawTH(){gTH.clearLayers();if(!THR)return;$('cTH').textContent=`${THR.big.length} ใหญ่ · ${THR.mid.length} กลาง`;if(!$('ovTH').checked)return;
+ const dt=new Date(THR.date+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
+ [...THR.mid,...THR.big].forEach(x=>{const c=resCol(x.pct),big=x.sz==='l',sz=big?18:10;
+  const html=big?`<div style="width:${sz}px;height:${sz}px;border-radius:4px;background:${c};border:2.5px solid #fff;box-shadow:0 0 0 1.5px #0b1424,0 2px 5px rgba(0,0,0,.4)"></div>`:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:1.5px solid #fff;box-shadow:0 0 0 1px #0b1424"></div>`;
+  const m=L.marker([x.lat,x.lon],{icon:L.divIcon({className:'',html,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]}),zIndexOffset:big?500:200});
+  const ch=x.prev!=null&&x.pct!=null?` <span class="mut">(ปีที่แล้ว ${fmt(x.prev,0)}%)</span>`:'';
+  m.bindPopup(`<b>${x.name}</b><br>${big?'เขื่อน/อ่างเก็บน้ำขนาดใหญ่':'อ่างเก็บน้ำขนาดกลาง'} · ${x.prov?'จ.'+x.prov+' · ':''}${x.reg||''}${x.proj?`<br><span class="mut">${x.proj}</span>`:''}
+  <br>ความจุ ${fmt(x.cap,x.cap<10?3:2)} ล้าน ลบ.ม.<br>ปริมาณน้ำ <b>${fmt(x.stor,x.stor<10?3:2)}</b> ล้าน ลบ.ม. · <b style="color:${c}">${fmt(x.pct,1)}%</b> (${resTxt(x.pct)})${ch}
+  ${x.use!=null?`<br>น้ำใช้การได้ ${fmt(x.use,2)} ล้าน ลบ.ม.${x.pu!=null?` (${fmt(x.pu,0)}%)`:''}`:''}${x.inf!=null||x.out!=null?`<br>ไหลเข้า ${x.inf!=null?fmt(x.inf,2):'–'} · ระบาย ${x.out!=null?fmt(x.out,2):'–'} ล้าน ลบ.ม./วัน`:''}
+  <br><span class="mut">ข้อมูล ${dt} · กรมชลประทาน (app.rid.go.th/reservoir)</span>`);
+  if(big&&$('ovLab').checked&&map.getZoom()>=7)m.bindTooltip(`${x.name} ${fmt(x.pct,0)}%`,{permanent:true,direction:'right',className:'rlab',offset:[sz/2,0]});
+  m.addTo(gTH)})}
+$('ovTH').onchange=()=>{if(!THR)loadTH();else drawTH()};map.on('zoomend',()=>{if($('ovTH').checked)drawTH()});$('ovLab').addEventListener('change',drawTH);loadTH();
 $('ovRes').onchange=drawRes;$('ovLab').addEventListener('change',drawRes);loadRes();
 map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el){const fix=()=>{try{e.popup._updateLayout();e.popup._updatePosition();e.popup._adjustPan&&e.popup._adjustPan()}catch(_){}};fix();if(el.classList.contains('rcm'))return;wlMini(el,el.dataset.k,el.dataset.id).then(fix)}});
 </script>
