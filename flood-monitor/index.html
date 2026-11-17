@@ -166,7 +166,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
     <option value="yday">ฝนเมื่อวาน</option>
    </select></div>
    <label><input type="checkbox" id="ovWl" checked> 🌊 โทรมาตรระดับน้ำ <small id="cWl"></small></label>
-   <label><input type="checkbox" id="ovRivM" checked> <span style="display:inline-block;width:18px;height:4px;background:#0058C8;border-radius:2px;vertical-align:middle"></span> เส้นน้ำสายหลัก <small id="cRivM"></small></label>
+   <label><input type="checkbox" id="ovRivM" checked> <span style="display:inline-block;width:18px;height:3px;background:#0058C8;border-radius:2px;vertical-align:middle;box-shadow:0 0 0 1.2px #fff"></span> เส้นน้ำสายหลัก <small id="cRivM"></small></label>
    <label><input type="checkbox" id="ovRivS" checked> <span style="display:inline-block;width:18px;height:2px;background:#4FA3F7;vertical-align:middle"></span> เส้นน้ำสายรอง <small id="cRivS"></small></label>
    <label><input type="checkbox" id="ovRes" checked> 💧 อ่างเก็บน้ำ ใหญ่/กลาง/เล็ก <small id="cRes"></small></label>
    <div id="resSz" style="display:flex;gap:10px;flex-wrap:wrap;margin:-2px 0 6px 24px;font-size:12.5px"><label><input type="checkbox" data-s="l" checked> ใหญ่</label><label><input type="checkbox" data-s="m" checked> กลาง</label><label><input type="checkbox" data-s="s" checked> เล็ก</label></div>
@@ -308,7 +308,7 @@ const SRC={
  wl:{n:'โทรมาตรระดับน้ำ (สสน. ThaiWater)',d:'ระดับน้ำจริงเทียบระดับตลิ่ง (% ความจุลำน้ำ) และสถานะเฝ้าระวังรายสถานี',u:'https://www.thaiwater.net'},
  rid:{n:'สถานีวัดน้ำท่า กรมชลประทาน (ศูนย์อุทกวิทยาชลประทานภาคตะวันตก)',d:'ระดับน้ำรายชั่วโมงย้อนหลัง 7 วัน เทียบระดับตลิ่ง ลุ่มน้ำชายฝั่งทะเลตะวันตก (เช่น Gt.7, Gt.20, Gt.21 คลองบางสะพาน) ใช้ทำกราฟรวมสถานี',u:'http://hydro-7.rid.go.th/index4.html'},
  res:{n:'อ่างเก็บน้ำ (โครงการชลประทานประจวบคีรีขันธ์)',d:'อ่างขนาดใหญ่/กลาง 9 แห่ง จากรายงานประจำวัน พร้อมกราฟ Rule Curve และภาพรายงาน 4K · อ่างขนาดเล็ก 33 แห่ง',u:'https://thongyoy1918-collab.github.io/prachuap-water/'},
- riv:{n:'เส้นน้ำสายหลัก / สายรอง (สำนักงานชลประทานที่ 14)',d:'ชั้นข้อมูลลำน้ำ Stream_rid14 ของ สชป.14 ตัดเฉพาะ จ.ประจวบคีรีขันธ์ · สายหลัก = แม่น้ำและลำน้ำไหลตลอดปีที่ยาว ≥20 กม. · สายรอง = ลำน้ำไหลตลอดปีอื่น ๆ และคลองชลประทาน',u:'https://www.rid.go.th'},
+ riv:{n:'เส้นน้ำสายหลัก / สายรอง (สำนักงานชลประทานที่ 14)',d:'ชั้นข้อมูลลำน้ำ Stream_rid14 ของ สชป.14 ตัดเฉพาะ จ.ประจวบคีรีขันธ์ · สายหลัก = ทางน้ำสายหลัก (CLASS 1) · สายรอง = ทางน้ำมีน้ำไหลตลอดปี (CLASS 2) และคลองชลประทาน ตามการจำแนกในชั้นข้อมูล',u:'https://www.rid.go.th'},
  rsv:{n:'อ่างเก็บน้ำทั่วประเทศ (กรมชลประทาน)',d:'ระบบฐานข้อมูลน้ำในอ่างเก็บน้ำ: เขื่อน/อ่างขนาดใหญ่ และอ่างขนาดกลางทุกภาค ปริมาณน้ำ ร้อยละความจุ น้ำใช้การได้ ไหลเข้า/ระบายรายวัน',u:'https://app.rid.go.th/reservoir/'},
  radar:{n:'เรดาร์ฝน + พยากรณ์ 3 ชม. (กรมอุตุนิยมวิทยา / สทนช.)',d:'ภาพเรดาร์คอมโพสิตทั้งประเทศของกรมอุตุฯ ราย 15 นาที ย้อนหลัง 1 ชม. และคาดการณ์กลุ่มฝนล่วงหน้า 3 ชม. (Nowcast) · สำรอง: RainViewer ย้อนหลัง 2 ชม.',u:'https://clpp-radar.onwr.go.th'},
  sat:{n:'ดาวเทียม Himawari-9 (JMA)',d:'ภาพเมฆอินฟราเรด / Sandwich / True Color อัปเดตทุก 10 นาที',u:'https://www.jma.go.jp/bosai/map.html#contents=himawari'},
@@ -753,16 +753,17 @@ document.querySelectorAll('#resSz input').forEach(i=>i.onchange=()=>{drawRes();d
 /* ---------- เส้นน้ำ (ชั้นข้อมูลลำน้ำ สชป.14 Stream_rid14) ---------- */
 map.createPane('riv');map.getPane('riv').style.zIndex=390;
 const rivR=L.canvas({pane:'riv',padding:.3}),gRivM=L.layerGroup().addTo(map),gRivS=L.layerGroup().addTo(map);let RIV=null;
-async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=1');drawRiv();
+async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=2');drawRiv();
  setSt('riv','ok',`สายหลัก ${new Set(RIV.main.map(x=>x.n).filter(Boolean)).size} สาย · สายรอง ${new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size} สาย`)}catch(e){setSt('riv','er',e.message)}}
-function rivPop(x,k){const km=RIV.km&&RIV.km[x.n];return `<b>${x.n||'ทางน้ำ (ไม่มีชื่อ)'}</b><br>${k==='m'?(x.t||'ทางน้ำสายหลัก'):k==='c'?'คลองชลประทาน':'ทางน้ำสายรอง (ไหลตลอดปี)'}${km?`<br>ความยาวในจังหวัดประมาณ ${km} กม.`:''}<br><span class="mut">ชั้นข้อมูลลำน้ำ สำนักงานชลประทานที่ 14</span>`}
+function rivPop(x,k){const km=RIV.km&&RIV.km[x.n];return `<b>${x.n||'ทางน้ำ (ไม่มีชื่อ)'}</b><br>${k==='m'?'ทางน้ำสายหลัก':k==='c'?'คลองชลประทาน':'ทางน้ำสายรอง (มีน้ำไหลตลอดปี)'}${km?`<br>ความยาวในจังหวัดประมาณ ${km} กม.`:''}<br><span class="mut">ชั้นข้อมูลลำน้ำ สำนักงานชลประทานที่ 14</span>`}
 function drawRiv(){gRivM.clearLayers();gRivS.clearLayers();if(!RIV)return;
  $('cRivM').textContent=new Set(RIV.main.map(x=>x.n).filter(Boolean)).size+' สาย';$('cRivS').textContent=new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size+' สาย';
  const z=map.getZoom();
- if($('ovRivS').checked){RIV.sec.forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#4FA3F7',weight:z>=11?2:1.3,opacity:.85}).bindPopup(rivPop(x,'s')).addTo(gRivS));
-  (RIV.canal||[]).forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#0EA5A4',weight:2,dashArray:'5 4'}).bindPopup(rivPop(x,'c')).addTo(gRivS))}
- if($('ovRivM').checked){RIV.main.forEach(x=>{const ll=x.c.map(p=>[p[1],p[0]]);L.polyline(ll,{renderer:rivR,color:'#fff',weight:z>=11?6.5:5,opacity:.55,interactive:false}).addTo(gRivM);
-  L.polyline(ll,{renderer:rivR,color:'#0058C8',weight:z>=11?3.6:2.8}).bindPopup(rivPop(x,'m')).bindTooltip(x.n||'',{sticky:true,className:'rlab'}).addTo(gRivM)})}}
+ if($('ovRivS').checked){RIV.sec.forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#3B8FE8',weight:z>=11?1.6:1.1,opacity:.9}).bindPopup(rivPop(x,'s')).bindTooltip(x.n||'',{sticky:true,className:'rlab'}).addTo(gRivS));
+  (RIV.canal||[]).forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#0EA5A4',weight:1.6,dashArray:'5 4'}).bindPopup(rivPop(x,'c')).addTo(gRivS))}
+ if($('ovRivM').checked){const w=z>=11?2.8:2.2,lines=RIV.main.map(x=>[x,x.c.map(p=>[p[1],p[0]])]);
+  lines.forEach(([x,ll])=>L.polyline(ll,{renderer:rivR,color:'#ffffff',weight:w+2.4,opacity:1,interactive:false,lineCap:'round',lineJoin:'round'}).addTo(gRivM));
+  lines.forEach(([x,ll])=>L.polyline(ll,{renderer:rivR,color:'#0058C8',weight:w,lineCap:'round',lineJoin:'round'}).bindPopup(rivPop(x,'m')).bindTooltip(x.n||'',{sticky:true,className:'rlab'}).addTo(gRivM))}}
 let rivZ=0;map.on('zoomend',()=>{const b=map.getZoom()>=11?1:0;if(b!==rivZ){rivZ=b;drawRiv()}});
 $('ovRivM').onchange=drawRiv;$('ovRivS').onchange=drawRiv;loadRiv();
 $('ovRes').onchange=drawRes;$('ovLab').addEventListener('change',drawRes);loadRes();
