@@ -60,19 +60,19 @@ tr.cl{cursor:pointer}
 #rcMod .hd a,#rcMod .hd button{background:#22262d;color:#cbd5e1;border:1px solid #333944;padding:5px 12px;border-radius:999px;text-decoration:none;font-size:13px}
 #rcMod img{display:block;width:100%;height:auto}
 .rcbig{margin-top:6px;width:100%;background:#0f3d6e;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:12.5px;cursor:pointer}.rcbig:hover{background:#1d5aa0}
-#wlMod{position:fixed;inset:0;z-index:3000;background:rgba(3,8,18,.72);display:none;align-items:center;justify-content:center;padding:16px}
+#wlMod{position:fixed;inset:0;z-index:3000;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:16px}
 #wlMod.on{display:flex}
-#wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#17191d;color:#e5e7eb;border:1px solid #2a2e35;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
-#wlMod .hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #262a31}
-#wlMod .hd b{font-size:16px;color:#9ca3af;font-weight:500}#wlMod .hd .sp{flex:1}
-#wlMod .hd button{background:#22262d;color:#cbd5e1;border:1px solid #333944;padding:5px 12px;border-radius:999px}
-#wlMod .hd button.on{background:#14532d;color:#86efac;border-color:#22c55e}
-#wlMod .x{font-size:20px;line-height:1;border:0!important;background:none!important;color:#9ca3af!important}
-#wlMod .ttl{text-align:center;padding:12px 8px 0}#wlMod .ttl h4{margin:0;font-size:19px;color:#f3f4f6;font-weight:600}#wlMod .ttl div{font-size:12.5px;color:#8b93a1}
-#wlMod .cmp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 12px 0;font-size:12.5px;color:#cbd5e1}
-#wlMod .cmp label{display:flex;gap:5px;align-items:center;background:#22262d;border:1px solid #333944;border-radius:99px;padding:4px 12px;cursor:pointer}
+#wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#fff;color:#1f2937;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 20px 60px rgba(15,23,42,.3);font-family:'Sarabun','Kanit',sans-serif}
+#wlMod .hd{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#123B7A;border-radius:10px 10px 0 0}
+#wlMod .hd b{font-size:16px;color:#fff;font-weight:500}#wlMod .hd .sp{flex:1}
+#wlMod .hd button{background:transparent;color:#dbe6f5;border:1px solid #5d7fb3;padding:4px 12px;border-radius:4px}
+#wlMod .hd button.on{background:#fff;color:#123B7A;border-color:#fff;font-weight:600}
+#wlMod .x{font-size:20px;line-height:1;border:0!important;background:none!important;color:#fff!important}
+#wlMod .ttl{text-align:center;padding:12px 8px 0}#wlMod .ttl h4{margin:0;font-size:20px;color:#123B7A;font-weight:600}#wlMod .ttl div{font-size:12.5px;color:#64748b}
+#wlMod .cmp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 12px 0;font-size:12.5px;color:#334155}
+#wlMod .cmp label{display:flex;gap:5px;align-items:center;background:#f8fafc;border:1px solid #d5dde8;border-radius:4px;padding:4px 12px;cursor:pointer}
 #wlSvg{display:block;width:100%;height:auto}
-#wlMod .ft{font-size:12px;color:#8b93a1;padding:4px 16px 12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+#wlMod .ft{font-size:12px;color:#64748b;padding:8px 16px 12px;border-top:1px solid #e5e9f0;margin-top:4px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
 
 tr.cl:hover td{background:#18294a}
 td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -137,6 +137,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
  .live .lt{display:none}
 }
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap">
 </head>
 <body>
 <header>
@@ -595,7 +596,7 @@ function renderRidTable(){const tb=document.getElementById('ridTb');if(!tb)retur
  tb.innerHTML=RID.groups.map(g=>{const L=RID.st.filter(x=>g.ids.includes(x.id));if(!L.length)return'';return`<tr><td colspan=3 style="background:#0f2a4a;font-weight:600">${g.name} <button class="wlg" type="button" onclick="ridChart('${L[0].id}')">📈 กราฟกลุ่ม</button></td></tr>`+L.map(w=>`<tr class="cl" data-lat="${w.lat}" data-lng="${w.lng}"><td>${w.code} <button class="wlg" type="button" onclick="event.stopPropagation();ridChart('${w.id}')">📈</button><div class="mut">${w.name} · อ.${w.amp}</div></td><td class="n">${fmt(w.wl,2)}<div class="mut">${w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲':w.wl<w.prev?'▼':'■')+fmt(Math.abs(w.wl-w.prev),2):''}</div></td><td class="n"><span class="chip" style="background:${ridCol(w)};color:#0b1424">${fmt(w.bank,2)}</span><div class="mut">${ridTxt(w)}</div></td></tr>`).join('')}).join('')||'<tr><td colspan=3 class="mut">ไม่มีข้อมูล</td></tr>';
  const n=document.getElementById('ridNote');if(n)n.textContent=`${RID.st.length} สถานี · ${RID.groups.length} กลุ่มลุ่มน้ำ · ระดับน้ำ ม.(รสม.)`}
 (function(){
-const COL=['#38bdf8','#4ade80','#fb7185','#c084fc','#fbbf24'];
+const COL=['#123B7A','#1F7A4D','#B42318','#6941C6','#B54708'];
 const W={st:null,days:7,sel:[],cache:{},list:[]};
 const md=document.getElementById('wlMod'),svg=document.getElementById('wlSvg');
 const pad=n=>String(n).padStart(2,'0'),dstr=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -653,17 +654,17 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
  const span=hi-lo||1;lo=Math.floor((lo-span*.1)*2)/2;hi=Math.ceil((hi+span*.08)*2)/2;
  const X0=24,X1=930,Y0=24,Y1=400,x=t=>X0+(t-t0)/(t1-t0)*(X1-X0),y=v=>Y1-(v-lo)/(hi-lo)*(Y1-Y0);
  const stp=(()=>{const r=(hi-lo)/6,c=[.1,.2,.25,.5,1,2,2.5,5,10];return c.find(v=>v>=r)||10})();
- let g='<defs>'+ser.map((s,i)=>`<linearGradient id="ga${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.c}" stop-opacity=".28"/><stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient><filter id="gl${i}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>`).join('')+'</defs>';for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp){g+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#2a2e35"/><text x="${X1+10}" y="${y(v)+4}" font-size="12.5" fill="#9ca3af">${(+v.toFixed(2))} ม.</text>`}
+ let g='<defs>'+ser.map((s,i)=>`<linearGradient id="ga${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.c}" stop-opacity=".10"/><stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient><filter id="gl${i}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>`).join('')+'</defs>';for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp){g+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#e8ebf0"/><text x="${X1+10}" y="${y(v)+4}" font-size="12.5" fill="#64748b">${(+v.toFixed(2))} ม.</text>`}
  const ndays=Math.round((t1-t0)/864e5),every=ndays>8?2:1;
- for(let k=0;k<=ndays;k++){const d=new Date(+t0+k*864e5);const xx=x(d);if(k%every===0&&k<ndays)g+=`<text x="${xx}" y="${Y1+22}" font-size="12" text-anchor="middle" fill="#8b93a1">${d.getDate()} ${THm[d.getMonth()]}</text>`}
+ for(let k=0;k<=ndays;k++){const d=new Date(+t0+k*864e5);const xx=x(d);if(k%every===0&&k<ndays)g+=`<text x="${xx}" y="${Y1+22}" font-size="12" text-anchor="middle" fill="#64748b">${d.getDate()} ${THm[d.getMonth()]}</text>`}
  ser.forEach(s=>{if(s.bank==null)return;const yy=y(+s.bank);g+=`<line x1="${X0}" x2="${X1}" y1="${yy}" y2="${yy}" stroke="${s.c}" stroke-opacity=".55" stroke-width="1.3" stroke-dasharray="6 5"/><text x="${X0+6}" y="${yy-7}" font-size="12.5" font-weight="600" fill="${s.c}" fill-opacity=".9">ระดับตลิ่ง ${s.st.code||s.st.name} · ${(+s.bank).toFixed(2)} ม.</text>`});
- ser.forEach(s=>{if(!s.pts.length)return;let d='',prev=null;s.pts.forEach(p=>{const gap=prev&&(p.t-prev.t)>3*36e5;d+=(d===''||gap?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);prev=p});
-  const i=ser.indexOf(s),fp=s.pts[0],lp=s.pts[s.pts.length-1];g+=`<path d="${d} L${x(lp.t).toFixed(1)},${Y1} L${x(fp.t).toFixed(1)},${Y1} Z" fill="url(#ga${i})" stroke="none"/><path d="${d}" fill="none" stroke="${s.c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
-  g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="11" fill="${s.c}" opacity=".35" filter="url(#gl${i})"/><circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="7" fill="none" stroke="${s.c}" stroke-opacity=".5" stroke-width="2"/><circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}"/>`;
-  const pv=lp.v.toFixed(2),pw=pv.length*8+44;g+=`<g transform="translate(${Math.min(x(lp.t)-pw-14,X1-pw)},${y(lp.v)-13})"><rect width="${pw}" height="24" rx="12" fill="#0b0d10" stroke="${s.c}" stroke-opacity=".7"/><text x="${pw/2}" y="16.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#f9fafb">${s.st.code||''} · ${pv}</text></g>`;
+ ser.forEach(s=>{if(!s.pts.length)return;let d='',prev=null,segs=[],cur=[];s.pts.forEach(p=>{const gap=prev&&(p.t-prev.t)>3*36e5;if(gap&&cur.length){segs.push(cur);cur=[]}cur.push(p);d+=(d===''||gap?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);prev=p});if(cur.length)segs.push(cur);
+  const i=ser.indexOf(s),fp=s.pts[0],lp=s.pts[s.pts.length-1];g+=segs.map(q=>`<path d="M${q.map(p=>x(p.t).toFixed(1)+','+y(p.v).toFixed(1)).join(' L')} L${x(q[q.length-1].t).toFixed(1)},${Y1} L${x(q[0].t).toFixed(1)},${Y1} Z" fill="url(#ga${i})" stroke="none"/>`).join('')+`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+  g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="#fff" stroke="${s.c}" stroke-width="2.5"/>`;
+  const pv=lp.v.toFixed(2),pw=pv.length*8+44;g+=`<g transform="translate(${Math.min(x(lp.t)-pw-14,X1-pw)},${y(lp.v)-13})"><rect width="${pw}" height="24" rx="4" fill="#fff" stroke="${s.c}" stroke-width="1.2"/><text x="${pw/2}" y="16.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="${s.c}">${s.st.code||''} · ${pv}</text></g>`;
   g+=`<text x="${x(fp.t)+4}" y="${y(fp.v)-10}" font-size="12.5" font-weight="700" fill="${s.c}">${s.st.code||''}</text>`});
- g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#6b7280" stroke-dasharray="3 4" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="12" fill="#0b0d10" fill-opacity=".95" stroke="#22c55e" stroke-opacity=".6"/><text id="wlTt" font-size="13" fill="#f3f4f6"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
- g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="4" stroke-linecap="round"/><text x="28" y="0" font-size="13" fill="#cbd5e1">${s.st.code||s.st.name}</text></g>`).join('');
+ g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#94a3b8" stroke-dasharray="3 4" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="6" fill="#fff" fill-opacity=".97" stroke="#cbd5e1" style="filter:drop-shadow(0 4px 10px rgba(15,23,42,.15))"/><text id="wlTt" font-size="13" fill="#0f172a"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
+ g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="4" stroke-linecap="round"/><text x="28" y="0" font-size="13" fill="#334155">${s.st.code||s.st.name}</text></g>`).join('');
  svg.innerHTML=g;
  const lastT=Math.max(...ap.map(p=>+p.t));document.getElementById('wlF').textContent=`ข้อมูลล่าสุด ${new Date(lastT).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})} น.`;
  document.getElementById('wlSrc').textContent=L.some(x=>x.src==='rid')?'ที่มา: ศูนย์อุทกวิทยาชลประทานภาคตะวันตก กรมชลประทาน (hydro-7.rid.go.th)':'ที่มา: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net)';
@@ -672,7 +673,7 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
   const rows=ser.map(s=>{let b=null;for(const p of s.pts){if(!b||Math.abs(p.t-t)<Math.abs(b.t-t))b=p}return[s,b]}).filter(r=>r[1]&&Math.abs(r[1].t-t)<2*36e5);if(!rows.length){tip.setAttribute('visibility','hidden');H.setAttribute('visibility','hidden');return}
   const tm=rows[0][1].t,xx=x(tm);H.setAttribute('x1',xx);H.setAttribute('x2',xx);H.setAttribute('visibility','visible');
   const lines=[`● ${tm.getDate()} ${THm[tm.getMonth()]} ${tm.getFullYear()+543} · ${pad(tm.getHours())}:00 น.`,...rows.map(([s,p])=>`● ${s.st.code||s.st.name}: ${p.v.toFixed(2)} เมตร`)];
-  tt.innerHTML=lines.map((l,i)=>`<tspan x="0" dy="${i?20:0}" ${i?`fill="${rows[i-1][0].c}" font-weight="700"`:'fill="#86efac"'}>${l}</tspan>`).join('');
+  tt.innerHTML=lines.map((l,i)=>`<tspan x="0" dy="${i?20:0}" ${i?`fill="${rows[i-1][0].c}" font-weight="700"`:'fill="#334155"'}>${l}</tspan>`).join('');
   const bw=Math.max(...lines.map(l=>l.length))*7.4+26,bh=lines.length*20+14,bx=Math.min(xx+16,X1-bw),by=Y0+10;
   tr.setAttribute('x',bx-13);tr.setAttribute('y',by-18);tr.setAttribute('width',bw);tr.setAttribute('height',bh);tt.setAttribute('transform',`translate(${bx},${by})`);tip.setAttribute('visibility','visible')};
  hit.addEventListener('mousemove',mv);hit.addEventListener('touchstart',e=>mv(e.touches[0]),{passive:true});hit.addEventListener('touchmove',e=>mv(e.touches[0]),{passive:true});
