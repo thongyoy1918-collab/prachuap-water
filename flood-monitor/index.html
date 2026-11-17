@@ -88,6 +88,11 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .days{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .day{background:#0f1b31;border:1px solid var(--ln);border-radius:8px;padding:6px 4px;text-align:center;font-size:12px}
 .day b{display:block;font-size:15px}
+.seg .rmb{margin-left:auto;background:#0f3d6e;border-color:#2563eb}.seg .rmb.on{background:#f59e0b;border-color:#fbbf24;color:#111}
+.rmctl a{display:block;width:auto!important;padding:0 10px;font:600 13px/30px Kanit,sans-serif!important;white-space:nowrap;color:#0f172a}.rmctl a.on{background:#f59e0b!important;color:#111}
+#rmLeg{position:absolute;left:12px;bottom:28px;z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;max-width:calc(100% - 24px)}
+#rmLeg b{font-family:Kanit,sans-serif;font-size:13.5px}#rmLeg .bar{display:flex;margin-top:5px}#rmLeg .bar span{flex:1;min-width:38px;text-align:center}#rmLeg .bar i{display:block;height:10px}
+.alab{background:none;border:0;box-shadow:none;color:#fff;font:700 13px Kanit,sans-serif;text-shadow:0 0 3px #000,0 0 6px #000}.alab:before{display:none}
 .seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
 .seg button{padding:4px 9px;font-size:12px}
 .seg button.on{background:#0369a1;border-color:#0ea5e9}
@@ -150,7 +155,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
 </header>
 <main>
  <div id="mapwrap">
-  <div id="map"></div>
+  <div id="map"><div id="rmLeg"></div></div>
   <button id="lyrToggle" class="mp" style="padding:6px 10px">☰ ชั้นข้อมูล</button>
   <div id="lyr" class="mp">
    <h4>แผนที่ฐาน</h4>
@@ -227,7 +232,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
   <div class="pane" id="p-rain">
    <div class="seg" id="rainSeg">
     <button data-m="r24" class="on">24 ชม.</button><button data-m="r6">6 ชม.</button><button data-m="r3">3 ชม.</button><button data-m="r1">1 ชม.</button><button data-m="today">วันนี้</button><button data-m="yday">เมื่อวาน</button>
-   </div>
+   <button type="button" id="rmapBtn" class="rmb" title="สลับเป็นแผนที่ฝน (พื้นสีตามปริมาณฝน)">🗺️ แผนที่ฝน</button></div>
    <div class="mut" id="rainNote"></div>
    <table><thead><tr><th>#</th><th>สถานี</th><th>อำเภอ</th><th style="text-align:right">มม.</th></tr></thead><tbody id="rainTb"></tbody></table>
   </div>
@@ -352,6 +357,7 @@ const inProv=x=>S.prov==='all'||x.prov===S.prov;
 
 function drawRain(){
  gRain.clearLayers();
+ if(S.rmap)setTimeout(rainMap,0);
  if((S.rainMode==='r3'||S.rainMode==='r6')&&S.rnKey!==S.prov){rainN();return}
  const arr=(S.raw[S.rainMode]||[]).filter(inProv);
  $('cRain').textContent=arr.length?arr.length+' สถานี':'';
@@ -567,6 +573,38 @@ function rainN(){if(S.rnBusy)return S.rnBusy;const key=S.prov;
   S.rnKey=key;S.rnAt=Date.now();S.rnLim=lim})().finally(()=>{S.rnBusy=null;if(S.rainMode==='r3'||S.rainMode==='r6'){drawRain();renderRainTable();legend()}});
  return S.rnBusy}
 setInterval(()=>{if(S.rnAt&&Date.now()-S.rnAt>6e5){S.rnKey=null;if(S.rainMode==='r3'||S.rainMode==='r6')drawRain()}},6e4);
+
+/* ---------- แผนที่ฝน (พื้นสีปริมาณฝน IDW ภายในขอบเขตอำเภอ) ---------- */
+map.createPane('rmap');map.getPane('rmap').style.zIndex=380;map.getPane('rmap').style.pointerEvents='none';
+const RMC=[[10,'#9fd3f0','0–10'],[20,'#a6dc7a','10–20'],[35,'#4cb86b','20–35'],[50,'#f2d43d','35–50'],[70,'#f5a13a','50–70'],[90,'#ec6b2d','70–90'],[1e9,'#d93a2f','>90']];
+const rmCol=v=>(RMC.find(c=>v<=c[0])||RMC[6])[1];
+let AMPG=null,rmImg=null;const gAmpB=L.layerGroup().addTo(map);S.rmap=false;const rmSaved={};
+const RM_HIDE=['ovWl','ovRivS','ovRes','ovTH','ovRid','ovRadar','ovSat','ovFlood'];
+async function ampGeo(){if(!AMPG)AMPG=await getJ('amphoe.json?v=1');return AMPG}
+function hex2rgb(h){return[1,3,5].map(i=>parseInt(h.substr(i,2),16))}
+async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)return;
+ if(rmImg){map.removeLayer(rmImg);rmImg=null}gAmpB.clearLayers();
+ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;A.forEach(a=>a.r.forEach(r=>r.forEach(([x,y])=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)})));
+ const st=(S.raw[S.rainMode]||[]).filter(r=>r.v!=null&&r.lng>x0-.3&&r.lng<x1+.3&&r.lat>y0-.3&&r.lat<y1+.3);
+ const W=420,H=Math.round(W*(y1-y0)/(x1-x0)*1.02),cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
+ if(st.length){const im=g.createImageData(W,H),D=im.data,kx=Math.cos((y0+y1)/2*Math.PI/180);
+  for(let py=0;py<H;py++){const la=y1-(py+.5)/H*(y1-y0);for(let px=0;px<W;px++){const lo=x0+(px+.5)/W*(x1-x0);let sw=0,sv=0,hit=null;
+   for(const r of st){const dx=(r.lng-lo)*kx,dy=r.lat-la,d2=dx*dx+dy*dy;if(d2<1e-7){hit=r.v;break}const w=1/(d2*d2);sw+=w;sv+=w*r.v}
+   const v=hit!=null?hit:sv/sw,c=hex2rgb(rmCol(v)),o=(py*W+px)*4;D[o]=c[0];D[o+1]=c[1];D[o+2]=c[2];D[o+3]=255}}
+  g.putImageData(im,0,0)}else{g.fillStyle='#9fd3f0';g.fillRect(0,0,W,H)}
+ // clip to districts
+ g.globalCompositeOperation='destination-in';g.beginPath();A.forEach(a=>a.r.forEach(r=>r.forEach(([x,y],i)=>{const X=(x-x0)/(x1-x0)*W,Y=(y1-y)/(y1-y0)*H;i?g.lineTo(X,Y):g.moveTo(X,Y)})));g.fill();
+ rmImg=L.imageOverlay(cv.toDataURL(),[[y0,x0],[y1,x1]],{pane:'rmap',opacity:.82,interactive:false}).addTo(map);
+ A.forEach(a=>{a.r.forEach(r=>{const ll=r.map(([x,y])=>[y,x]);L.polyline(ll,{pane:'rmap',color:'#f97316',weight:5,opacity:.35,interactive:false}).addTo(gAmpB);L.polyline(ll,{pane:'rmap',color:'#fff7ed',weight:1.6,interactive:false}).addTo(gAmpB)});
+  L.marker([a.c[1],a.c[0]],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip('อ.'+a.n,{permanent:true,direction:'center',className:'alab'}).addTo(gAmpB)});
+ const mx=st.filter(r=>r.prov==='77').reduce((m,r)=>Math.max(m,r.v),0),tt=((st.find(r=>r.prov==='77')||{}).t)||'';
+ $('rmLeg').innerHTML=`<b>แผนที่${modeName()}</b> <span style="color:#64748b">· จ.ประจวบคีรีขันธ์ · ${st.filter(r=>r.prov==='77').length} สถานี · สูงสุด ${fmt(mx)} มม.${tt?' · ข้อมูลถึง '+tt:''}</span><div class="bar">${RMC.map(c=>`<span><i style="background:${c[1]}"></i>${c[2]}</span>`).join('')}</div><div style="color:#64748b;margin-top:3px">มม. · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น</div>`;$('rmLeg').style.display='block'}
+function setRmap(on){if(on===S.rmap)return;S.rmap=on;document.querySelectorAll('#rmapBtn,.rmctl a').forEach(b=>b.classList.toggle('on',on));
+ RM_HIDE.forEach(id=>{const c=$(id);if(!c)return;if(on){rmSaved[id]=c.checked;if(c.checked){c.checked=false;c.dispatchEvent(new Event('change'))}}else if(rmSaved[id]&&!c.checked){c.checked=true;c.dispatchEvent(new Event('change'))}});
+ if(on){if(!$('ovRain').checked){$('ovRain').checked=true;$('ovRain').dispatchEvent(new Event('change'))}ampGeo().then(A=>{map.fitBounds(A.flatMap(a=>a.r[0].map(([x,y])=>[y,x])),{padding:[20,20]});rainMap()})}
+ else{if(rmImg){map.removeLayer(rmImg);rmImg=null}gAmpB.clearLayers();$('rmLeg').style.display='none'}}
+$('rmapBtn').onclick=()=>setRmap(!S.rmap);
+const RmCtl=L.Control.extend({options:{position:'topleft'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar rmctl');d.innerHTML='<a href="#" role="button" title="แผนที่ฝน">🗺️ แผนที่ฝน</a>';L.DomEvent.disableClickPropagation(d);d.firstChild.onclick=e=>{e.preventDefault();setRmap(!S.rmap)};return d}});new RmCtl().addTo(map);
 function setMode(m){S.rainMode=m;$('rainMode').value=m;document.querySelectorAll('#rainSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));drawRain();renderRainTable();legend()}
 $('rainMode').onchange=e=>setMode(e.target.value);
 document.querySelectorAll('#rainSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
