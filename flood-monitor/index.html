@@ -753,7 +753,7 @@ document.querySelectorAll('#resSz input').forEach(i=>i.onchange=()=>{drawRes();d
 /* ---------- เส้นน้ำ (ชั้นข้อมูลลำน้ำ สชป.14 Stream_rid14) ---------- */
 map.createPane('riv');map.getPane('riv').style.zIndex=390;
 const rivR=L.canvas({pane:'riv',padding:.3}),gRivM=L.layerGroup().addTo(map),gRivS=L.layerGroup().addTo(map);let RIV=null;
-async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=2');drawRiv();
+async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=3');drawRiv();
  setSt('riv','ok',`สายหลัก ${new Set(RIV.main.map(x=>x.n).filter(Boolean)).size} สาย · สายรอง ${new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size} สาย`)}catch(e){setSt('riv','er',e.message)}}
 function rivPop(x,k){const km=RIV.km&&RIV.km[x.n];return `<b>${x.n||'ทางน้ำ (ไม่มีชื่อ)'}</b><br>${k==='m'?'ทางน้ำสายหลัก':k==='c'?'คลองชลประทาน':'ทางน้ำสายรอง (มีน้ำไหลตลอดปี)'}${km?`<br>ความยาวในจังหวัดประมาณ ${km} กม.`:''}<br><span class="mut">ชั้นข้อมูลลำน้ำ สำนักงานชลประทานที่ 14</span>`}
 function drawRiv(){gRivM.clearLayers();gRivS.clearLayers();if(!RIV)return;
