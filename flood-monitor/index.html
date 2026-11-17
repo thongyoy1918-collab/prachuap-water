@@ -383,7 +383,7 @@ function drawWl(){
 function renderRainTable(){
  if((S.rainMode==='r3'||S.rainMode==='r6')&&S.rnKey!==S.prov){$('rainNote').textContent='กำลังคำนวณ'+modeName()+' จากข้อมูลรายชั่วโมง…';return}
  const arr=(S.raw[S.rainMode]||[]).filter(inProv).sort((a,b)=>b.v-a.v);
- $('rainNote').textContent=`${modeName()} · ${arr.length} สถานี · ข้อมูลถึง ${(arr[0]||{}).t||'–'}`;
+ $('rainNote').textContent=`${modeName()} · ${arr.length} สถานี · ข้อมูลถึง ${(arr[0]||{}).t||'–'}`;if((S.rainMode==='r3'||S.rainMode==='r6')&&S.rnLim)$('rainNote').textContent+=' · ThaiWater จำกัดจำนวนการเรียกข้อมูล บางสถานีอาจยังไม่แสดง ลองใหม่ในไม่กี่นาที';
  $('rainTb').innerHTML=arr.slice(0,300).map((r,i)=>`<tr class="cl" data-lat="${r.lat}" data-lng="${r.lng}"><td class="mut">${i+1}</td><td>${r.name}<div class="mut">${r.ag} ${r.code}</div></td><td>${r.amp}${S.prov==='all'?'<div class="mut">'+r.provName+'</div>':''}</td><td class="n"><b style="color:${rainCol(r.v)}">${fmt(r.v)}</b><div class="bar"><i style="width:${Math.min(100,r.v/1.5)}%;background:${rainCol(r.v)}"></i></div></td></tr>`).join('')||'<tr><td colspan=4 class="mut">ไม่มีข้อมูล</td></tr>';
 }
 function renderWlTable(){
@@ -560,11 +560,11 @@ async function hourly(id){const c=S.hg[id];if(c&&Date.now()-c.at<6e5)return c.d;
 function rainN(){if(S.rnBusy)return S.rnBusy;const key=S.prov;
  S.rnBusy=(async()=>{const base=(S.raw.r24||[]).filter(inProv);let wet=base.filter(r=>r.v>0).sort((a,b)=>b.v-a.v);if(wet.length>200)wet=wet.slice(0,200);
   const res={},q=[...wet];let done=0;$('rainNote').textContent=`กำลังคำนวณฝนสะสม 3/6 ชม. จากข้อมูลรายชั่วโมง 0/${wet.length} สถานี…`;
-  await Promise.all(Array.from({length:4},async()=>{while(q.length){const r=q.shift();try{const d=await hourly(r.id);const last=twDt(r.t)||(d.length?d[d.length-1].t:null);
-    const sum=h=>last?d.filter(x=>x.v!=null&&x.t>last-h*36e5&&x.t<=last).reduce((a,x)=>a+x.v,0):null;res[r.id]={r3:sum(3),r6:sum(6)}}catch(e){res[r.id]=null}
+  let lim=false;await Promise.all(Array.from({length:2},async()=>{while(q.length&&!lim){const r=q.shift();await new Promise(z=>setTimeout(z,120));try{const d=await hourly(r.id);const last=twDt(r.t)||(d.length?d[d.length-1].t:null);
+    const sum=h=>last?d.filter(x=>x.v!=null&&x.t>last-h*36e5&&x.t<=last).reduce((a,x)=>a+x.v,0):null;res[r.id]={r3:sum(3),r6:sum(6)}}catch(e){res[r.id]=null;if(/429/.test(e.message))lim=true}
     done++;if(done%5===0)$('rainNote').textContent=`กำลังคำนวณฝนสะสม 3/6 ชม. ${done}/${wet.length} สถานี…`}}));
   for(const k of ['r3','r6'])S.raw[k]=base.map(r=>{const x=res[r.id];return{...r,v:r.v>0?(x&&x[k]!=null?Math.round(x[k]*10)/10:null):0,r1:r.r1}}).filter(r=>r.v!=null);
-  S.rnKey=key;S.rnAt=Date.now()})().finally(()=>{S.rnBusy=null;if(S.rainMode==='r3'||S.rainMode==='r6'){drawRain();renderRainTable();legend()}});
+  S.rnKey=key;S.rnAt=Date.now();S.rnLim=lim})().finally(()=>{S.rnBusy=null;if(S.rainMode==='r3'||S.rainMode==='r6'){drawRain();renderRainTable();legend()}});
  return S.rnBusy}
 setInterval(()=>{if(S.rnAt&&Date.now()-S.rnAt>6e5){S.rnKey=null;if(S.rainMode==='r3'||S.rainMode==='r6')drawRain()}},6e4);
 function setMode(m){S.rainMode=m;$('rainMode').value=m;document.querySelectorAll('#rainSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));drawRain();renderRainTable();legend()}
