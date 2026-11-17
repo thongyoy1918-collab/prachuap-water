@@ -560,12 +560,13 @@ window.wlChart=function(id){const all=S.raw.wl||[];const st=all.find(x=>x.id==id
  // same amphoe (fallback: same basin) stations for comparison
  let nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.amp===st.amp);if(nb.length<1)nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.basin&&x.basin===st.basin);
  nb=nb.sort((a,b)=>Math.hypot(a.lat-st.lat,a.lng-st.lng)-Math.hypot(b.lat-st.lat,b.lng-st.lng)).slice(0,4);
- W.list=[st,...nb];W.sel=[st.id,...nb.filter(x=>x.wl!=null&&st.wl!=null&&Math.abs(x.wl-st.wl)<=6).slice(0,2).map(x=>x.id)];
- document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-id="${x.id}" ${W.sel.includes(x.id)?'checked':''} ${i===0?'disabled':''}><span style="width:10px;height:10px;border-radius:50%;background:${COL[i]}"></span>${x.code||x.name}${x.code?' · '+x.name:''}</label>`).join('');
+ // same group -> same chart whichever station is clicked: fixed order by station code
+ W.list=[st,...nb].sort((a,b)=>(a.code||a.name).localeCompare(b.code||b.name,'en',{numeric:true}));W.sel=W.list.map(x=>x.id);
+ document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-id="${x.id}" ${W.sel.includes(x.id)?'checked':''}><span style="width:10px;height:10px;border-radius:50%;background:${COL[i]}"></span>${x.code||x.name}${x.code?' · '+x.name:''}</label>`).join('');
  document.getElementById('wlCmp').querySelectorAll('input').forEach(c=>c.onchange=()=>{W.sel=[...document.querySelectorAll('#wlCmp input:checked')].map(i=>+i.dataset.id);draw()});
  md.classList.add('on');draw()};
 async function draw(){const st=W.st;const L=W.list.filter(x=>W.sel.includes(x.id));
- document.getElementById('wlT').textContent=`ระดับน้ำรายชั่วโมง ${st.amp?('อ.'+st.amp):st.name}`;
+ document.getElementById('wlT').textContent=`ระดับน้ำรายชั่วโมง ${st.amp?st.amp:st.name}`;
  document.getElementById('wlS').textContent=(st.basin?st.basin+' · ':'')+`${W.days} วันย้อนหลัง`;
  svg.innerHTML='<text x="500" y="230" text-anchor="middle" fill="#6b7280" font-size="16">กำลังโหลดข้อมูล…</text>';
  let D;try{D=await Promise.all(L.map(x=>get(x.id,W.days)))}catch(e){svg.innerHTML=`<text x="500" y="230" text-anchor="middle" fill="#b91c1c" font-size="15">โหลดข้อมูลไม่ได้ (${e.message})</text>`;return}
@@ -582,7 +583,7 @@ async function draw(){const st=W.st;const L=W.list.filter(x=>W.sel.includes(x.id
  g+=`<line x1="${X0}" x2="${X1}" y1="${Y1}" y2="${Y1}" stroke="#9ca3af"/>`;
  ser.forEach(s=>{if(s.bank==null)return;const yy=y(+s.bank);g+=`<line x1="${X0}" x2="${X1}" y1="${yy}" y2="${yy}" stroke="${s.c}" stroke-opacity=".45" stroke-width="1.5"/><text x="${X0+6}" y="${yy-6}" font-size="13" font-weight="600" fill="${s.c}">ระดับตลิ่ง ${s.st.code||s.st.name} : ${(+s.bank).toFixed(2)} ม.</text>`});
  ser.forEach(s=>{let d='',prev=null;s.pts.forEach(p=>{const gap=prev&&(p.t-prev.t)>3*36e5;d+=(d===''||gap?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);prev=p});
-  g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="${s.st.id===st.id?3.2:2.2}" stroke-linejoin="round"/>`;const lp=s.pts[s.pts.length-1];g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}" stroke="#fff" stroke-width="1.5"/>`;
+  g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.8" stroke-linejoin="round"/>`;const lp=s.pts[s.pts.length-1];g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}" stroke="#fff" stroke-width="1.5"/>`;
   const fp=s.pts[0];g+=`<text x="${x(fp.t)+4}" y="${y(fp.v)-8}" font-size="13" font-weight="700" fill="${s.c}">${s.st.code||''}</text>`});
  g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#9ca3af" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="4" fill="#fff" stroke="#9ca3af"/><text id="wlTt" font-size="12.5" fill="#111827"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
  g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="3"/><text x="28" y="0" font-size="13" fill="#374151">${s.st.code||s.st.name}</text></g>`).join('');
