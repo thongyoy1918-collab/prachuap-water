@@ -91,6 +91,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .seg .rmb{margin-left:auto;background:#0f3d6e;border-color:#2563eb}.seg .rmb.on{background:#f59e0b;border-color:#fbbf24;color:#111}
 .rmctl a{display:block;width:auto!important;padding:0 10px;font:600 13px/30px Kanit,sans-serif!important;white-space:nowrap;color:#0f172a}.rmctl a.on{background:#f59e0b!important;color:#111}
 #rmPan{position:absolute;right:12px;top:52px;bottom:24px;z-index:650;width:330px;max-width:calc(100% - 24px);background:#fff;color:#0f172a;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.4);display:none;flex-direction:column;overflow:hidden;font-size:12.5px}
+@media (max-width:760px){#rmPan{top:auto;height:46%;left:12px;width:auto}}
 #rmPan .h{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}#rmPan .chip{background:#dc2626;color:#fff;border-radius:99px;padding:2px 9px;font:600 11.5px Kanit,sans-serif}
 #rmPan .tm{margin-left:auto;background:#123B7A;color:#fff;border-radius:8px;padding:3px 9px;text-align:center;line-height:1.1}#rmPan .tm small{display:block;font-size:10px;opacity:.85}#rmPan .tm b{font:700 17px Kanit,sans-serif}
 #rmPan h4{margin:2px 12px 0;font:700 17px Kanit,sans-serif;color:#0f172a}#rmPan .src{margin:0 12px 6px;color:#64748b;font-size:11.5px}
@@ -102,7 +103,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #rmPan .sr .v{text-align:center;font:700 13px Kanit,sans-serif;border-radius:6px;padding:3px 0}#rmPan .sr .t{color:#64748b;font-size:11px;text-align:center}
 #rmPan .ft{padding:6px 12px 9px;color:#64748b;font-size:10.5px;border-top:1px solid #eef2f7}#rmPan .sv{background:#123B7A;color:#fff;border:0;border-radius:8px;padding:5px 9px;font:600 12px Kanit,sans-serif;cursor:pointer;white-space:nowrap}#rmPan .sv:hover{background:#1d5aa0}#rmPan .x{background:none;border:0;font-size:16px;color:#64748b;cursor:pointer;padding:0 2px}
 .rmv{background:#fff;color:#0f172a;border:0;border-radius:6px;padding:0 4px;font:700 11px Kanit,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.4)}.rmv:before{display:none}
-#rmLeg{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;max-width:calc(100% - 24px)}
+#rmLeg{position:absolute;left:12px;right:12px;top:10px;z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;}
 #rmLeg b{font-family:Kanit,sans-serif;font-size:13.5px}#rmLeg .bar{display:flex;margin-top:5px}#rmLeg .bar span{flex:1;min-width:38px;text-align:center}#rmLeg .bar i{display:block;height:10px}
 .alab{background:none;border:0;box-shadow:none;color:#fff;font:700 13px Kanit,sans-serif;text-shadow:0 0 3px #000,0 0 6px #000}.alab:before{display:none}
 .seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
@@ -596,7 +597,7 @@ async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)ret
  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;A.forEach(a=>a.r.forEach(r=>r.forEach(([x,y])=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)})));
  const st=(S.raw[S.rainMode]||[]).filter(r=>r.v!=null&&r.lng>x0-.3&&r.lng<x1+.3&&r.lat>y0-.3&&r.lat<y1+.3);
  const W=420,H=Math.round(W*(y1-y0)/(x1-x0)*1.02),cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
- if(!st.length){$('rmLeg').innerHTML=`<b>แผนที่ปริมาณ${modeName()}</b><div style="color:#b91c1c;margin-top:3px">${(S.rainMode==='r3'||S.rainMode==='r6')&&S.rnBusy?'กำลังคำนวณจากข้อมูลรายชั่วโมง…':'ยังไม่มีข้อมูลฝนจาก ThaiWater '+((ST.rain&&ST.rain.s==='er')?'('+ST.rain.msg+') ลองกดรีเฟรชอีกครั้ง':'— กำลังโหลด…')}</div>`;$('rmLeg').style.display='block';$('rmPan').style.display='none';return}
+ if(!st.length){$('rmLeg').innerHTML=`<b>แผนที่ปริมาณ${modeName()}</b><div style="color:#b91c1c;margin-top:3px">${(S.rainMode==='r3'||S.rainMode==='r6')&&S.rnBusy?'กำลังคำนวณจากข้อมูลรายชั่วโมง…':'ยังไม่มีข้อมูลฝนจาก ThaiWater '+((ST.rain&&ST.rain.s==='er')?'('+ST.rain.msg+') ลองกดรีเฟรชอีกครั้ง':'— กำลังโหลด…')}</div>`;$('rmLeg').style.display='block';$('rmPan').style.display='none';rmLayout();return}
  if(st.length){const im=g.createImageData(W,H),D=im.data,kx=Math.cos((y0+y1)/2*Math.PI/180);
   for(let py=0;py<H;py++){const la=y1-(py+.5)/H*(y1-y0);for(let px=0;px<W;px++){const lo=x0+(px+.5)/W*(x1-x0);let sw=0,sv=0,hit=null;
    for(const r of st){const dx=(r.lng-lo)*kx,dy=r.lat-la,d2=dx*dx+dy*dy;if(d2<1e-7){hit=r.v;break}const w=1/(d2*d2);sw+=w;sv+=w*r.v}
@@ -623,7 +624,7 @@ function rmPanel(st,A){const P=$('rmPan');if(!S.rmap){P.style.display='none';ret
  <div class="bd"><div class="sec">ฝนสูงสุดรายอำเภอ<span>มม. · (เฉลี่ย)</span></div>${amps.map(a=>`<div class="ar"><span>${short(a.n)}</span><i><u style="width:${Math.max(3,a.mx/gmx*100)}%;background:${rmCol(a.mx)}"></u></i><span class="n">${fmt(a.mx,1)}</span><span class="m">(${fmt(a.av,1)})</span></div>`).join('')}
  <div class="sec" style="margin-top:10px">สถานีวัดฝน<span>เวลา · ฝน (มม.)</span></div>${srt.slice(0,30).map(r=>`<div class="sr" data-lat="${r.lat}" data-lng="${r.lng}"><div><b>${r.name}</b><small>ต.${r.tam} อ.${r.amp} · ${r.ag}</small></div><span class="t">${(String(r.t).match(/\d+:\d+$/)||[''])[0]}</span><span class="v" style="background:${rmCol(r.v)}">${fmt(r.v,1)}</span></div>`).join('')}</div>
  <div class="ft">แสดง ${Math.min(30,srt.length)} อันดับแรก จากสถานีที่รายงาน ${st.length} สถานี (มีฝน ${wet} สถานี · ฝน 0 มม. ${st.length-wet} สถานี) · ข้อมูลอัปเดต ${tt||'–'} · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น · ขอบเขตอำเภอ: สชป.14</div>`;
- P.style.display='flex';P.querySelectorAll('.sr').forEach(e=>e.onclick=()=>map.setView([+e.dataset.lat,+e.dataset.lng],12))}
+ P.style.display='flex';rmLayout();P.querySelectorAll('.sr').forEach(e=>e.onclick=()=>map.setView([+e.dataset.lat,+e.dataset.lng],12))}
 
 /* ---------- บันทึกภาพแผนที่ฝน 4K ---------- */
 
@@ -684,6 +685,13 @@ async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไ�
  const nm=`แผนที่ฝน_${mn.replace(/\s|\./g,'')}_${(R.tt||'').replace(/[: ]/g,'-')}.png`;
  c.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);if(bt){bt.disabled=false;bt.textContent='💾 บันทึกภาพ'}},'image/png')}
 window.rmExport=rmExport;
+
+function rmLayout(){const L0=$('rmLeg'),P=$('rmPan'),m=$('map').getBoundingClientRect();if(!L0)return;
+ const ly=$('lyr'),lr=ly&&ly.offsetParent&&getComputedStyle(ly).display!=='none'?ly.getBoundingClientRect():null;
+ let left=12,right=12;if(lr&&lr.right>m.left&&lr.top<m.top+140)left=Math.max(12,lr.right-m.left+10);
+ if(P.style.display!=='none'&&P.offsetParent){const pr=P.getBoundingClientRect();if(pr.top<m.top+140)right=m.right-pr.left+10}
+ if(m.width-left-right<260){left=12}L0.style.left=left+'px';L0.style.right=right+'px'}
+addEventListener('resize',()=>S.rmap&&rmLayout());document.addEventListener('click',e=>{if(S.rmap&&e.target.closest('#lyrToggle,#rmPan .x'))setTimeout(rmLayout,50)});
 function setRmap(on){if(on===S.rmap)return;S.rmap=on;document.querySelectorAll('#rmapBtn,.rmctl a').forEach(b=>b.classList.toggle('on',on));
  RM_HIDE.forEach(id=>{const c=$(id);if(!c)return;if(on){rmSaved[id]=c.checked;if(c.checked){c.checked=false;c.dispatchEvent(new Event('change'))}}else if(rmSaved[id]&&!c.checked){c.checked=true;c.dispatchEvent(new Event('change'))}});
  if(on){if(!$('ovRain').checked){$('ovRain').checked=true;$('ovRain').dispatchEvent(new Event('change'))}ampGeo().then(A=>{map.fitBounds(A.flatMap(a=>a.r[0].map(([x,y])=>[y,x])),{padding:[20,20]});rainMap()})}
