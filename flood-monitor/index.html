@@ -161,6 +161,8 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
    <label><input type="checkbox" id="ovRain" checked> 🌧️ สถานีวัดฝน <small id="cRain"></small></label>
    <div class="sub"><select id="rainMode">
     <option value="r24">ฝนสะสม 24 ชม.</option>
+    <option value="r6">ฝนสะสม 6 ชม.</option>
+    <option value="r3">ฝนสะสม 3 ชม.</option>
     <option value="r1">ฝน 1 ชม. ล่าสุด</option>
     <option value="today">ฝนวันนี้ (ตั้งแต่ 07:00)</option>
     <option value="yday">ฝนเมื่อวาน</option>
@@ -224,7 +226,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
   </div>
   <div class="pane" id="p-rain">
    <div class="seg" id="rainSeg">
-    <button data-m="r24" class="on">24 ชม.</button><button data-m="r1">1 ชม.</button><button data-m="today">วันนี้</button><button data-m="yday">เมื่อวาน</button>
+    <button data-m="r24" class="on">24 ชม.</button><button data-m="r6">6 ชม.</button><button data-m="r3">3 ชม.</button><button data-m="r1">1 ชม.</button><button data-m="today">วันนี้</button><button data-m="yday">เมื่อวาน</button>
    </div>
    <div class="mut" id="rainNote"></div>
    <table><thead><tr><th>#</th><th>สถานี</th><th>อำเภอ</th><th style="text-align:right">มม.</th></tr></thead><tbody id="rainTb"></tbody></table>
@@ -330,7 +332,7 @@ function normRain(arr,valKey){return(arr||[]).map(d=>{const st=d.station||{};con
 async function loadTW(){
  setSt('rain','ld');setSt('wl','ld');
  const [r24,tod,yd,wl]=await Promise.allSettled([getJ(TW+'rain_24h'),getJ(TW+'rain_today'),getJ(TW+'rain_yesterday'),getJ(TW+'waterlevel_load')]);
- if(r24.status==='fulfilled'){S.raw.r24=normRain(r24.value.data,d=>d.rain_24h);S.raw.r1=normRain(r24.value.data,d=>d.rain_1h);setSt('rain','ok',(S.raw.r24[0]||{}).t||'')}else setSt('rain','er',r24.reason&&r24.reason.message);
+ if(r24.status==='fulfilled'){S.raw.r24=normRain(r24.value.data,d=>d.rain_24h);S.rnKey=null;S.raw.r1=normRain(r24.value.data,d=>d.rain_1h);setSt('rain','ok',(S.raw.r24[0]||{}).t||'')}else setSt('rain','er',r24.reason&&r24.reason.message);
  if(tod.status==='fulfilled')S.raw.today=normRain(tod.value.data,d=>d.rainfall_value);
  if(yd.status==='fulfilled')S.raw.yday=normRain(yd.value.data,d=>d.rainfall_value);
  if(wl.status==='fulfilled'){S.raw.wl=(wl.value.waterlevel_data.data||[]).map(d=>{const st=d.station||{},g=d.geocode||{};return{
@@ -350,6 +352,7 @@ const inProv=x=>S.prov==='all'||x.prov===S.prov;
 
 function drawRain(){
  gRain.clearLayers();
+ if((S.rainMode==='r3'||S.rainMode==='r6')&&S.rnKey!==S.prov){rainN();return}
  const arr=(S.raw[S.rainMode]||[]).filter(inProv);
  $('cRain').textContent=arr.length?arr.length+' สถานี':'';
  if(!$('ovRain').checked)return;
@@ -361,7 +364,7 @@ function drawRain(){
   if(lab&&r.v>=lmin)m.bindTooltip(fmt(r.v),{permanent:true,direction:'right',className:'rlab',offset:[rad,0]});
   m.addTo(gRain)});
 }
-function modeName(){return{r24:'ฝนสะสม 24 ชม.',r1:'ฝน 1 ชม.',today:'ฝนวันนี้',yday:'ฝนเมื่อวาน'}[S.rainMode]}
+function modeName(){return{r24:'ฝนสะสม 24 ชม.',r6:'ฝนสะสม 6 ชม.',r3:'ฝนสะสม 3 ชม.',r1:'ฝน 1 ชม.',today:'ฝนวันนี้',yday:'ฝนเมื่อวาน'}[S.rainMode]}
 function drawWl(){
  gWl.clearLayers();
  const arr=(S.raw.wl||[]).filter(inProv);
@@ -378,6 +381,7 @@ function drawWl(){
 
 /* ---------- panels ---------- */
 function renderRainTable(){
+ if((S.rainMode==='r3'||S.rainMode==='r6')&&S.rnKey!==S.prov){$('rainNote').textContent='กำลังคำนวณ'+modeName()+' จากข้อมูลรายชั่วโมง…';return}
  const arr=(S.raw[S.rainMode]||[]).filter(inProv).sort((a,b)=>b.v-a.v);
  $('rainNote').textContent=`${modeName()} · ${arr.length} สถานี · ข้อมูลถึง ${(arr[0]||{}).t||'–'}`;
  $('rainTb').innerHTML=arr.slice(0,300).map((r,i)=>`<tr class="cl" data-lat="${r.lat}" data-lng="${r.lng}"><td class="mut">${i+1}</td><td>${r.name}<div class="mut">${r.ag} ${r.code}</div></td><td>${r.amp}${S.prov==='all'?'<div class="mut">'+r.provName+'</div>':''}</td><td class="n"><b style="color:${rainCol(r.v)}">${fmt(r.v)}</b><div class="bar"><i style="width:${Math.min(100,r.v/1.5)}%;background:${rainCol(r.v)}"></i></div></td></tr>`).join('')||'<tr><td colspan=4 class="mut">ไม่มีข้อมูล</td></tr>';
@@ -547,6 +551,22 @@ $('btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('repTxt
 /* ---------- UI wiring ---------- */
 function openTab(p){document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));if(p==='rep')mkReport()}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>openTab(b.dataset.p));
+
+/* ---------- ฝนสะสม 3 / 6 ชม. (รวมจากฝนรายชั่วโมง rain_24h_graph ของแต่ละสถานี) ---------- */
+S.hg={};S.rnBusy=null;
+const twDt=t=>{const m=String(t||'').match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+)/);return m?new Date(+m[1],m[2]-1,+m[3],+m[4],+m[5]):null};
+async function hourly(id){const c=S.hg[id];if(c&&Date.now()-c.at<6e5)return c.d;
+ const j=await getJ(TW+'rain_24h_graph?station_id='+id);const d=(j.data||[]).map(x=>({t:twDt(x.rainfall_datetime),v:x.rainfall_value==null?null:+x.rainfall_value})).filter(x=>x.t);S.hg[id]={at:Date.now(),d};return d}
+function rainN(){if(S.rnBusy)return S.rnBusy;const key=S.prov;
+ S.rnBusy=(async()=>{const base=(S.raw.r24||[]).filter(inProv);let wet=base.filter(r=>r.v>0).sort((a,b)=>b.v-a.v);if(wet.length>200)wet=wet.slice(0,200);
+  const res={},q=[...wet];let done=0;$('rainNote').textContent=`กำลังคำนวณฝนสะสม 3/6 ชม. จากข้อมูลรายชั่วโมง 0/${wet.length} สถานี…`;
+  await Promise.all(Array.from({length:4},async()=>{while(q.length){const r=q.shift();try{const d=await hourly(r.id);const last=twDt(r.t)||(d.length?d[d.length-1].t:null);
+    const sum=h=>last?d.filter(x=>x.v!=null&&x.t>last-h*36e5&&x.t<=last).reduce((a,x)=>a+x.v,0):null;res[r.id]={r3:sum(3),r6:sum(6)}}catch(e){res[r.id]=null}
+    done++;if(done%5===0)$('rainNote').textContent=`กำลังคำนวณฝนสะสม 3/6 ชม. ${done}/${wet.length} สถานี…`}}));
+  for(const k of ['r3','r6'])S.raw[k]=base.map(r=>{const x=res[r.id];return{...r,v:r.v>0?(x&&x[k]!=null?Math.round(x[k]*10)/10:null):0,r1:r.r1}}).filter(r=>r.v!=null);
+  S.rnKey=key;S.rnAt=Date.now()})().finally(()=>{S.rnBusy=null;if(S.rainMode==='r3'||S.rainMode==='r6'){drawRain();renderRainTable();legend()}});
+ return S.rnBusy}
+setInterval(()=>{if(S.rnAt&&Date.now()-S.rnAt>6e5){S.rnKey=null;if(S.rainMode==='r3'||S.rainMode==='r6')drawRain()}},6e4);
 function setMode(m){S.rainMode=m;$('rainMode').value=m;document.querySelectorAll('#rainSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));drawRain();renderRainTable();legend()}
 $('rainMode').onchange=e=>setMode(e.target.value);
 document.querySelectorAll('#rainSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
