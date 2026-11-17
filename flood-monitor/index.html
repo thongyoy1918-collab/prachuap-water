@@ -166,7 +166,10 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
     <option value="yday">ฝนเมื่อวาน</option>
    </select></div>
    <label><input type="checkbox" id="ovWl" checked> 🌊 โทรมาตรระดับน้ำ <small id="cWl"></small></label>
+   <label><input type="checkbox" id="ovRivM" checked> <span style="display:inline-block;width:18px;height:4px;background:#0058C8;border-radius:2px;vertical-align:middle"></span> เส้นน้ำสายหลัก <small id="cRivM"></small></label>
+   <label><input type="checkbox" id="ovRivS" checked> <span style="display:inline-block;width:18px;height:2px;background:#4FA3F7;vertical-align:middle"></span> เส้นน้ำสายรอง <small id="cRivS"></small></label>
    <label><input type="checkbox" id="ovRes" checked> 💧 อ่างเก็บน้ำ ใหญ่/กลาง/เล็ก <small id="cRes"></small></label>
+   <div id="resSz" style="display:flex;gap:10px;flex-wrap:wrap;margin:-2px 0 6px 24px;font-size:12.5px"><label><input type="checkbox" data-s="l" checked> ใหญ่</label><label><input type="checkbox" data-s="m" checked> กลาง</label><label><input type="checkbox" data-s="s" checked> เล็ก</label></div>
    <label><input type="checkbox" id="ovTH"> 🇹🇭 อ่างเก็บน้ำทั่วประเทศ (ชป.) <small id="cTH"></small></label>
    <label><input type="checkbox" id="ovRid" checked> ◆ สถานีวัดน้ำ ชป. (ศูนย์อุทกวิทยาฯ ตะวันตก) <small id="cRid"></small></label>
    <h4>เรดาร์ / ดาวเทียม</h4>
@@ -305,6 +308,7 @@ const SRC={
  wl:{n:'โทรมาตรระดับน้ำ (สสน. ThaiWater)',d:'ระดับน้ำจริงเทียบระดับตลิ่ง (% ความจุลำน้ำ) และสถานะเฝ้าระวังรายสถานี',u:'https://www.thaiwater.net'},
  rid:{n:'สถานีวัดน้ำท่า กรมชลประทาน (ศูนย์อุทกวิทยาชลประทานภาคตะวันตก)',d:'ระดับน้ำรายชั่วโมงย้อนหลัง 7 วัน เทียบระดับตลิ่ง ลุ่มน้ำชายฝั่งทะเลตะวันตก (เช่น Gt.7, Gt.20, Gt.21 คลองบางสะพาน) ใช้ทำกราฟรวมสถานี',u:'http://hydro-7.rid.go.th/index4.html'},
  res:{n:'อ่างเก็บน้ำ (โครงการชลประทานประจวบคีรีขันธ์)',d:'อ่างขนาดใหญ่/กลาง 9 แห่ง จากรายงานประจำวัน พร้อมกราฟ Rule Curve และภาพรายงาน 4K · อ่างขนาดเล็ก 33 แห่ง',u:'https://thongyoy1918-collab.github.io/prachuap-water/'},
+ riv:{n:'เส้นน้ำสายหลัก / สายรอง (สำนักงานชลประทานที่ 14)',d:'ชั้นข้อมูลลำน้ำ Stream_rid14 ของ สชป.14 ตัดเฉพาะ จ.ประจวบคีรีขันธ์ · สายหลัก = แม่น้ำและลำน้ำไหลตลอดปีที่ยาว ≥20 กม. · สายรอง = ลำน้ำไหลตลอดปีอื่น ๆ และคลองชลประทาน',u:'https://www.rid.go.th'},
  rsv:{n:'อ่างเก็บน้ำทั่วประเทศ (กรมชลประทาน)',d:'ระบบฐานข้อมูลน้ำในอ่างเก็บน้ำ: เขื่อน/อ่างขนาดใหญ่ และอ่างขนาดกลางทุกภาค ปริมาณน้ำ ร้อยละความจุ น้ำใช้การได้ ไหลเข้า/ระบายรายวัน',u:'https://app.rid.go.th/reservoir/'},
  radar:{n:'เรดาร์ฝน + พยากรณ์ 3 ชม. (กรมอุตุนิยมวิทยา / สทนช.)',d:'ภาพเรดาร์คอมโพสิตทั้งประเทศของกรมอุตุฯ ราย 15 นาที ย้อนหลัง 1 ชม. และคาดการณ์กลุ่มฝนล่วงหน้า 3 ชม. (Nowcast) · สำรอง: RainViewer ย้อนหลัง 2 ชม.',u:'https://clpp-radar.onwr.go.th'},
  sat:{n:'ดาวเทียม Himawari-9 (JMA)',d:'ภาพเมฆอินฟราเรด / Sandwich / True Color อัปเดตทุก 10 นาที',u:'https://www.jma.go.jp/bosai/map.html#contents=himawari'},
@@ -517,7 +521,7 @@ function loadFlood(){
 function legend(){
  const rr=[[0,'ไม่มีฝน'],[5,'0.1–10 เล็กน้อย'],[20,'10–35 ปานกลาง'],[50,'35–90 หนัก'],[120,'90–150 หนักมาก'],[200,'>150 หนักมากที่สุด']];
  const ww=[[120,'>100% ล้นตลิ่ง'],[80,'70–100% น้ำมาก'],[50,'30–70% ปกติ'],[20,'10–30% น้ำน้อย'],[5,'≤10% วิกฤติ']];
- $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">อ่างเก็บน้ำ (% ความจุ)</b>`+[['#facc15','≤30% น้ำน้อย'],['#22c55e','31–50% พอใช้'],['#38bdf8','51–80% น้ำดี'],['#ef4444','81–100% ดีมาก']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:50%"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">สถานี ชป. (ระยะถึงตลิ่ง)</b>`+[['#FF0000','ล้นตลิ่ง'],['#f97316','ต่ำกว่าตลิ่ง ≤1 ม.'],['#facc15','1–2 ม.'],['#22c55e','>2 ม.']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:2px;transform:rotate(45deg) scale(.85);outline:1.5px solid #fff"></i>${r[1]}</div>`).join('');
+ $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">เส้นน้ำ</b><div class="row"><i style="background:#0058C8;height:4px;border-radius:2px;margin-top:5px"></i>สายหลัก</div><div class="row"><i style="background:#4FA3F7;height:2px;border-radius:0;margin-top:6px"></i>สายรอง</div>`+`<b style="display:block;margin-top:6px">อ่างเก็บน้ำ (% ความจุ)</b>`+[['#facc15','≤30% น้ำน้อย'],['#22c55e','31–50% พอใช้'],['#38bdf8','51–80% น้ำดี'],['#ef4444','81–100% ดีมาก']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:50%"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">สถานี ชป. (ระยะถึงตลิ่ง)</b>`+[['#FF0000','ล้นตลิ่ง'],['#f97316','ต่ำกว่าตลิ่ง ≤1 ม.'],['#facc15','1–2 ม.'],['#22c55e','>2 ม.']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:2px;transform:rotate(45deg) scale(.85);outline:1.5px solid #fff"></i>${r[1]}</div>`).join('');
 }
 
 /* ---------- LINE report ---------- */
@@ -693,7 +697,7 @@ const resTxt=p=>p==null?'–':p<=30?'น้ำน้อย':p<=50?'น้ำพ�
 async function loadRes(){setSt('res','ld');try{RESV=await getJ('reservoirs.json?v='+Date.now());drawRes();setSt('res','ok',`อ่างใหญ่/กลาง ${RESV.date_ls} · อ่างเล็ก ${RESV.date_small}`)}catch(e){console.warn('res',e);setSt('res','er',e.message)}}
 function drawRes(){gRes.clearLayers();if(!RESV)return;const all=[...RESV.large_medium.map(r=>({...r,kind:r.size==='l'?'ขนาดใหญ่':'ขนาดกลาง',d:RESV.date_ls})),...RESV.small.map(r=>({...r,kind:'ขนาดเล็ก',size:'s',d:RESV.date_small}))];
  $('cRes').textContent=`${RESV.large_medium.filter(r=>r.size==='l').length} ใหญ่ · ${RESV.large_medium.filter(r=>r.size!=='l').length} กลาง · ${RESV.small.length} เล็ก`;if(!$('ovRes').checked)return;
- all.forEach(r=>{const sz=r.size==='l'?30:r.size==='m'?22:13,c=resCol(r.pct);
+ const on=new Set([...document.querySelectorAll('#resSz input:checked')].map(i=>i.dataset.s));all.filter(r=>on.has(r.size)).forEach(r=>{const sz=r.size==='l'?30:r.size==='m'?22:13,c=resCol(r.pct);
   const html=r.size==='s'?`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:2px solid #0b1424;box-shadow:0 0 0 1.5px #fff"></div>`
    :`<div style="width:${sz}px;height:${sz}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c};border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:${r.size==='l'?13:10}px">💧</span></div>`;
   const m=L.marker([r.lat,r.lon],{icon:L.divIcon({className:'',html,iconSize:[sz,sz],iconAnchor:r.size==='s'?[sz/2,sz/2]:[sz/2,sz]}),zIndexOffset:r.size==='s'?300:700});
@@ -734,7 +738,7 @@ async function loadTH(){setSt('rsv','ld');try{let d=new Date(),big=[],mid=[],ds=
  setSt('rsv','ok',`ขนาดใหญ่ ${THR.big.length} · ขนาดกลาง ${THR.mid.length} แห่ง · ข้อมูล ${dt}`)}catch(e){console.warn('rsv',e);setSt('rsv','er',e.message)}}
 function drawTH(){gTH.clearLayers();if(!THR)return;$('cTH').textContent=`${THR.big.length} ใหญ่ · ${THR.mid.length} กลาง`;if(!$('ovTH').checked)return;
  const dt=new Date(THR.date+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
- [...THR.mid,...THR.big].forEach(x=>{const c=resCol(x.pct),big=x.sz==='l',sz=big?18:10;
+ const on=new Set([...document.querySelectorAll('#resSz input:checked')].map(i=>i.dataset.s));[...THR.mid,...THR.big].filter(x=>on.has(x.sz)).forEach(x=>{const c=resCol(x.pct),big=x.sz==='l',sz=big?18:10;
   const html=big?`<div style="width:${sz}px;height:${sz}px;border-radius:4px;background:${c};border:2.5px solid #fff;box-shadow:0 0 0 1.5px #0b1424,0 2px 5px rgba(0,0,0,.4)"></div>`:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:1.5px solid #fff;box-shadow:0 0 0 1px #0b1424"></div>`;
   const m=L.marker([x.lat,x.lon],{icon:L.divIcon({className:'',html,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]}),zIndexOffset:big?500:200});
   const ch=x.prev!=null&&x.pct!=null?` <span class="mut">(ปีที่แล้ว ${fmt(x.prev,0)}%)</span>`:'';
@@ -745,6 +749,22 @@ function drawTH(){gTH.clearLayers();if(!THR)return;$('cTH').textContent=`${THR.b
   if(big&&$('ovLab').checked&&map.getZoom()>=7)m.bindTooltip(`${x.name} ${fmt(x.pct,0)}%`,{permanent:true,direction:'right',className:'rlab',offset:[sz/2,0]});
   m.addTo(gTH)})}
 $('ovTH').onchange=()=>{if(!THR)loadTH();else drawTH()};map.on('zoomend',()=>{if($('ovTH').checked)drawTH()});$('ovLab').addEventListener('change',drawTH);loadTH();
+document.querySelectorAll('#resSz input').forEach(i=>i.onchange=()=>{drawRes();drawTH()});
+/* ---------- เส้นน้ำ (ชั้นข้อมูลลำน้ำ สชป.14 Stream_rid14) ---------- */
+map.createPane('riv');map.getPane('riv').style.zIndex=390;
+const rivR=L.canvas({pane:'riv',padding:.3}),gRivM=L.layerGroup().addTo(map),gRivS=L.layerGroup().addTo(map);let RIV=null;
+async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=1');drawRiv();
+ setSt('riv','ok',`สายหลัก ${new Set(RIV.main.map(x=>x.n).filter(Boolean)).size} สาย · สายรอง ${new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size} สาย`)}catch(e){setSt('riv','er',e.message)}}
+function rivPop(x,k){const km=RIV.km&&RIV.km[x.n];return `<b>${x.n||'ทางน้ำ (ไม่มีชื่อ)'}</b><br>${k==='m'?(x.t||'ทางน้ำสายหลัก'):k==='c'?'คลองชลประทาน':'ทางน้ำสายรอง (ไหลตลอดปี)'}${km?`<br>ความยาวในจังหวัดประมาณ ${km} กม.`:''}<br><span class="mut">ชั้นข้อมูลลำน้ำ สำนักงานชลประทานที่ 14</span>`}
+function drawRiv(){gRivM.clearLayers();gRivS.clearLayers();if(!RIV)return;
+ $('cRivM').textContent=new Set(RIV.main.map(x=>x.n).filter(Boolean)).size+' สาย';$('cRivS').textContent=new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size+' สาย';
+ const z=map.getZoom();
+ if($('ovRivS').checked){RIV.sec.forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#4FA3F7',weight:z>=11?2:1.3,opacity:.85}).bindPopup(rivPop(x,'s')).addTo(gRivS));
+  (RIV.canal||[]).forEach(x=>L.polyline(x.c.map(p=>[p[1],p[0]]),{renderer:rivR,color:'#0EA5A4',weight:2,dashArray:'5 4'}).bindPopup(rivPop(x,'c')).addTo(gRivS))}
+ if($('ovRivM').checked){RIV.main.forEach(x=>{const ll=x.c.map(p=>[p[1],p[0]]);L.polyline(ll,{renderer:rivR,color:'#fff',weight:z>=11?6.5:5,opacity:.55,interactive:false}).addTo(gRivM);
+  L.polyline(ll,{renderer:rivR,color:'#0058C8',weight:z>=11?3.6:2.8}).bindPopup(rivPop(x,'m')).bindTooltip(x.n||'',{sticky:true,className:'rlab'}).addTo(gRivM)})}}
+let rivZ=0;map.on('zoomend',()=>{const b=map.getZoom()>=11?1:0;if(b!==rivZ){rivZ=b;drawRiv()}});
+$('ovRivM').onchange=drawRiv;$('ovRivS').onchange=drawRiv;loadRiv();
 $('ovRes').onchange=drawRes;$('ovLab').addEventListener('change',drawRes);loadRes();
 map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el){const fix=()=>{try{e.popup._updateLayout();e.popup._updatePosition();e.popup._adjustPan&&e.popup._adjustPan()}catch(_){}};fix();if(el.classList.contains('rcm'))return;wlMini(el,el.dataset.k,el.dataset.id).then(fix)}});
 </script>
