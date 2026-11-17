@@ -51,19 +51,22 @@ th{position:sticky;top:-12px;background:var(--pn);text-align:left;color:var(--mu
 td{padding:6px 4px;border-bottom:1px solid #1b2a47;vertical-align:top}
 tr.cl{cursor:pointer}
 .wlg{padding:1px 7px;font-size:11.5px;border-radius:99px;margin-left:4px;background:#0f2a4a;border-color:#2b4c7a;color:#7dd3fc}
+
+.pw{display:flex;gap:14px;align-items:flex-start}.pw .pi{min-width:190px;max-width:240px}.pw .pm{width:280px;min-height:60px;border-left:1px solid var(--ln);padding-left:12px}
+@media (max-width:640px){.pw{flex-direction:column}.pw .pm{border-left:0;padding-left:0;border-top:1px solid var(--ln);padding-top:8px;width:100%}}
 #wlMod{position:fixed;inset:0;z-index:3000;background:rgba(3,8,18,.72);display:none;align-items:center;justify-content:center;padding:16px}
 #wlMod.on{display:flex}
-#wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#fff;color:#1f2937;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-#wlMod .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e5e7eb}
-#wlMod .hd b{font-size:17px;color:#374151;font-weight:500}#wlMod .hd .sp{flex:1}
-#wlMod .hd button{background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:4px 10px}
-#wlMod .hd button.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+#wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#17191d;color:#e5e7eb;border:1px solid #2a2e35;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#wlMod .hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #262a31}
+#wlMod .hd b{font-size:16px;color:#9ca3af;font-weight:500}#wlMod .hd .sp{flex:1}
+#wlMod .hd button{background:#22262d;color:#cbd5e1;border:1px solid #333944;padding:5px 12px;border-radius:999px}
+#wlMod .hd button.on{background:#14532d;color:#86efac;border-color:#22c55e}
 #wlMod .x{font-size:20px;line-height:1;border:0!important;background:none!important;color:#9ca3af!important}
-#wlMod .ttl{text-align:center;padding:12px 8px 0}#wlMod .ttl h4{margin:0;font-size:18px;color:#111827;font-weight:600}#wlMod .ttl div{font-size:12.5px;color:#6b7280}
-#wlMod .cmp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px 12px 0;font-size:12.5px;color:#374151}
-#wlMod .cmp label{display:flex;gap:5px;align-items:center;background:#f3f4f6;border-radius:99px;padding:3px 10px;cursor:pointer}
+#wlMod .ttl{text-align:center;padding:12px 8px 0}#wlMod .ttl h4{margin:0;font-size:19px;color:#f3f4f6;font-weight:600}#wlMod .ttl div{font-size:12.5px;color:#8b93a1}
+#wlMod .cmp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 12px 0;font-size:12.5px;color:#cbd5e1}
+#wlMod .cmp label{display:flex;gap:5px;align-items:center;background:#22262d;border:1px solid #333944;border-radius:99px;padding:4px 12px;cursor:pointer}
 #wlSvg{display:block;width:100%;height:auto}
-#wlMod .ft{font-size:12px;color:#6b7280;padding:4px 16px 12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+#wlMod .ft{font-size:12px;color:#8b93a1;padding:4px 16px 12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
 
 tr.cl:hover td{background:#18294a}
 td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -352,7 +355,7 @@ function drawWl(){
   const ic=L.divIcon({className:'',html:`<div class="wlm" style="background:${wlCol(w.pct)}"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
   const tr=w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲ เพิ่มขึ้น':w.wl<w.prev?'▼ ลดลง':'■ ทรงตัว')+' '+fmt(Math.abs(w.wl-w.prev),2)+' ม.':'';
   const m=L.marker([w.lat,w.lng],{icon:ic,zIndexOffset:500});
-  m.bindPopup(`<b>${w.name}</b> <span class="mut">${w.code}</span><br>ต.${w.tam} อ.${w.amp}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.รทก.</b> ${tr}<br>${w.pct!=null?`ความจุลำน้ำ: <b style="color:${wlCol(w.pct)}">${fmt(w.pct,1)}%</b> (${wlTxt(w.pct)})<br>`:''}${w.bank!=null?`ระดับตลิ่ง: ${fmt(w.bank,2)} ม.รทก.<br>`:''}${w.diff!=null?`${w.diffT||''} ${w.diff}<br>`:''}${w.q!=null?`ปริมาณน้ำ: ${fmt(w.q,2)} ลบ.ม./วินาที<br>`:''}<span class="mut">${w.ag} · ${w.t||''}</span><br><a href="#" onclick="wlChart(${w.id});return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง →</a>`);
+  m.bindPopup(`<div class="pw"><div class="pi"><b>${w.name}</b> <span class="mut">${w.code}</span><br>ต.${w.tam} อ.${w.amp}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.รทก.</b> ${tr}<br>${w.pct!=null?`ความจุลำน้ำ: <b style="color:${wlCol(w.pct)}">${fmt(w.pct,1)}%</b> (${wlTxt(w.pct)})<br>`:''}${w.bank!=null?`ระดับตลิ่ง: ${fmt(w.bank,2)} ม.รทก.<br>`:''}${w.diff!=null?`${w.diffT||''} ${w.diff}<br>`:''}${w.q!=null?`ปริมาณน้ำ: ${fmt(w.q,2)} ลบ.ม./วินาที<br>`:''}<span class="mut">${w.ag} · ${w.t||''}</span><br><a href="#" onclick="wlChart(${w.id});return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง →</a></div><div class="pm" data-k="tw" data-id="${w.id}"></div></div>`,{maxWidth:640,minWidth:280});
   if($('ovLab').checked&&S.prov!=='all')m.bindTooltip(w.pct!=null?fmt(w.pct,0)+'%':fmt(w.wl,2),{permanent:true,direction:'left',className:'rlab',offset:[-10,0]});
   m.addTo(gWl)});
 }
@@ -571,14 +574,14 @@ function drawRID(){gRid.clearLayers();const cb=document.getElementById('ovRid');
  RID.st.forEach(w=>{const ic=L.divIcon({className:'',html:`<div style="width:16px;height:16px;border-radius:3px;transform:rotate(45deg);background:${ridCol(w)};border:2px solid #fff;box-shadow:0 0 0 1.5px #0b1424"></div>`,iconSize:[16,16],iconAnchor:[8,8]});
   const tr=w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲ เพิ่มขึ้น':w.wl<w.prev?'▼ ลดลง':'■ ทรงตัว')+' '+fmt(Math.abs(w.wl-w.prev),2)+' ม.':'';
   const m=L.marker([w.lat,w.lng],{icon:ic,zIndexOffset:600});
-  m.bindPopup(`<b>${w.code}</b> ${w.name}<br>อ.${w.amp} จ.${w.provName||''}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.(รสม.)</b> ${tr}<br>ระดับตลิ่ง: ${fmt(w.bank,2)} ม. · <b style="color:${ridCol(w)}">${ridTxt(w)}</b><br>${w.zg!=null?`ศูนย์เสาระดับ ${w.zg>0?'+':''}${fmt(w.zg,2)} ม.(รทก.)<br>`:''}<span class="mut">ชป. ศูนย์อุทกวิทยาฯ ภาคตะวันตก · ${w.t?w.t.toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'}):''}</span><br><a href="#" onclick="ridChart('${w.id}');return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง${w.group?' ('+w.group.name+')':''} →</a>`);
+  m.bindPopup(`<div class="pw"><div class="pi"><b>${w.code}</b> ${w.name}<br>อ.${w.amp} จ.${w.provName||''}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.(รสม.)</b> ${tr}<br>ระดับตลิ่ง: ${fmt(w.bank,2)} ม. · <b style="color:${ridCol(w)}">${ridTxt(w)}</b><br>${w.zg!=null?`ศูนย์เสาระดับ ${w.zg>0?'+':''}${fmt(w.zg,2)} ม.(รทก.)<br>`:''}<span class="mut">ชป. ศูนย์อุทกวิทยาฯ ภาคตะวันตก · ${w.t?w.t.toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'}):''}</span><br><a href="#" onclick="ridChart('${w.id}');return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง${w.group?' ('+w.group.name+')':''} →</a></div><div class="pm" data-k="rid" data-id="${w.id}"></div></div>`,{maxWidth:640,minWidth:280});
   if(document.getElementById('ovLab').checked)m.bindTooltip(w.code,{permanent:true,direction:'right',className:'rlab',offset:[10,0]});
   m.addTo(gRid)})}
 function renderRidTable(){const tb=document.getElementById('ridTb');if(!tb)return;
  tb.innerHTML=RID.groups.map(g=>{const L=RID.st.filter(x=>g.ids.includes(x.id));if(!L.length)return'';return`<tr><td colspan=3 style="background:#0f2a4a;font-weight:600">${g.name} <button class="wlg" type="button" onclick="ridChart('${L[0].id}')">📈 กราฟกลุ่ม</button></td></tr>`+L.map(w=>`<tr class="cl" data-lat="${w.lat}" data-lng="${w.lng}"><td>${w.code} <button class="wlg" type="button" onclick="event.stopPropagation();ridChart('${w.id}')">📈</button><div class="mut">${w.name} · อ.${w.amp}</div></td><td class="n">${fmt(w.wl,2)}<div class="mut">${w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲':w.wl<w.prev?'▼':'■')+fmt(Math.abs(w.wl-w.prev),2):''}</div></td><td class="n"><span class="chip" style="background:${ridCol(w)};color:#0b1424">${fmt(w.bank,2)}</span><div class="mut">${ridTxt(w)}</div></td></tr>`).join('')}).join('')||'<tr><td colspan=3 class="mut">ไม่มีข้อมูล</td></tr>';
  const n=document.getElementById('ridNote');if(n)n.textContent=`${RID.st.length} สถานี · ${RID.groups.length} กลุ่มลุ่มน้ำ · ระดับน้ำ ม.(รสม.)`}
 (function(){
-const COL=['#1f77b4','#2ca02c','#f4511e','#8e44ad','#d4a017'];
+const COL=['#38bdf8','#4ade80','#fb7185','#c084fc','#fbbf24'];
 const W={st:null,days:7,sel:[],cache:{},list:[]};
 const md=document.getElementById('wlMod'),svg=document.getElementById('wlSvg');
 const pad=n=>String(n).padStart(2,'0'),dstr=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -597,15 +600,34 @@ function open(list,title,sub){W.list=list;W.sel=list.map(x=>x.src+x.id);W.title=
  document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-k="${x.src+x.id}" checked><span style="width:10px;height:10px;border-radius:50%;background:${COL[i%COL.length]}"></span>${x.code||x.name}${x.name&&x.code?' · '+x.name:''}${x.src==='rid'&&x.amp?' · อ.'+x.amp:''}</label>`).join('');
  document.getElementById('wlCmp').querySelectorAll('input').forEach(c=>c.onchange=()=>{W.sel=[...document.querySelectorAll('#wlCmp input:checked')].map(i=>i.dataset.k);draw()});
  md.classList.add('on');draw()}
-window.ridChart=function(id){const st=RID.st.find(x=>String(x.id)===String(id));if(!st)return;const g=st.group;
+function grpRid(id){const st=RID.st.find(x=>String(x.id)===String(id));if(!st)return null;const g=st.group;
  const L=(g?RID.st.filter(x=>g.ids.includes(x.id)).sort((a,b)=>g.ids.indexOf(a.id)-g.ids.indexOf(b.id)):[st]);
- open(L,`ระดับน้ำรายชั่วโมง ${g?g.name:st.code}`,`ลุ่มน้ำชายฝั่งทะเลตะวันตก · ระดับน้ำ ม.(รสม.) · ศูนย์อุทกวิทยาชลประทานภาคตะวันตก`)};
-window.wlChart=function(id){const all=S.raw.wl||[];const st=all.find(x=>x.id==id);if(!st)return;
- const rid=RID.byCode[(st.code||'').toLowerCase().replace(/\s/g,'')];if(rid){ridChart(rid.id);return}
+ return{L,title:`ระดับน้ำรายชั่วโมง ${g?g.name:st.code}`,sub:`ลุ่มน้ำชายฝั่งทะเลตะวันตก · ระดับน้ำ ม.(รสม.) · ศูนย์อุทกวิทยาชลประทานภาคตะวันตก`}}
+function grpTw(id){const all=S.raw.wl||[];const st=all.find(x=>x.id==id);if(!st)return null;
+ const rid=RID.byCode[(st.code||'').toLowerCase().replace(/\s/g,'')];if(rid)return grpRid(rid.id);
  let nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.amp===st.amp);if(nb.length<1)nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.basin&&x.basin===st.basin);
  nb=nb.sort((a,b)=>Math.hypot(a.lat-st.lat,a.lng-st.lng)-Math.hypot(b.lat-st.lat,b.lng-st.lng)).slice(0,4);
  const L=[st,...nb].map(x=>({...x,src:'tw'})).sort((a,b)=>(a.code||a.name).localeCompare(b.code||b.name,'en',{numeric:true}));
- open(L,`ระดับน้ำรายชั่วโมง ${st.amp||st.name}`,(st.basin?st.basin+' · ':'')+'ระดับน้ำ ม.รทก. · คลังข้อมูลน้ำแห่งชาติ')};
+ return{L,title:`ระดับน้ำรายชั่วโมง ${st.amp||st.name}`,sub:(st.basin?st.basin+' · ':'')+'ระดับน้ำ ม.รทก. · คลังข้อมูลน้ำแห่งชาติ'}}
+window.ridChart=function(id){const g=grpRid(id);if(g)open(g.L,g.title,g.sub)};
+window.wlChart=function(id){const g=grpTw(id);if(g)open(g.L,g.title,g.sub)};
+/* mini chart inside map popup */
+window.wlMini=async function(el,kind,id){if(!el)return;const g=kind==='rid'?grpRid(id):grpTw(id);if(!g){el.innerHTML='';return}
+ el.innerHTML='<div class="mut" style="padding:40px 0;text-align:center">กำลังโหลดกราฟ…</div>';
+ let D;try{D=await Promise.all(g.L.map(x=>get(x,3)))}catch(e){el.innerHTML='<div class="mut">โหลดกราฟไม่ได้</div>';return}
+ const Wd=280,Hd=150,X0=6,X1=Wd-34,Y0=10,Y1=Hd-22;const t1=new Date(),t0=new Date(Date.now()-3*864e5);
+ const ser=g.L.map((x,i)=>({st:x,c:COL[i%COL.length],bank:D[i].bank,pts:D[i].pts.filter(p=>p.t>=t0)}));const ap=ser.flatMap(s=>s.pts);
+ if(!ap.length){el.innerHTML='<div class="mut">ไม่มีข้อมูลรายชั่วโมง</div>';return}
+ let lo=Math.min(...ap.map(p=>p.v)),hi=Math.max(...ap.map(p=>p.v));ser.forEach(s=>{if(s.bank!=null)hi=Math.max(hi,+s.bank)});const sp=hi-lo||1;lo-=sp*.08;hi+=sp*.06;
+ const x=t=>X0+(t-t0)/(t1-t0)*(X1-X0),y=v=>Y1-(v-lo)/(hi-lo)*(Y1-Y0);let h='';
+ for(let k=0;k<=3;k++){const v=lo+(hi-lo)*k/3;h+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#263247"/><text x="${X1+5}" y="${y(v)+3}" font-size="9.5" fill="#8ea0bd">${v.toFixed(1)}</text>`}
+ for(let k=0;k<=3;k++){const d=new Date(+t0+k*864e5);d.setHours(0,0,0,0);const xx=x(d);if(xx>=X0&&xx<=X1)h+=`<text x="${xx}" y="${Hd-8}" font-size="9" text-anchor="middle" fill="#8ea0bd">${d.getDate()}/${d.getMonth()+1}</text>`}
+ ser.forEach(s=>{if(s.bank!=null)h+=`<line x1="${X0}" x2="${X1}" y1="${y(+s.bank)}" y2="${y(+s.bank)}" stroke="${s.c}" stroke-dasharray="4 3" stroke-opacity=".8"/>`;
+  let d='',pv=null;s.pts.forEach(p=>{d+=(d===''||(pv&&p.t-pv.t>3*36e5)?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);pv=p});const i=ser.indexOf(s),fp=s.pts[0],lp=s.pts[s.pts.length-1];if(!lp)return;
+  h+=`<defs><linearGradient id="mg${i}${el.dataset.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.c}" stop-opacity=".3"/><stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient></defs><path d="${d} L${x(lp.t).toFixed(1)},${Y1} L${x(fp.t).toFixed(1)},${Y1} Z" fill="url(#mg${i}${el.dataset.id})"/><path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  h+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="6" fill="${s.c}" opacity=".3"/><circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="3.2" fill="${s.c}"/>`});
+ const leg=ser.map(s=>{const lp=s.pts[s.pts.length-1];return`<span style="white-space:nowrap;background:#0b0d10;border:1px solid ${s.c}66;border-radius:99px;padding:1px 8px;color:#e5e7eb"><b style="color:${s.c}">●</b> ${s.st.code||s.st.name}${lp?' <b>'+lp.v.toFixed(2)+'</b>':''}</span>`}).join(' ');
+ el.innerHTML=`<div style="background:#15181d;border:1px solid #2a2e35;border-radius:12px;padding:8px 8px 8px 10px"><div style="font-size:11.5px;color:#9ca3af;margin-bottom:2px">${g.title.replace('ระดับน้ำรายชั่วโมง','ระดับน้ำ 3 วัน')}</div><svg viewBox="0 0 ${Wd} ${Hd}" width="${Wd}" height="${Hd}" style="display:block;max-width:100%">${h}</svg><div style="font-size:11px;display:flex;flex-wrap:wrap;gap:6px">${leg}</div><button type="button" class="wlg" style="margin:6px 0 0;padding:4px 10px" onclick="${kind==='rid'?'ridChart':'wlChart'}('${id}')">⤢ ขยายกราฟ</button> <span class="mut" style="font-size:10.5px">เส้นประ = ระดับตลิ่ง</span></div>`};
 async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
  document.getElementById('wlT').textContent=W.title;document.getElementById('wlS').textContent=W.sub+` · ${W.days} วันย้อนหลัง`;
  svg.innerHTML='<text x="500" y="230" text-anchor="middle" fill="#6b7280" font-size="16">กำลังโหลดข้อมูล…</text>';
@@ -615,18 +637,19 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
  const ap=ser.flatMap(s=>s.pts);if(!ap.length){svg.innerHTML='<text x="500" y="230" text-anchor="middle" fill="#6b7280" font-size="16">ไม่มีข้อมูลรายชั่วโมงในช่วงนี้</text>';return}
  let lo=Math.min(...ap.map(p=>p.v)),hi=Math.max(...ap.map(p=>p.v));ser.forEach(s=>{if(s.bank!=null){hi=Math.max(hi,+s.bank);}});
  const span=hi-lo||1;lo=Math.floor((lo-span*.1)*2)/2;hi=Math.ceil((hi+span*.08)*2)/2;
- const X0=70,X1=975,Y0=24,Y1=400,x=t=>X0+(t-t0)/(t1-t0)*(X1-X0),y=v=>Y1-(v-lo)/(hi-lo)*(Y1-Y0);
+ const X0=24,X1=930,Y0=24,Y1=400,x=t=>X0+(t-t0)/(t1-t0)*(X1-X0),y=v=>Y1-(v-lo)/(hi-lo)*(Y1-Y0);
  const stp=(()=>{const r=(hi-lo)/6,c=[.1,.2,.25,.5,1,2,2.5,5,10];return c.find(v=>v>=r)||10})();
- let g='';for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp){g+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#e5e7eb"/><text x="${X0-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#6b7280">${(+v.toFixed(2))} ม.</text>`}
+ let g='<defs>'+ser.map((s,i)=>`<linearGradient id="ga${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.c}" stop-opacity=".28"/><stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient><filter id="gl${i}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>`).join('')+'</defs>';for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp){g+=`<line x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}" stroke="#2a2e35"/><text x="${X1+10}" y="${y(v)+4}" font-size="12.5" fill="#9ca3af">${(+v.toFixed(2))} ม.</text>`}
  const ndays=Math.round((t1-t0)/864e5),every=ndays>8?2:1;
- for(let k=0;k<=ndays;k++){const d=new Date(+t0+k*864e5);const xx=x(d);g+=`<line x1="${xx}" x2="${xx}" y1="${Y1}" y2="${Y1+5}" stroke="#9ca3af"/>`;if(k%every===0&&k<ndays)g+=`<text x="${xx}" y="${Y1+22}" font-size="12" text-anchor="middle" fill="#4b5563">${d.getDate()} ${THm[d.getMonth()]}</text>`}
- g+=`<line x1="${X0}" x2="${X1}" y1="${Y1}" y2="${Y1}" stroke="#9ca3af"/>`;
- ser.forEach(s=>{if(s.bank==null)return;const yy=y(+s.bank);g+=`<line x1="${X0}" x2="${X1}" y1="${yy}" y2="${yy}" stroke="${s.c}" stroke-opacity=".45" stroke-width="1.5"/><text x="${X0+6}" y="${yy-6}" font-size="13" font-weight="600" fill="${s.c}">ระดับตลิ่ง ${s.st.code||s.st.name} : ${(+s.bank).toFixed(2)} ม.</text>`});
+ for(let k=0;k<=ndays;k++){const d=new Date(+t0+k*864e5);const xx=x(d);if(k%every===0&&k<ndays)g+=`<text x="${xx}" y="${Y1+22}" font-size="12" text-anchor="middle" fill="#8b93a1">${d.getDate()} ${THm[d.getMonth()]}</text>`}
+ ser.forEach(s=>{if(s.bank==null)return;const yy=y(+s.bank);g+=`<line x1="${X0}" x2="${X1}" y1="${yy}" y2="${yy}" stroke="${s.c}" stroke-opacity=".55" stroke-width="1.3" stroke-dasharray="6 5"/><text x="${X0+6}" y="${yy-7}" font-size="12.5" font-weight="600" fill="${s.c}" fill-opacity=".9">ระดับตลิ่ง ${s.st.code||s.st.name} · ${(+s.bank).toFixed(2)} ม.</text>`});
  ser.forEach(s=>{if(!s.pts.length)return;let d='',prev=null;s.pts.forEach(p=>{const gap=prev&&(p.t-prev.t)>3*36e5;d+=(d===''||gap?'M':'L')+x(p.t).toFixed(1)+','+y(p.v).toFixed(1);prev=p});
-  g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.8" stroke-linejoin="round"/>`;const lp=s.pts[s.pts.length-1];g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}" stroke="#fff" stroke-width="1.5"/>`;
-  const fp=s.pts[0];g+=`<text x="${x(fp.t)+4}" y="${y(fp.v)-8}" font-size="13" font-weight="700" fill="${s.c}">${s.st.code||''}</text>`});
- g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#9ca3af" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="4" fill="#fff" stroke="#9ca3af"/><text id="wlTt" font-size="12.5" fill="#111827"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
- g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="3"/><text x="28" y="0" font-size="13" fill="#374151">${s.st.code||s.st.name}</text></g>`).join('');
+  const i=ser.indexOf(s),fp=s.pts[0],lp=s.pts[s.pts.length-1];g+=`<path d="${d} L${x(lp.t).toFixed(1)},${Y1} L${x(fp.t).toFixed(1)},${Y1} Z" fill="url(#ga${i})" stroke="none"/><path d="${d}" fill="none" stroke="${s.c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+  g+=`<circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="11" fill="${s.c}" opacity=".35" filter="url(#gl${i})"/><circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="7" fill="none" stroke="${s.c}" stroke-opacity=".5" stroke-width="2"/><circle cx="${x(lp.t)}" cy="${y(lp.v)}" r="4.5" fill="${s.c}"/>`;
+  const pv=lp.v.toFixed(2),pw=pv.length*8+44;g+=`<g transform="translate(${Math.min(x(lp.t)-pw-14,X1-pw)},${y(lp.v)-13})"><rect width="${pw}" height="24" rx="12" fill="#0b0d10" stroke="${s.c}" stroke-opacity=".7"/><text x="${pw/2}" y="16.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#f9fafb">${s.st.code||''} · ${pv}</text></g>`;
+  g+=`<text x="${x(fp.t)+4}" y="${y(fp.v)-10}" font-size="12.5" font-weight="700" fill="${s.c}">${s.st.code||''}</text>`});
+ g+=`<line id="wlH" x1="0" x2="0" y1="${Y0}" y2="${Y1}" stroke="#6b7280" stroke-dasharray="3 4" visibility="hidden"/><g id="wlTip" visibility="hidden"><rect id="wlTr" rx="12" fill="#0b0d10" fill-opacity=".95" stroke="#22c55e" stroke-opacity=".6"/><text id="wlTt" font-size="13" fill="#f3f4f6"></text></g><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="transparent" id="wlHit"/>`;
+ g+=ser.map((s,i)=>`<g transform="translate(${500-ser.length*85+i*170},440)"><line x1="0" x2="22" y1="-4" y2="-4" stroke="${s.c}" stroke-width="4" stroke-linecap="round"/><text x="28" y="0" font-size="13" fill="#cbd5e1">${s.st.code||s.st.name}</text></g>`).join('');
  svg.innerHTML=g;
  const lastT=Math.max(...ap.map(p=>+p.t));document.getElementById('wlF').textContent=`ข้อมูลล่าสุด ${new Date(lastT).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})} น.`;
  document.getElementById('wlSrc').textContent=L.some(x=>x.src==='rid')?'ที่มา: ศูนย์อุทกวิทยาชลประทานภาคตะวันตก กรมชลประทาน (hydro-7.rid.go.th)':'ที่มา: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net)';
@@ -634,16 +657,17 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
  const mv=ev=>{const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*1000,t=+t0+(px-X0)/(X1-X0)*(t1-t0);
   const rows=ser.map(s=>{let b=null;for(const p of s.pts){if(!b||Math.abs(p.t-t)<Math.abs(b.t-t))b=p}return[s,b]}).filter(r=>r[1]&&Math.abs(r[1].t-t)<2*36e5);if(!rows.length){tip.setAttribute('visibility','hidden');H.setAttribute('visibility','hidden');return}
   const tm=rows[0][1].t,xx=x(tm);H.setAttribute('x1',xx);H.setAttribute('x2',xx);H.setAttribute('visibility','visible');
-  const lines=[`${tm.getDate()} ${THm[tm.getMonth()]} ${tm.getFullYear()+543} เวลา ${pad(tm.getHours())}:00 น.`,...rows.map(([s,p])=>`● ${s.st.code||s.st.name}: ${p.v.toFixed(2)} เมตร`)];
-  tt.innerHTML=lines.map((l,i)=>`<tspan x="0" dy="${i?18:0}" ${i?`fill="${rows[i-1][0].c}" font-weight="600"`:''}>${l}</tspan>`).join('');
-  const bw=Math.max(...lines.map(l=>l.length))*7.2+20,bh=lines.length*18+12,bx=Math.min(xx+12,X1-bw),by=Y0+6;
-  tr.setAttribute('x',bx-10);tr.setAttribute('y',by-16);tr.setAttribute('width',bw);tr.setAttribute('height',bh);tt.setAttribute('transform',`translate(${bx},${by})`);tip.setAttribute('visibility','visible')};
+  const lines=[`● ${tm.getDate()} ${THm[tm.getMonth()]} ${tm.getFullYear()+543} · ${pad(tm.getHours())}:00 น.`,...rows.map(([s,p])=>`● ${s.st.code||s.st.name}: ${p.v.toFixed(2)} เมตร`)];
+  tt.innerHTML=lines.map((l,i)=>`<tspan x="0" dy="${i?20:0}" ${i?`fill="${rows[i-1][0].c}" font-weight="700"`:'fill="#86efac"'}>${l}</tspan>`).join('');
+  const bw=Math.max(...lines.map(l=>l.length))*7.4+26,bh=lines.length*20+14,bx=Math.min(xx+16,X1-bw),by=Y0+10;
+  tr.setAttribute('x',bx-13);tr.setAttribute('y',by-18);tr.setAttribute('width',bw);tr.setAttribute('height',bh);tt.setAttribute('transform',`translate(${bx},${by})`);tip.setAttribute('visibility','visible')};
  hit.addEventListener('mousemove',mv);hit.addEventListener('touchstart',e=>mv(e.touches[0]),{passive:true});hit.addEventListener('touchmove',e=>mv(e.touches[0]),{passive:true});
  hit.addEventListener('mouseleave',()=>{tip.setAttribute('visibility','hidden');H.setAttribute('visibility','hidden')});
 }
 })();
 document.getElementById('ovRid').onchange=drawRID;document.getElementById('ovLab').addEventListener('change',drawRID);
 loadRID();setInterval(loadRID,30*60*1000);
+map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el&&!el.dataset.done){el.dataset.done=1;wlMini(el,el.dataset.k,el.dataset.id).then(()=>e.popup.update())}});
 </script>
 </body>
 </html>
