@@ -54,6 +54,12 @@ tr.cl{cursor:pointer}
 
 .pw{display:flex;gap:14px;align-items:flex-start}.pw .pi{min-width:190px;max-width:240px}.pw .pm{width:280px;min-height:60px;border-left:1px solid var(--ln);padding-left:12px}
 @media (max-width:640px){.pw{flex-direction:column}.pw .pm{border-left:0;padding-left:0;border-top:1px solid var(--ln);padding-top:8px;width:100%}}
+#rcMod{position:fixed;inset:0;z-index:3000;background:rgba(3,8,18,.8);display:none;align-items:center;justify-content:center;padding:16px}#rcMod.on{display:flex}
+#rcMod .box{width:min(1400px,100%);max-height:100%;overflow:auto;background:#17191d;color:#e5e7eb;border:1px solid #2a2e35;border-radius:16px}
+#rcMod .hd{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #262a31}#rcMod .hd b{flex:1;font-size:15px}
+#rcMod .hd a,#rcMod .hd button{background:#22262d;color:#cbd5e1;border:1px solid #333944;padding:5px 12px;border-radius:999px;text-decoration:none;font-size:13px}
+#rcMod img{display:block;width:100%;height:auto}
+.rcbig{margin-top:6px;width:100%;background:#0f3d6e;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:12.5px;cursor:pointer}.rcbig:hover{background:#1d5aa0}
 #wlMod{position:fixed;inset:0;z-index:3000;background:rgba(3,8,18,.72);display:none;align-items:center;justify-content:center;padding:16px}
 #wlMod.on{display:flex}
 #wlMod .box{width:min(1100px,100%);max-height:100%;overflow:auto;background:#17191d;color:#e5e7eb;border:1px solid #2a2e35;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
@@ -159,9 +165,11 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
     <option value="yday">ฝนเมื่อวาน</option>
    </select></div>
    <label><input type="checkbox" id="ovWl" checked> 🌊 โทรมาตรระดับน้ำ <small id="cWl"></small></label>
+   <label><input type="checkbox" id="ovRes" checked> 💧 อ่างเก็บน้ำ ใหญ่/กลาง/เล็ก <small id="cRes"></small></label>
    <label><input type="checkbox" id="ovRid" checked> ◆ สถานีวัดน้ำ ชป. (ศูนย์อุทกวิทยาฯ ตะวันตก) <small id="cRid"></small></label>
    <h4>เรดาร์ / ดาวเทียม</h4>
-   <label><input type="checkbox" id="ovRadar" checked> 📡 เรดาร์ฝน RainViewer</label>
+   <label><input type="checkbox" id="ovRadar" checked> 📡 เรดาร์ฝน + พยากรณ์</label>
+   <select id="radSrc" style="width:100%;margin:2px 0 6px"><option value="tmd">กรมอุตุฯ คอมโพสิต + พยากรณ์ 3 ชม. (สทนช.)</option><option value="rv">RainViewer (ย้อนหลัง 2 ชม.)</option></select>
    <label><input type="checkbox" id="ovSat"> 🛰️ เมฆ Himawari-9</label>
    <div class="sub"><select id="satProd">
     <option value="B13/TBB">อินฟราเรด (IR)</option>
@@ -448,8 +456,14 @@ map.on('click',e=>{if(clickMk)map.removeLayer(clickMk);clickMk=L.marker(e.latlng
 
 /* ---------- radar (RainViewer) ---------- */
 let rvHost='',playT=null;
+const TMDR='https://clpp-radar.onwr.go.th/api/frames/',TMDB=[[3.7700921364886226,90.89809645478132],[22.17252444511399,110.53300005721367]];
+const imgOk=u=>new Promise(r=>{const i=new Image();const t=setTimeout(()=>r(false),15000);i.onload=()=>{clearTimeout(t);r(true)};i.onerror=()=>{clearTimeout(t);r(false)};i.src=u});
 async function loadRadar(){
- setSt('radar','ld');
+ setSt('radar','ld');Object.values(radarCache).forEach(l=>{if(map.hasLayer(l))map.removeLayer(l)});
+ const src=($('radSrc')||{}).value||'tmd';
+ if(src==='tmd'){try{const now=Math.floor(Date.now()/1000/900)*900;let base=null;for(let k=0;k<10&&!base;k++){const t=now-k*900;if(await imgOk(TMDR+t+'.png'))base=t}
+   if(!base)throw new Error('ไม่พบภาพเรดาร์ล่าสุด');S.radar=[];for(let m=-60;m<=180;m+=15)S.radar.push({src:'tmd',time:base+m*60,nc:m>0,off:m,path:'tmd'+(base+m*60)});
+   const lastPast=4;$('tslider').max=S.radar.length-1;S.rIdx=lastPast;$('tslider').value=lastPast;setSt('radar','ok','TMD '+S.radar.length+' เฟรม');showRadar()}catch(e){setSt('radar','er',e.message)}return}
  try{const j=await getJ('https://api.rainviewer.com/public/weather-maps.json');rvHost=j.host;
   S.radar=[...(j.radar.past||[]).map(f=>({...f,nc:false})),...((j.radar.nowcast)||[]).map(f=>({...f,nc:true}))];
   const lastPast=(j.radar.past||[]).length-1;
@@ -458,7 +472,7 @@ async function loadRadar(){
  }catch(e){setSt('radar','er',e.message)}
 }
 const radarCache={};
-function radarLyr(f){return radarCache[f.path]||(radarCache[f.path]=L.tileLayer(`${rvHost}${f.path}/256/{z}/{x}/{y}/4/1_1.png`,{pane:'radar',opacity:0,maxNativeZoom:7,maxZoom:19,attribution:'Radar © RainViewer'}))}
+function radarLyr(f){if(f.src==='tmd')return radarCache[f.path]||(radarCache[f.path]=L.imageOverlay(TMDR+f.time+'.png',TMDB,{pane:'radar',opacity:0,attribution:'Radar © กรมอุตุนิยมวิทยา · สทนช.'}));return radarCache[f.path]||(radarCache[f.path]=L.tileLayer(`${rvHost}${f.path}/256/{z}/{x}/{y}/4/1_1.png`,{pane:'radar',opacity:0,maxNativeZoom:7,maxZoom:19,attribution:'Radar © RainViewer'}))}
 function showRadar(){
  const on=$('ovRadar').checked&&S.radar.length;
  $('tbar').style.display=on?'flex':'none';
@@ -466,10 +480,10 @@ function showRadar(){
  if(!on)return;
  const f=S.radar[S.rIdx];const l=radarLyr(f);
  if(!map.hasLayer(l))l.addTo(map);
- Object.values(radarCache).forEach(x=>x.setOpacity(x===l?.75:0));
+ Object.values(radarCache).forEach(x=>x.setOpacity(x===l?(f.src==='tmd'?.7:.75):0));
  // preload next
  const nx=S.radar[(S.rIdx+1)%S.radar.length];const ln=radarLyr(nx);if(!map.hasLayer(ln))ln.addTo(map);
- const d=new Date(f.time*1000);$('tlabel').textContent=(f.nc?'คาดการณ์ ':'เรดาร์ ')+d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.';
+ const d=new Date(f.time*1000);$('tlabel').textContent=(f.nc?(f.src==='tmd'?`พยากรณ์ +${f.off} นาที `:'คาดการณ์ '):'เรดาร์ ')+d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.';
 }
 $('tslider').oninput=e=>{S.rIdx=+e.target.value;showRadar()};
 $('play').onclick=()=>{if(playT){clearInterval(playT);playT=null;$('play').textContent='▶';return}$('play').textContent='❚❚';playT=setInterval(()=>{S.rIdx=(S.rIdx+1)%S.radar.length;$('tslider').value=S.rIdx;showRadar()},700)};
@@ -498,7 +512,7 @@ function loadFlood(){
 function legend(){
  const rr=[[0,'ไม่มีฝน'],[5,'0.1–10 เล็กน้อย'],[20,'10–35 ปานกลาง'],[50,'35–90 หนัก'],[120,'90–150 หนักมาก'],[200,'>150 หนักมากที่สุด']];
  const ww=[[120,'>100% ล้นตลิ่ง'],[80,'70–100% น้ำมาก'],[50,'30–70% ปกติ'],[20,'10–30% น้ำน้อย'],[5,'≤10% วิกฤติ']];
- $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">สถานี ชป. (ระยะถึงตลิ่ง)</b>`+[['#FF0000','ล้นตลิ่ง'],['#f97316','ต่ำกว่าตลิ่ง ≤1 ม.'],['#facc15','1–2 ม.'],['#22c55e','>2 ม.']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:2px;transform:rotate(45deg) scale(.85);outline:1.5px solid #fff"></i>${r[1]}</div>`).join('');
+ $('legend').innerHTML=`<b>${modeName()} (มม.)</b>`+rr.map(r=>`<div class="row"><i style="background:${rainCol(r[0])}"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">ระดับน้ำ (% ตลิ่ง)</b>`+ww.map(r=>`<div class="row"><i style="background:${wlCol(r[0])};border-radius:2px;transform:rotate(45deg) scale(.85)"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">อ่างเก็บน้ำ (% ความจุ)</b>`+[['#facc15','≤30% น้ำน้อย'],['#22c55e','31–50% พอใช้'],['#38bdf8','51–80% น้ำดี'],['#ef4444','81–100% ดีมาก']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:50%"></i>${r[1]}</div>`).join('')+`<b style="display:block;margin-top:6px">สถานี ชป. (ระยะถึงตลิ่ง)</b>`+[['#FF0000','ล้นตลิ่ง'],['#f97316','ต่ำกว่าตลิ่ง ≤1 ม.'],['#facc15','1–2 ม.'],['#22c55e','>2 ม.']].map(r=>`<div class="row"><i style="background:${r[0]};border-radius:2px;transform:rotate(45deg) scale(.85);outline:1.5px solid #fff"></i>${r[1]}</div>`).join('');
 }
 
 /* ---------- LINE report ---------- */
@@ -528,7 +542,7 @@ function setMode(m){S.rainMode=m;$('rainMode').value=m;document.querySelectorAll
 $('rainMode').onchange=e=>setMode(e.target.value);
 document.querySelectorAll('#rainSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 $('ovRain').onchange=drawRain;$('ovWl').onchange=drawWl;$('ovLab').onchange=()=>{drawRain();drawWl()};$('ovAmp').onchange=drawAmp;
-$('ovRadar').onchange=showRadar;$('ovSat').onchange=loadSat;$('satProd').onchange=loadSat;$('ovFlood').onchange=loadFlood;$('floodProd').onchange=loadFlood;
+$('ovRadar').onchange=showRadar;$('radSrc').onchange=loadRadar;$('ovSat').onchange=loadSat;$('satProd').onchange=loadSat;$('ovFlood').onchange=loadFlood;$('floodProd').onchange=loadFlood;
 map.on('zoomend',()=>{drawRain()});
 $('lyrToggle').onclick=()=>$('lyr').classList.toggle('open');
 $('prov').onchange=e=>{S.prov=e.target.value;try{localStorage.setItem('fm_prov',S.prov)}catch(x){}renderAll();fitProv()};
@@ -547,6 +561,7 @@ renderSrc();legend();refreshAll();
 setInterval(refreshAll,5*60*1000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
+<div id="rcMod" role="dialog" aria-modal="true" aria-label="รายงาน Rule Curve"><div class="box"><div class="hd"><b id="rcT"></b><a id="rcOpen" target="_blank" rel="noopener">เปิดภาพ 4K</a><button type="button" id="rcX" aria-label="ปิด">✕</button></div><img id="rcImg" alt="รายงานอ่างเก็บน้ำ Rule Curve"></div></div>
 <div id="wlMod" role="dialog" aria-modal="true" aria-label="กราฟระดับน้ำรายชั่วโมง"><div class="box"><div class="hd"><b>กราฟระดับน้ำรายชั่วโมง</b><span class="sp"></span><button type="button" data-d="3">3 วัน</button><button type="button" data-d="7" class="on">7 วัน</button><button type="button" data-d="14">14 วัน</button><button type="button" class="x" id="wlX" aria-label="ปิด">✕</button></div>
 <div class="ttl"><h4 id="wlT"></h4><div id="wlS"></div></div><div class="cmp" id="wlCmp"></div><div style="position:relative"><svg id="wlSvg" viewBox="0 0 1000 460"></svg></div><div class="ft"><span id="wlF"></span><span id="wlSrc">ที่มา: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net)</span></div></div></div>
 <script>
@@ -666,6 +681,39 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
 })();
 document.getElementById('ovRid').onchange=drawRID;document.getElementById('ovLab').addEventListener('change',drawRID);
 loadRID();setInterval(loadRID,30*60*1000);
+/* ===== reservoirs (large/medium/small) ===== */
+const gRes=L.layerGroup().addTo(map);let RESV=null;
+const resCol=p=>p==null?'#94a3b8':p<=30?'#facc15':p<=50?'#22c55e':p<=80?'#38bdf8':'#ef4444';
+const resTxt=p=>p==null?'–':p<=30?'น้ำน้อย':p<=50?'น้ำพอใช้':p<=80?'น้ำดี':'น้ำดีมาก';
+async function loadRes(){try{RESV=await getJ('reservoirs.json?v='+Date.now());drawRes()}catch(e){console.warn('res',e)}}
+function drawRes(){gRes.clearLayers();if(!RESV)return;const all=[...RESV.large_medium.map(r=>({...r,kind:r.size==='l'?'ขนาดใหญ่':'ขนาดกลาง',d:RESV.date_ls})),...RESV.small.map(r=>({...r,kind:'ขนาดเล็ก',size:'s',d:RESV.date_small}))];
+ $('cRes').textContent=`${RESV.large_medium.filter(r=>r.size==='l').length} ใหญ่ · ${RESV.large_medium.filter(r=>r.size!=='l').length} กลาง · ${RESV.small.length} เล็ก`;if(!$('ovRes').checked)return;
+ all.forEach(r=>{const sz=r.size==='l'?30:r.size==='m'?22:13,c=resCol(r.pct);
+  const html=r.size==='s'?`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:2px solid #0b1424;box-shadow:0 0 0 1.5px #fff"></div>`
+   :`<div style="width:${sz}px;height:${sz}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c};border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:${r.size==='l'?13:10}px">💧</span></div>`;
+  const m=L.marker([r.lat,r.lon],{icon:L.divIcon({className:'',html,iconSize:[sz,sz],iconAnchor:r.size==='s'?[sz/2,sz/2]:[sz/2,sz]}),zIndexOffset:r.size==='s'?300:700});
+  if(r.rc){m.bindPopup(`<div class="pw"><div class="pi"><b>${r.name}</b><br>อ่างเก็บน้ำ${r.kind}${r.amp?' · '+r.amp:''}<br>ความจุ ${fmt(r.cap,2)} ล้าน ลบ.ม.<br>ปริมาณน้ำ <b>${fmt(r.stor,3)}</b> ล้าน ลบ.ม.<br><b style="color:${resCol(r.pct)}">${fmt(r.pct,1)}%</b> (${resTxt(r.pct)})<br>${r.lvl!=null?`ระดับน้ำ ${fmt(r.lvl,2)} ม.รทก.<br>`:''}${r.inf!=null?`ไหลเข้า ${fmt(r.inf,3)} · ระบาย ${fmt(r.rel,3)}<br>`:''}<span class="mut">ข้อมูล ${r.d||''}</span></div><div class="pm rcm">${rcMini(r)}<button type="button" class="rcbig" data-img="${r.img}" data-t="${r.name}">⤢ ดูรายงาน Rule Curve</button></div></div>`,{maxWidth:640,minWidth:280})}else
+  m.bindPopup(`<b>${r.name}</b><br>อ่างเก็บน้ำ${r.kind}${r.amp?' · '+r.amp:''}<br>ความจุ ${fmt(r.cap,r.cap<1?3:2)} ล้าน ลบ.ม.<br>${r.stor!=null?`ปริมาณน้ำ <b>${fmt(r.stor,3)}</b> ล้าน ลบ.ม. · <b style="color:${resCol(r.pct)}">${fmt(r.pct,1)}%</b> (${resTxt(r.pct)})<br>`:''}<span class="mut">ข้อมูล ${r.d||''} · โครงการชลประทานประจวบคีรีขันธ์</span>`);
+  if(r.size!=='s'&&$('ovLab').checked)m.bindTooltip(`${r.name.replace('อ่างเก็บน้ำ','อ่างฯ')} ${r.pct!=null?fmt(r.pct,0)+'%':''}`,{permanent:true,direction:'right',className:'rlab',offset:[sz/2,-sz/2]});
+  m.addTo(gRes)})}
+
+function rcMini(r){const R=r.rc,W=280,H=160,L=30,Rr=6,T=8,B=20,st=R.step,n=R.urc.length;
+ const mx=Math.max(r.cap*1.05,...R.urc.filter(v=>v!=null),...R.act.filter(v=>v!=null)),X=i=>L+(i*st)/365*(W-L-Rr),Y=v=>T+(1-v/mx)*(H-T-B);
+ const ln=a=>a.map((v,i)=>v==null?null:`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).filter(Boolean).join(' ');
+ const band=R.urc.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')+' '+R.lrc.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).reverse().join(' ');
+ const li=R.act.length-1,lx=X(li),ly=Y(R.act[li]);const ms=['ม.ค.','เม.ย.','ก.ค.','ต.ค.'],mi=[0,90,181,273];
+ let g='';for(let k=0;k<=2;k++){const v=mx*k/2;g+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#94a3b833"/><text x="${L-4}" y="${Y(v)+3}" text-anchor="end" font-size="9" fill="#94a3b8">${v.toFixed(0)}</text>`}
+ ms.forEach((m,j)=>g+=`<text x="${L+mi[j]/365*(W-L-Rr)}" y="${H-6}" font-size="9" fill="#94a3b8">${m}</text>`);
+ return `<div style="font-size:12px;font-weight:600;margin-bottom:2px">Rule Curve ปี 2569 <span class="mut" style="font-weight:400">ล้าน ลบ.ม.</span></div><svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${g}
+ <line x1="${L}" x2="${W-Rr}" y1="${Y(r.cap)}" y2="${Y(r.cap)}" stroke="#64748b" stroke-dasharray="2 3"/>
+ <polygon points="${band}" fill="#eab30822" stroke="none"/><polyline points="${ln(R.urc)}" fill="none" stroke="#d4a017" stroke-width="1.6"/><polyline points="${ln(R.lrc)}" fill="none" stroke="#8a94a3" stroke-width="1.6"/>
+ <polyline points="${ln(R.lbc)}" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 3"/><polyline points="${ln(R.act)}" fill="none" stroke="#1d7cc4" stroke-width="2.2"/>
+ <circle cx="${lx}" cy="${ly}" r="4" fill="#1d7cc4" stroke="#fff" stroke-width="1.5"/></svg>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10.5px;color:#94a3b8"><span><i style="display:inline-block;width:12px;height:2px;background:#d4a017;vertical-align:middle"></i> URC</span><span><i style="display:inline-block;width:12px;height:2px;background:#8a94a3;vertical-align:middle"></i> LRC</span><span><i style="display:inline-block;width:12px;height:2px;background:#1d7cc4;vertical-align:middle"></i> ปริมาณน้ำจริง</span></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('.rcbig');if(!b)return;$('rcImg').src=b.dataset.img+'?v='+(RESV&&RESV.date_ls||'');$('rcT').textContent=b.dataset.t;$('rcOpen').href=b.dataset.img;$('rcMod').classList.add('on')});
+$('rcX').onclick=()=>$('rcMod').classList.remove('on');$('rcMod').addEventListener('click',e=>{if(e.target.id==='rcMod')$('rcMod').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('rcMod').classList.remove('on')});
+$('ovRes').onchange=drawRes;$('ovLab').addEventListener('change',drawRes);loadRes();
 map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el){const fix=()=>{try{e.popup._updateLayout();e.popup._updatePosition();e.popup._adjustPan&&e.popup._adjustPan()}catch(_){}};fix();wlMini(el,el.dataset.k,el.dataset.id).then(fix)}});
 </script>
 </body>
