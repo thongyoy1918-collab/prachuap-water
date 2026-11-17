@@ -632,7 +632,7 @@ function rmRaster(st,A,x0,y0,x1,y1,W,H){const cv=document.createElement('canvas'
   for(const r of st){const dx=(r.lng-lo)*kx,dy=r.lat-la,d2=dx*dx+dy*dy;if(d2<1e-8){hit=r.v;break}const w=1/(d2*d2);sw+=w;sv+=w*r.v}
   const v=hit!=null?hit:sv/sw,c=hex2rgb(rmCol(v)),o=(py*W+px)*4;D[o]=c[0];D[o+1]=c[1];D[o+2]=c[2];D[o+3]=255}}
  g.putImageData(im,0,0);g.globalCompositeOperation='destination-in';g.beginPath();A.forEach(a=>a.r.forEach(r=>r.forEach(([x,y],i)=>{const X=(x-x0)/(x1-x0)*W,Y=(y1-y)/(y1-y0)*H;i?g.lineTo(X,Y):g.moveTo(X,Y)})));g.fill();return cv}
-async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไม่มีข้อมูลแผนที่ฝน');return}
+async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไม่มีข้อมูลแผนที่ฝน');return}const bt=document.querySelector('#rmPan .sv');if(bt){bt.disabled=true;bt.textContent='กำลังสร้างภาพ…'}await new Promise(r=>setTimeout(r,30));
  try{await Promise.all(['400','500','600','700'].map(w=>document.fonts.load(w+' 40px Kanit')))}catch(e){}
  const W=3840,H=3000,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),K='Kanit,"IBM Plex Sans Thai",sans-serif';
  const F=(w,z)=>g.font=`${w} ${z}px ${K}`;const rr=(x,y,w,h,r)=>{g.beginPath();g.roundRect(x,y,w,h,r)};
@@ -672,17 +672,17 @@ async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไ�
   const[X,Y]=P(r.lng,r.lat);g.beginPath();g.moveTo(1880,y+90);g.lineTo(X,Y);g.lineWidth=2;g.strokeStyle='rgba(255,255,255,.55)';g.stroke()});
  // right card
  rr(2880,48,904,2904,36);g.fillStyle='#fff';g.fill();
- rr(2930,98,250,64,32);g.fillStyle='#dc2626';g.fill();F(700,32);T(mn.replace('ฝนสะสม ','ฝน '),3055,141,'#fff','center');F(500,34);T(R.dTxt,3200,142,'#0f172a');
+ rr(2930,98,250,64,32);g.fillStyle='#dc2626';g.fill();F(700,32);T(mn.replace('ฝนสะสม ','ฝน '),3055,141,'#fff','center');F(500,30);T(fit(R.dTxt,200),3200,140,'#0f172a');
  rr(3420,80,330,140,20);g.fillStyle='#123B7A';g.fill();F(400,26);T('ข้อมูล ณ เวลา',3585,118,'#dbe6f5','center');F(700,62);T(R.hTxt,3585,195,'#fff','center');
  F(700,56);T('ฝนล่าสุดรายสถานี (มม.)',2930,290,'#0f172a');F(400,28);T('คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) · เรียงจากมากไปน้อย',2930,340,'#64748b');
  [['สูงสุด',fmt(R.srt.length?R.srt[0].v:0,1),'มม.'],['ฝนหนักมาก >90',R.st.filter(r=>r.v>90).length,'สถานี'],['ฝนหนัก >35',R.st.filter(r=>r.v>35).length,'สถานี']].forEach((q,i)=>{const x=2930+i*278;rr(x,380,258,150,18);g.fillStyle='#f1f5f9';g.fill();F(400,26);T(q[0],x+20,425,'#64748b');F(700,58);T(String(q[1]),x+20,500,'#123B7A');const w=g.measureText(String(q[1])).width;F(400,26);T(q[2],x+30+w,500,'#64748b')});
  g.fillStyle='#f1f5f9';g.fillRect(2880,560,904,70);F(500,28);T('ชื่อสถานี / ที่ตั้ง',3010,606,'#334155');T('เวลา',3540,606,'#334155','center');T('ฝน (มม.)',3690,606,'#334155','center');
- const rows=R.srt.slice(0,20);rows.forEach((r,i)=>{const y=640+i*112;g.beginPath();g.arc(2955,y+52,26,0,7);g.lineWidth=3;g.strokeStyle='#94a3b8';g.stroke();g.fillStyle='#94a3b8';g.beginPath();g.arc(2955,y+46,8,0,7);g.fill();
+ const rows=R.srt.slice(0,19);rows.forEach((r,i)=>{const y=640+i*112;g.beginPath();g.arc(2955,y+52,26,0,7);g.lineWidth=3;g.strokeStyle='#94a3b8';g.stroke();g.fillStyle='#94a3b8';g.beginPath();g.arc(2955,y+46,8,0,7);g.fill();
   F(700,34);T(fit(r.name,500),3000,y+48,'#0f172a');F(400,25);T(fit(`ต.${r.tam} อ.${r.amp} · ${r.ag}`,500),3000,y+88,'#64748b');F(500,30);T((String(r.t).match(/\d+:\d+$/)||[''])[0],3540,y+62,'#0f172a','center');
   rr(3615,y+18,150,76,12);g.fillStyle=rmCol(r.v);g.fill();F(700,40);T(fmt(r.v,1),3690,y+70,'#0f172a','center');g.fillStyle='#e2e8f0';g.fillRect(2920,y+110,830,2)});
- F(400,24);const ft=[`แสดง ${rows.length} อันดับแรก จากสถานีที่รายงาน ${R.st.length} สถานี (มีฝน ${R.wet} สถานี · ฝน 0 มม. ${R.st.length-R.wet} สถานี)`,`ข้อมูลอัปเดต ${R.tt} · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น`,'ขอบเขตอำเภอ: สำนักงานชลประทานที่ 14 · จัดทำ: โครงการชลประทานประจวบคีรีขันธ์'];ft.forEach((t,i)=>T(t,2930,2870+i*34-34,'#64748b'));
+ F(400,24);const ft=[`แสดง ${rows.length} อันดับแรก จากสถานีที่รายงาน ${R.st.length} สถานี (มีฝน ${R.wet} สถานี · ฝน 0 มม. ${R.st.length-R.wet} สถานี)`,`ข้อมูลอัปเดต ${R.tt} · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น`,'ขอบเขตอำเภอ: สำนักงานชลประทานที่ 14 · จัดทำ: โครงการชลประทานประจวบคีรีขันธ์'];ft.forEach((t,i)=>T(fit(t,820),2930,2858+i*34,'#64748b'));
  const nm=`แผนที่ฝน_${mn.replace(/\s|\./g,'')}_${(R.tt||'').replace(/[: ]/g,'-')}.png`;
- c.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)},'image/png')}
+ c.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);if(bt){bt.disabled=false;bt.textContent='💾 บันทึกภาพ'}},'image/png')}
 window.rmExport=rmExport;
 function setRmap(on){if(on===S.rmap)return;S.rmap=on;document.querySelectorAll('#rmapBtn,.rmctl a').forEach(b=>b.classList.toggle('on',on));
  RM_HIDE.forEach(id=>{const c=$(id);if(!c)return;if(on){rmSaved[id]=c.checked;if(c.checked){c.checked=false;c.dispatchEvent(new Event('change'))}}else if(rmSaved[id]&&!c.checked){c.checked=true;c.dispatchEvent(new Event('change'))}});
