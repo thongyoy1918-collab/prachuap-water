@@ -90,7 +90,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .day b{display:block;font-size:15px}
 .seg .rmb{margin-left:auto;background:#0f3d6e;border-color:#2563eb}.seg .rmb.on{background:#f59e0b;border-color:#fbbf24;color:#111}
 .rmctl a{display:block;width:auto!important;padding:0 10px;font:600 13px/30px Kanit,sans-serif!important;white-space:nowrap;color:#0f172a}.rmctl a.on{background:#f59e0b!important;color:#111}
-#rmLeg{position:absolute;left:12px;bottom:28px;z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;max-width:calc(100% - 24px)}
+#rmLeg{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:650;background:rgba(255,255,255,.95);color:#0f172a;border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-size:12px;display:none;max-width:calc(100% - 24px)}
 #rmLeg b{font-family:Kanit,sans-serif;font-size:13.5px}#rmLeg .bar{display:flex;margin-top:5px}#rmLeg .bar span{flex:1;min-width:38px;text-align:center}#rmLeg .bar i{display:block;height:10px}
 .alab{background:none;border:0;box-shadow:none;color:#fff;font:700 13px Kanit,sans-serif;text-shadow:0 0 3px #000,0 0 6px #000}.alab:before{display:none}
 .seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
@@ -604,7 +604,7 @@ function setRmap(on){if(on===S.rmap)return;S.rmap=on;document.querySelectorAll('
  if(on){if(!$('ovRain').checked){$('ovRain').checked=true;$('ovRain').dispatchEvent(new Event('change'))}ampGeo().then(A=>{map.fitBounds(A.flatMap(a=>a.r[0].map(([x,y])=>[y,x])),{padding:[20,20]});rainMap()})}
  else{if(rmImg){map.removeLayer(rmImg);rmImg=null}gAmpB.clearLayers();$('rmLeg').style.display='none'}}
 $('rmapBtn').onclick=()=>setRmap(!S.rmap);
-const RmCtl=L.Control.extend({options:{position:'topleft'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar rmctl');d.innerHTML='<a href="#" role="button" title="แผนที่ฝน">🗺️ แผนที่ฝน</a>';L.DomEvent.disableClickPropagation(d);d.firstChild.onclick=e=>{e.preventDefault();setRmap(!S.rmap)};return d}});new RmCtl().addTo(map);
+const RmCtl=L.Control.extend({options:{position:'topright'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar rmctl');d.innerHTML='<a href="#" role="button" title="แผนที่ฝน">🗺️ แผนที่ฝน</a>';L.DomEvent.disableClickPropagation(d);d.firstChild.onclick=e=>{e.preventDefault();setRmap(!S.rmap)};return d}});new RmCtl().addTo(map);
 function setMode(m){S.rainMode=m;$('rainMode').value=m;document.querySelectorAll('#rainSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));drawRain();renderRainTable();legend()}
 $('rainMode').onchange=e=>setMode(e.target.value);
 document.querySelectorAll('#rainSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
