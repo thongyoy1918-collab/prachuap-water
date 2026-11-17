@@ -365,7 +365,7 @@ async function loadTW(){
  buildProv();
 }
 function buildProv(){
- const sel=$('prov');if(!PV[S.prov])S.prov='77';sel.innerHTML=Object.entries(PV).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');sel.value=S.prov;
+ const sel=$('prov');if(!PV[S.prov])S.prov='77';sel.innerHTML=['76','77','86','85'].map(k=>[k,PV[k]]).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');sel.value=S.prov;
 }
 const inProv=x=>S.prov==='all'||x.prov===S.prov;
 
