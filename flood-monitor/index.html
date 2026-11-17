@@ -149,7 +149,7 @@ textarea{width:100%;height:190px;background:#0a1322;color:var(--tx);border:1px s
  <div class="logo">🌧️</div>
  <h1><span class="lg">ระบบติดตามน้ำท่วม-น้ำฝน และพยากรณ์อากาศแบบบูรณาการ</span><span class="sh">ติดตามน้ำท่วม-น้ำฝน</span><small>Real-time &amp; Forecast Monitoring · จังหวัดประจวบคีรีขันธ์</small></h1>
  <div class="sp"></div>
- <select id="prov" title="เลือกจังหวัด"></select>
+ <select id="prov" title="จังหวัด"><option value="77">ประจวบคีรีขันธ์</option></select>
  <div class="live"><span class="dot" id="ldot"></span><span class="lt">อัปเดต</span> <span id="lastUpd">–</span></div>
  <button id="btnRef" title="โหลดข้อมูลใหม่">⟳</button>
 </header>
@@ -279,7 +279,7 @@ const AMP=[
  ['หัวหิน',12.5684,99.9577],['ปราณบุรี',12.3858,99.9100],['สามร้อยยอด',12.2700,99.8800],['กุยบุรี',12.0697,99.8626],
  ['เมืองประจวบฯ',11.8124,99.7973],['ทับสะแก',11.4980,99.6150],['บางสะพาน',11.2100,99.5100],['บางสะพานน้อย',11.0700,99.4500]];
 const S={prov:'77',rainMode:'r24',raw:{},fc:null,fcPt:0,radar:[],rIdx:0,charts:{}};
-try{const p=localStorage.getItem('fm_prov');if(p)S.prov=p}catch(e){}
+S.prov='77'; /* เฉพาะ จ.ประจวบคีรีขันธ์ */
 const $=id=>document.getElementById(id);
 const fmt=(n,d=1)=>n==null||isNaN(n)?'–':Number(n).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d});
 const th=x=>x&&(x.th||x.en)||'';
@@ -348,10 +348,7 @@ async function loadTW(){
  buildProv();
 }
 function buildProv(){
- const m=new Map();(S.raw.r24||[]).forEach(r=>{if(r.prov&&r.provName)m.set(r.prov,r.provName)});
- const sel=$('prov');const cur=S.prov;
- sel.innerHTML='<option value="all">ทั้งประเทศ</option>'+[...m.entries()].sort((a,b)=>a[1].localeCompare(b[1],'th')).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
- sel.value=m.has(cur)||cur==='all'?cur:'77';
+ const sel=$('prov');S.prov='77';sel.innerHTML='<option value="77">ประจวบคีรีขันธ์</option>';sel.value='77';
 }
 const inProv=x=>S.prov==='all'||x.prov===S.prov;
 
