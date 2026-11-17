@@ -560,7 +560,7 @@ window.wlChart=function(id){const all=S.raw.wl||[];const st=all.find(x=>x.id==id
  // same amphoe (fallback: same basin) stations for comparison
  let nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.amp===st.amp);if(nb.length<1)nb=all.filter(x=>x.id!=st.id&&x.prov===st.prov&&x.basin&&x.basin===st.basin);
  nb=nb.sort((a,b)=>Math.hypot(a.lat-st.lat,a.lng-st.lng)-Math.hypot(b.lat-st.lat,b.lng-st.lng)).slice(0,4);
- W.list=[st,...nb];W.sel=[st.id,...nb.slice(0,2).map(x=>x.id)];
+ W.list=[st,...nb];W.sel=[st.id,...nb.filter(x=>x.wl!=null&&st.wl!=null&&Math.abs(x.wl-st.wl)<=6).slice(0,2).map(x=>x.id)];
  document.getElementById('wlCmp').innerHTML=W.list.map((x,i)=>`<label><input type="checkbox" data-id="${x.id}" ${W.sel.includes(x.id)?'checked':''} ${i===0?'disabled':''}><span style="width:10px;height:10px;border-radius:50%;background:${COL[i]}"></span>${x.code||x.name}${x.code?' · '+x.name:''}</label>`).join('');
  document.getElementById('wlCmp').querySelectorAll('input').forEach(c=>c.onchange=()=>{W.sel=[...document.querySelectorAll('#wlCmp input:checked')].map(i=>+i.dataset.id);draw()});
  md.classList.add('on');draw()};
