@@ -332,7 +332,7 @@ const SRC={
  wl:{n:'โทรมาตรระดับน้ำ (สสน. ThaiWater)',d:'ระดับน้ำจริงเทียบระดับตลิ่ง (% ความจุลำน้ำ) และสถานะเฝ้าระวังรายสถานี',u:'https://www.thaiwater.net'},
  rid:{n:'สถานีวัดน้ำท่า กรมชลประทาน (ศูนย์อุทกวิทยาชลประทานภาคตะวันตก)',d:'ระดับน้ำรายชั่วโมงย้อนหลัง 7 วัน เทียบระดับตลิ่ง ลุ่มน้ำชายฝั่งทะเลตะวันตก (เช่น Gt.7, Gt.20, Gt.21 คลองบางสะพาน) ใช้ทำกราฟรวมสถานี',u:'http://hydro-7.rid.go.th/index4.html'},
  res:{n:'อ่างเก็บน้ำ (โครงการชลประทานประจวบคีรีขันธ์)',d:'อ่างขนาดใหญ่/กลาง 9 แห่ง จากรายงานประจำวัน พร้อมกราฟ Rule Curve และภาพรายงาน 4K · อ่างขนาดเล็ก 33 แห่ง',u:'https://thongyoy1918-collab.github.io/prachuap-water/'},
- riv:{n:'เส้นน้ำสายหลัก / สายรอง (สำนักงานชลประทานที่ 14)',d:'ชั้นข้อมูลลำน้ำ Stream_rid14 ของ สชป.14 ตัดเฉพาะ จ.ประจวบคีรีขันธ์ · สายหลัก = ทางน้ำสายหลัก (CLASS 1) · สายรอง = ทางน้ำมีน้ำไหลตลอดปี (CLASS 2) และคลองชลประทาน ตามการจำแนกในชั้นข้อมูล',u:'https://www.rid.go.th'},
+ riv:{n:'เส้นน้ำสายหลัก / สายรอง (สำนักงานชลประทานที่ 14)',d:'ชั้นข้อมูลลำน้ำ Stream_rid14 ของ สชป.14 ตัดตามจังหวัดที่เลือก · สายหลัก = ทางน้ำสายหลัก (CLASS 1) · สายรอง = ทางน้ำมีน้ำไหลตลอดปี (CLASS 2) และคลองชลประทาน ตามการจำแนกในชั้นข้อมูล',u:'https://www.rid.go.th'},
  rsv:{n:'อ่างเก็บน้ำทั่วประเทศ (กรมชลประทาน)',d:'ระบบฐานข้อมูลน้ำในอ่างเก็บน้ำ: เขื่อน/อ่างขนาดใหญ่ และอ่างขนาดกลางทุกภาค ปริมาณน้ำ ร้อยละความจุ น้ำใช้การได้ ไหลเข้า/ระบายรายวัน',u:'https://app.rid.go.th/reservoir/'},
  radar:{n:'เรดาร์ฝน + พยากรณ์ 3 ชม. (กรมอุตุนิยมวิทยา / สทนช.)',d:'ภาพเรดาร์คอมโพสิตทั้งประเทศของกรมอุตุฯ ราย 15 นาที ย้อนหลัง 1 ชม. และคาดการณ์กลุ่มฝนล่วงหน้า 3 ชม. (Nowcast) · สำรอง: RainViewer ย้อนหลัง 2 ชม.',u:'https://clpp-radar.onwr.go.th'},
  sat:{n:'ดาวเทียม Himawari-9 (JMA)',d:'ภาพเมฆอินฟราเรด / Sandwich / True Color อัปเดตทุก 10 นาที',u:'https://www.jma.go.jp/bosai/map.html#contents=himawari'},
@@ -711,8 +711,8 @@ $('ovRain').onchange=drawRain;$('ovWl').onchange=drawWl;$('ovLab').onchange=()=>
 $('ovRadar').onchange=showRadar;$('radSrc').onchange=loadRadar;$('ovSat').onchange=loadSat;$('satProd').onchange=loadSat;$('ovFlood').onchange=loadFlood;$('floodProd').onchange=loadFlood;
 map.on('zoomend',()=>{drawRain()});
 $('lyrToggle').onclick=()=>$('lyr').classList.toggle('open');
-$('prov').onchange=e=>{S.prov=e.target.value;try{localStorage.setItem('fm_prov',S.prov)}catch(x){}renderAll();fitProv()};
-function fitProv(){const pts=[...(S.raw.r24||[]),...(S.raw.wl||[])].filter(inProv).map(x=>[x.lat,x.lng]);if(pts.length&&S.prov!=='all')map.fitBounds(pts,{padding:[30,30],maxZoom:11});else if(S.prov==='all')map.setView([13.2,100.9],6)}
+$('prov').onchange=e=>{S.prov=e.target.value;try{localStorage.setItem('fm_prov',S.prov)}catch(x){}renderAll();fitProv();try{loadRiv();drawRes();drawRID();drawTH()}catch(x){console.warn(x)}};
+function fitProv(){if(window.AMPG_ALL){const pts=window.AMPG_ALL.filter(a=>(a.p||'77')===S.prov).flatMap(a=>a.r[0].map(([x,y])=>[y,x]));if(pts.length){map.fitBounds(pts,{padding:[20,20]});return}}const pts=[...(S.raw.r24||[]),...(S.raw.wl||[])].filter(inProv).map(x=>[x.lat,x.lng]);if(pts.length&&S.prov!=='all')map.fitBounds(pts,{padding:[30,30],maxZoom:11});else if(S.prov==='all')map.setView([13.2,100.9],6)}
 function renderAll(){drawRain();drawWl();renderRainTable();renderWlTable();renderOverview();legend()}
 let first=true;
 async function refreshAll(){
@@ -750,8 +750,8 @@ async function loadRID(){setSt('rid','ld');try{
 function ridCol(w){if(w.wl==null||w.bank==null)return'#64748b';const d=w.bank-w.wl;if(d<=0)return'#FF0000';if(d<=1)return'#f97316';if(d<=2)return'#facc15';return'#22c55e'}
 function ridTxt(w){if(w.wl==null||w.bank==null)return'–';const d=w.bank-w.wl;return d<=0?`ล้นตลิ่ง ${fmt(-d,2)} ม.`:`ต่ำกว่าตลิ่ง ${fmt(d,2)} ม.`}
 const gRid=L.layerGroup().addTo(map);
-function drawRID(){gRid.clearLayers();const cb=document.getElementById('ovRid');const c=document.getElementById('cRid');if(c)c.textContent=RID.st.length?RID.st.length+' สถานี':'';if(cb&&!cb.checked)return;
- RID.st.forEach(w=>{const ic=L.divIcon({className:'',html:`<div style="width:16px;height:16px;border-radius:3px;transform:rotate(45deg);background:${ridCol(w)};border:2px solid #fff;box-shadow:0 0 0 1.5px #0b1424"></div>`,iconSize:[16,16],iconAnchor:[8,8]});
+function drawRID(){gRid.clearLayers();const cb=document.getElementById('ovRid');const c=document.getElementById('cRid');const nR=RID.st.filter(w=>!w.provName||w.provName.includes(pvName())).length;if(c)c.textContent=nR+' สถานี';if(cb&&!cb.checked)return;
+ RID.st.filter(w=>!w.provName||w.provName.includes(pvName())).forEach(w=>{const ic=L.divIcon({className:'',html:`<div style="width:16px;height:16px;border-radius:3px;transform:rotate(45deg);background:${ridCol(w)};border:2px solid #fff;box-shadow:0 0 0 1.5px #0b1424"></div>`,iconSize:[16,16],iconAnchor:[8,8]});
   const tr=w.prev!=null&&w.wl!=null?(w.wl>w.prev?'▲ เพิ่มขึ้น':w.wl<w.prev?'▼ ลดลง':'■ ทรงตัว')+' '+fmt(Math.abs(w.wl-w.prev),2)+' ม.':'';
   const m=L.marker([w.lat,w.lng],{icon:ic,zIndexOffset:600});
   m.bindPopup(`<div class="pw"><div class="pi"><b>${w.code}</b> ${w.name}<br>อ.${w.amp} จ.${w.provName||''}<br>ระดับน้ำ: <b>${fmt(w.wl,2)} ม.(รสม.)</b> ${tr}<br>ระดับตลิ่ง: ${fmt(w.bank,2)} ม. · <b style="color:${ridCol(w)}">${ridTxt(w)}</b><br>${w.zg!=null?`ศูนย์เสาระดับ ${w.zg>0?'+':''}${fmt(w.zg,2)} ม.(รทก.)<br>`:''}<span class="mut">ชป. ศูนย์อุทกวิทยาฯ ภาคตะวันตก · ${w.t?w.t.toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'}):''}</span><br><a href="#" onclick="ridChart('${w.id}');return false" style="color:#7dd3fc">📈 กราฟระดับน้ำรายชั่วโมง${w.group?' ('+w.group.name+')':''} →</a></div><div class="pm" data-k="rid" data-id="${w.id}"></div></div>`,{maxWidth:640,minWidth:280});
@@ -852,7 +852,7 @@ const gRes=L.layerGroup().addTo(map);let RESV=null;
 const resCol=p=>p==null?'#94a3b8':p<=30?'#facc15':p<=50?'#22c55e':p<=80?'#38bdf8':'#ef4444';
 const resTxt=p=>p==null?'–':p<=30?'น้ำน้อย':p<=50?'น้ำพอใช้':p<=80?'น้ำดี':'น้ำดีมาก';
 async function loadRes(){setSt('res','ld');try{RESV=await getJ('reservoirs.json?v='+Date.now());drawRes();setSt('res','ok',`อ่างใหญ่/กลาง ${RESV.date_ls} · อ่างเล็ก ${RESV.date_small}`)}catch(e){console.warn('res',e);setSt('res','er',e.message)}}
-function drawRes(){gRes.clearLayers();if(!RESV)return;const all=[...RESV.large_medium.map(r=>({...r,kind:r.size==='l'?'ขนาดใหญ่':'ขนาดกลาง',d:RESV.date_ls})),...RESV.small.map(r=>({...r,kind:'ขนาดเล็ก',size:'s',d:RESV.date_small}))];
+function drawRes(){gRes.clearLayers();if(!RESV)return;if(S.prov!=='77'){$('cRes').textContent='เฉพาะ จ.ประจวบฯ';return}const all=[...RESV.large_medium.map(r=>({...r,kind:r.size==='l'?'ขนาดใหญ่':'ขนาดกลาง',d:RESV.date_ls})),...RESV.small.map(r=>({...r,kind:'ขนาดเล็ก',size:'s',d:RESV.date_small}))];
  $('cRes').textContent=`${RESV.large_medium.filter(r=>r.size==='l').length} ใหญ่ · ${RESV.large_medium.filter(r=>r.size!=='l').length} กลาง · ${RESV.small.length} เล็ก`;if(!$('ovRes').checked)return;
  const on=new Set([...document.querySelectorAll('#resSz input:checked')].map(i=>i.dataset.s));all.filter(r=>on.has(r.size)).forEach(r=>{const sz=r.size==='l'?30:r.size==='m'?22:13,c=resCol(r.pct);
   const html=r.size==='s'?`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:2px solid #0b1424;box-shadow:0 0 0 1.5px #fff"></div>`
@@ -893,9 +893,12 @@ async function loadTH(){setSt('rsv','ld');try{let d=new Date(),big=[],mid=[],ds=
  THR={date:ds,big,mid:mid.filter(x=>x.lat&&x.lon)};drawTH();
  const dt=new Date(ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
  setSt('rsv','ok',`ขนาดใหญ่ ${THR.big.length} · ขนาดกลาง ${THR.mid.length} แห่ง · ข้อมูล ${dt}`)}catch(e){console.warn('rsv',e);setSt('rsv','er',e.message)}}
-function drawTH(){gTH.clearLayers();if(!THR)return;$('cTH').textContent=`${THR.big.length} ใหญ่ · ${THR.mid.length} กลาง`;if(!$('ovTH').checked)return;
+
+let PVPOLY=null;getJ('amphoe.json?v=2').then(a=>{AMPG_ALL=a;PVPOLY=1;try{drawTH()}catch(e){}}).catch(()=>{});var AMPG_ALL=null;
+function inPv(la,lo){if(!AMPG_ALL)return true;return AMPG_ALL.some(a=>(a.p||'77')===S.prov&&pipA(lo,la,a.r))}
+function drawTH(){gTH.clearLayers();if(!THR)return;{const b=THR.big.filter(x=>inPv(x.lat,x.lon)).length,m=THR.mid.filter(x=>x.prov===pvName()).length;$('cTH').textContent=`${b} ใหญ่ · ${m} กลาง (จ.${pvName()})`}if(!$('ovTH').checked)return;
  const dt=new Date(THR.date+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
- const on=new Set([...document.querySelectorAll('#resSz input:checked')].map(i=>i.dataset.s));[...THR.mid,...THR.big].filter(x=>on.has(x.sz)).forEach(x=>{const c=resCol(x.pct),big=x.sz==='l',sz=big?18:10;
+ const on=new Set([...document.querySelectorAll('#resSz input:checked')].map(i=>i.dataset.s));[...THR.mid,...THR.big].filter(x=>on.has(x.sz)&&(x.prov?x.prov===pvName():inPv(x.lat,x.lon))).forEach(x=>{const c=resCol(x.pct),big=x.sz==='l',sz=big?18:10;
   const html=big?`<div style="width:${sz}px;height:${sz}px;border-radius:4px;background:${c};border:2.5px solid #fff;box-shadow:0 0 0 1.5px #0b1424,0 2px 5px rgba(0,0,0,.4)"></div>`:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};border:1.5px solid #fff;box-shadow:0 0 0 1px #0b1424"></div>`;
   const m=L.marker([x.lat,x.lon],{icon:L.divIcon({className:'',html,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]}),zIndexOffset:big?500:200});
   const ch=x.prev!=null&&x.pct!=null?` <span class="mut">(ปีที่แล้ว ${fmt(x.prev,0)}%)</span>`:'';
@@ -910,7 +913,7 @@ document.querySelectorAll('#resSz input').forEach(i=>i.onchange=()=>{drawRes();d
 /* ---------- เส้นน้ำ (ชั้นข้อมูลลำน้ำ สชป.14 Stream_rid14) ---------- */
 map.createPane('riv');map.getPane('riv').style.zIndex=390;
 const rivR=L.canvas({pane:'riv',padding:.3}),gRivM=L.layerGroup().addTo(map),gRivS=L.layerGroup().addTo(map);let RIV=null;
-async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers.json?v=3');drawRiv();
+async function loadRiv(){setSt('riv','ld');try{RIV=await getJ('rivers_'+S.prov+'.json?v=1');drawRiv();
  setSt('riv','ok',`สายหลัก ${new Set(RIV.main.map(x=>x.n).filter(Boolean)).size} สาย · สายรอง ${new Set(RIV.sec.map(x=>x.n).filter(Boolean)).size} สาย`)}catch(e){setSt('riv','er',e.message)}}
 function rivPop(x,k){const km=RIV.km&&RIV.km[x.n];return `<b>${x.n||'ทางน้ำ (ไม่มีชื่อ)'}</b><br>${k==='m'?'ทางน้ำสายหลัก':k==='c'?'คลองชลประทาน':'ทางน้ำสายรอง (มีน้ำไหลตลอดปี)'}${km?`<br>ความยาวในจังหวัดประมาณ ${km} กม.`:''}<br><span class="mut">ชั้นข้อมูลลำน้ำ สำนักงานชลประทานที่ 14</span>`}
 function drawRiv(){gRivM.clearLayers();gRivS.clearLayers();if(!RIV)return;
