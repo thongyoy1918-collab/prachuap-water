@@ -295,7 +295,8 @@ const AMP=[
  ['หัวหิน',12.5684,99.9577],['ปราณบุรี',12.3858,99.9100],['สามร้อยยอด',12.2700,99.8800],['กุยบุรี',12.0697,99.8626],
  ['เมืองประจวบฯ',11.8124,99.7973],['ทับสะแก',11.4980,99.6150],['บางสะพาน',11.2100,99.5100],['บางสะพานน้อย',11.0700,99.4500]];
 const S={prov:'77',rainMode:'r24',raw:{},fc:null,fcPt:0,radar:[],rIdx:0,charts:{}};
-S.prov='77'; /* เฉพาะ จ.ประจวบคีรีขันธ์ */
+const PV={'76':'เพชรบุรี','77':'ประจวบคีรีขันธ์','86':'ชุมพร','85':'ระนอง'};const pvName=()=>PV[S.prov]||'';const pvPrj=()=>'โครงการชลประทาน'+pvName();
+try{const p=localStorage.getItem('fm_prov');S.prov=PV[p]?p:'77'}catch(e){S.prov='77'} /* เฉพาะจังหวัดในเขต สชป.14 */
 const $=id=>document.getElementById(id);
 const fmt=(n,d=1)=>n==null||isNaN(n)?'–':Number(n).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d});
 const th=x=>x&&(x.th||x.en)||'';
@@ -364,7 +365,7 @@ async function loadTW(){
  buildProv();
 }
 function buildProv(){
- const sel=$('prov');S.prov='77';sel.innerHTML='<option value="77">ประจวบคีรีขันธ์</option>';sel.value='77';
+ const sel=$('prov');if(!PV[S.prov])S.prov='77';sel.innerHTML=Object.entries(PV).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');sel.value=S.prov;
 }
 const inProv=x=>S.prov==='all'||x.prov===S.prov;
 
@@ -549,17 +550,17 @@ function legend(){
 
 /* ---------- LINE report ---------- */
 function mkReport(){
- const r=(S.raw.r24||[]).filter(x=>x.prov==='77').sort((a,b)=>b.v-a.v);
+ const r=(S.raw.r24||[]).filter(x=>x.prov===S.prov).sort((a,b)=>b.v-a.v);
  const now=new Date();const ds=now.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
  const t=(r[0]||{}).t||'';
- let s=`🌧️ สถานการณ์ฝน-น้ำ จ.ประจวบคีรีขันธ์\n📅 ${ds} ข้อมูลถึง ${t.slice(11,16)||now.toTimeString().slice(0,5)} น.\n\n☔ ฝนสะสม 24 ชม.\n`;
+ let s=`🌧️ สถานการณ์ฝน-น้ำ จ.${pvName()}\n📅 ${ds} ข้อมูลถึง ${t.slice(11,16)||now.toTimeString().slice(0,5)} น.\n\n☔ ฝนสะสม 24 ชม.\n`;
  if(r[0])s+=`🟣 สูงสุด ${r[0].name} อ.${r[0].amp} ${fmt(r[0].v)} มม.\n`;
  const vh=r.filter(x=>x.v>90),hv=r.filter(x=>x.v>35&&x.v<=90);
  if(vh.length)s+=`🔴 >90 มม. ${vh.length} สถานี: ${vh.map(x=>x.name+' '+fmt(x.v)).join(', ')}\n`;
  if(hv.length)s+=`🟠 >35 มม. ${hv.length} สถานี: ${hv.slice(0,8).map(x=>x.name+' '+fmt(x.v)).join(', ')}${hv.length>8?' ฯลฯ':''}\n`;
  const am={};r.forEach(x=>{if(!am[x.amp]||am[x.amp].v<x.v)am[x.amp]=x});
  Object.values(am).sort((a,b)=>b.v-a.v).slice(0,3).forEach(x=>s+=`🔵 อ.${x.amp} ${fmt(x.v)} มม. (${x.name})\n`);
- const w=(S.raw.wl||[]).filter(x=>x.prov==='77').sort((a,b)=>(b.pct??-1)-(a.pct??-1));
+ const w=(S.raw.wl||[]).filter(x=>x.prov===S.prov).sort((a,b)=>(b.pct??-1)-(a.pct??-1));
  if(w.length){s+=`\n🌊 ระดับน้ำ\n`;w.forEach(x=>s+=`${x.pct==null?'⚪':x.pct>100?'🔴':x.pct>70?'🔵':x.pct>30?'🟢':'🟡'} ${x.code||''} ${x.name} ${fmt(x.wl,2)} ม.รทก.${x.pct!=null?' ('+fmt(x.pct,0)+'%)':''}${x.prev!=null&&x.wl!=null?' '+(x.wl>x.prev?'▲':x.wl<x.prev?'▼':'■'):''}\n`)}
  if(S.fc){s+=`\n🔮 พยากรณ์ฝน 24 ชม. ข้างหน้า\n`;S.fc.amp.slice().sort((a,b)=>b.sum-a.sum).slice(0,4).forEach(a=>s+=`• อ.${a.name} ${fmt(a.sum)} มม. (โอกาส ${a.pmax}%)\n`)}
  $('repTxt').value=s.trim();
@@ -593,7 +594,7 @@ const RMC=[[10,'#9fd3f0','0–10'],[20,'#a6dc7a','10–20'],[35,'#4cb86b','20–
 const rmCol=v=>(RMC.find(c=>v<=c[0])||RMC[6])[1];
 let AMPG=null,rmImg=null;const gAmpB=L.layerGroup().addTo(map);S.rmap=false;const rmSaved={};
 const RM_HIDE=['ovWl','ovRivS','ovRes','ovTH','ovRid','ovRadar','ovSat','ovFlood'];
-async function ampGeo(){if(!AMPG)AMPG=await getJ('amphoe.json?v=1');return AMPG}
+async function ampGeo(){if(!AMPG)AMPG=await getJ('amphoe.json?v=2');return AMPG.filter(a=>(a.p||'77')===S.prov)}
 function hex2rgb(h){return[1,3,5].map(i=>parseInt(h.substr(i,2),16))}
 async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)return;
  if(rmImg){map.removeLayer(rmImg);rmImg=null}gAmpB.clearLayers();
@@ -611,18 +612,18 @@ async function rainMap(){if(!S.rmap)return;const A=await ampGeo();if(!S.rmap)ret
  window.__RM={cv,x0,y0,x1,y1,A,stAll:st};rmImg=L.imageOverlay(cv.toDataURL(),[[y0,x0],[y1,x1]],{pane:'rmap',opacity:.82,interactive:false}).addTo(map);
  A.forEach(a=>{a.r.forEach(r=>{const ll=r.map(([x,y])=>[y,x]);L.polyline(ll,{pane:'rmap',color:'#f97316',weight:5,opacity:.35,interactive:false}).addTo(gAmpB);L.polyline(ll,{pane:'rmap',color:'#fff7ed',weight:1.6,interactive:false}).addTo(gAmpB)});
   L.marker([a.c[1],a.c[0]],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip('อ.'+a.n,{permanent:true,direction:'center',className:'alab'}).addTo(gAmpB)});
- st.filter(r=>r.prov==='77'&&r.v>0).forEach(r=>L.marker([r.lat,r.lng],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip(fmt(r.v,1),{permanent:true,direction:'top',offset:[0,-7],className:'rmv'}).addTo(gAmpB));
- const mx=st.filter(r=>r.prov==='77').reduce((m,r)=>Math.max(m,r.v),0),tt=((st.find(r=>r.prov==='77')||{}).t)||'';
+ st.filter(r=>r.prov===S.prov&&r.v>0).forEach(r=>L.marker([r.lat,r.lng],{icon:L.divIcon({className:'',html:'',iconSize:[0,0]}),interactive:false}).bindTooltip(fmt(r.v,1),{permanent:true,direction:'top',offset:[0,-7],className:'rmv'}).addTo(gAmpB));
+ const mx=st.filter(r=>r.prov===S.prov).reduce((m,r)=>Math.max(m,r.v),0),tt=((st.find(r=>r.prov===S.prov)||{}).t)||'';
  {const TH=['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'],mm=String(tt).match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+)/),dd=mm?`${+mm[3]} ${TH[+mm[2]]} ${+mm[1]+543} ${mm[4]}:${mm[5]} น.`:'–';
- $('rmLeg').innerHTML=`<div class="tc"><div class="ic"><svg viewBox="0 0 24 24" width="30" height="30"><path fill="#fff" d="M12 2.5C9 7 6 10.4 6 14a6 6 0 0 0 12 0c0-3.6-3-7-6-11.5z"/></svg></div><div class="tx"><b>แผนที่ปริมาณ${modeName().replace('ชม.','ชั่วโมง')}${['r24','r6','r3'].includes(S.rainMode)?' ย้อนหลัง':''}</b><small>จังหวัดประจวบคีรีขันธ์ · โครงการชลประทานประจวบคีรีขันธ์ · ข้อมูลถึง ${dd}</small></div></div>
- <div class="r2"><div class="bc">ประเทศไทย › <b>ประจวบคีรีขันธ์</b></div><div class="lb"><div class="bar">${RMC.map(c=>`<span><i style="background:${c[1]}"></i>${c[2]}</span>`).join('')}</div></div></div>`}$('rmLeg').style.display='block';rmPanel(st.filter(r=>r.prov==='77'),A)}
+ $('rmLeg').innerHTML=`<div class="tc"><div class="ic"><svg viewBox="0 0 24 24" width="30" height="30"><path fill="#fff" d="M12 2.5C9 7 6 10.4 6 14a6 6 0 0 0 12 0c0-3.6-3-7-6-11.5z"/></svg></div><div class="tx"><b>แผนที่ปริมาณ${modeName().replace('ชม.','ชั่วโมง')}${['r24','r6','r3'].includes(S.rainMode)?' ย้อนหลัง':''}</b><small>จังหวัด${pvName()} · ${pvPrj()} · ข้อมูลถึง ${dd}</small></div></div>
+ <div class="r2"><div class="bc">ประเทศไทย › <b>${pvName()}</b></div><div class="lb"><div class="bar">${RMC.map(c=>`<span><i style="background:${c[1]}"></i>${c[2]}</span>`).join('')}</div></div></div>`}$('rmLeg').style.display='block';rmPanel(st.filter(r=>r.prov===S.prov),A)}
 function pipA(x,y,rs){let ins=false;for(const r of rs){for(let i=0,j=r.length-1;i<r.length;j=i++){const[xi,yi]=r[i],[xj,yj]=r[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)ins=!ins}}return ins}
 function rmPanel(st,A){const P=$('rmPan');if(!S.rmap){P.style.display='none';return}
  const tt=(st.map(r=>r.t).filter(Boolean).sort().pop())||'',m=tt.match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+)/),TH=['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
  const dTxt=m?`${+m[3]} ${TH[+m[2]]} ${+m[1]+543}`:'–',hTxt=m?`${m[4]}.${m[5]} น.`:'–';
  const amps=A.map(a=>{const ss=st.filter(r=>pipA(r.lng,r.lat,a.r));const mx=ss.reduce((q,r)=>Math.max(q,r.v),0),av=ss.length?ss.reduce((q,r)=>q+r.v,0)/ss.length:0;return{n:a.n,c:a.c,mx,av,k:ss.length}});
  const gmx=Math.max(1,...amps.map(a=>a.mx)),wet=st.filter(r=>r.v>0).length,srt=[...st].sort((a,b)=>b.v-a.v||String(b.t).localeCompare(String(a.t)));
- const short=n=>n.replace('เมืองประจวบคีรีขันธ์','เมืองฯ');
+ const short=n=>n.replace('เมือง'+pvName(),'เมืองฯ');
  Object.assign(window.__RM||{},{st,amps,srt,tt,dTxt,hTxt,wet});P.innerHTML=`<div class="h"><span class="chip">${modeName().replace('ฝนสะสม ','ฝน ')}</span><span style="font:600 13px Kanit,sans-serif">${dTxt}</span><div class="tm"><small>ข้อมูล ณ เวลา</small><b>${hTxt}</b></div><button class="sv" title="บันทึกภาพ 4K" onclick="rmExport()">💾 บันทึกภาพ</button><button class="x" title="ซ่อน" onclick="$('rmPan').style.display='none'">✕</button></div>
  <h4>ฝนล่าสุดรายสถานี (มม.)</h4><div class="src">คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) · เรียงจากมากไปน้อย</div>
  <div class="st"><div><small>สูงสุด</small><b>${fmt(srt.length?srt[0].v:0,srt.length&&srt[0].v%1?1:0)}</b> <small style="display:inline">มม.</small></div><div><small>ฝนหนักมาก &gt;90</small><b>${st.filter(r=>r.v>90).length}</b> <small style="display:inline">สถานี</small></div><div><small>ฝนหนัก &gt;35</small><b>${st.filter(r=>r.v>35).length}</b> <small style="display:inline">สถานี</small></div></div>
@@ -650,9 +651,9 @@ async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไ�
  rr(56,48,1840,200,36);g.fillStyle='#fff';g.fill();
  const gr=g.createLinearGradient(0,78,0,218);gr.addColorStop(0,'#38a5f5');gr.addColorStop(1,'#1d6fd8');rr(96,78,140,140,30);g.fillStyle=gr;g.fill();
  g.fillStyle='#fff';g.beginPath();g.moveTo(166,104);g.bezierCurveTo(130,150,128,165,128,175);g.arc(166,175,38,Math.PI,0,true);g.bezierCurveTo(204,165,202,150,166,104);g.fill();
- F(700,76);T(title,270,150,'#0f172a');F(400,36);T(`จังหวัดประจวบคีรีขันธ์ · โครงการชลประทานประจวบคีรีขันธ์ · ข้อมูลถึง ${R.dTxt} ${R.hTxt}`,272,214,'#475569');
+ F(700,76);T(title,270,150,'#0f172a');F(400,36);T(`จังหวัด${pvName()} · ${pvPrj()} · ข้อมูลถึง ${R.dTxt} ${R.hTxt}`,272,214,'#475569');
  // breadcrumb + legend
- rr(56,290,520,96,20);g.fillStyle='#fff';g.fill();F(400,34);T('ประเทศไทย ›',96,350,'#334155');F(700,34);T('ประจวบคีรีขันธ์',300,350,'#0f172a');
+ rr(56,290,520,96,20);g.fillStyle='#fff';g.fill();F(400,34);T('ประเทศไทย ›',96,350,'#334155');F(700,34);T(pvName(),300,350,'#0f172a');
  rr(620,290,960,120,20);g.fillStyle='#fff';g.fill();RMC.forEach((q,i)=>{g.fillStyle=q[1];g.fillRect(660+i*126,312,126,30);F(400,28);T(q[2],660+i*126+63,385,'#334155','center')});
  // map
  const kx=Math.cos((R.y0+R.y1)/2*Math.PI/180),bx=80,by=460,bw=1680,bh=2470,sc=Math.min(bw/((R.x1-R.x0)*kx),bh/(R.y1-R.y0)),mw=(R.x1-R.x0)*kx*sc,mh=(R.y1-R.y0)*sc,ox=bx+(bw-mw)/2,oy=by+(bh-mh)/2;
@@ -665,14 +666,14 @@ async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไ�
  // stations
  const sts=R.st;sts.forEach(r=>{const[X,Y]=P(r.lng,r.lat);g.beginPath();g.arc(X,Y,15,0,7);g.fillStyle=r.v>0?rmCol(r.v):'#cfe6f7';g.fill();g.lineWidth=5;g.strokeStyle='#fff';g.stroke()});
  sts.filter(r=>r.v>0).forEach(r=>{const[X,Y]=P(r.lng,r.lat);F(700,30);const t=fmt(r.v,1),w=g.measureText(t).width+22;rr(X-w/2,Y-64,w,42,10);g.fillStyle='#fff';g.fill();g.lineWidth=2;g.strokeStyle='#0f172a33';g.stroke();T(t,X,Y-34,'#0f172a','center')});
- R.A.forEach(a=>{const[X,Y]=P(a.c[0],a.c[1]);F(700,46);g.lineWidth=10;g.strokeStyle='#0f2236';g.lineJoin='round';g.textAlign='center';g.textBaseline='middle';const t='อ.'+a.n.replace('เมืองประจวบคีรีขันธ์','เมืองประจวบฯ');g.strokeText(t,X,Y);T(t,X,Y,'#fff','center','middle')});
+ R.A.forEach(a=>{const[X,Y]=P(a.c[0],a.c[1]);F(700,46);g.lineWidth=10;g.strokeStyle='#0f2236';g.lineJoin='round';g.textAlign='center';g.textBaseline='middle';const t='อ.'+a.n.replace('เมือง'+pvName(),'เมือง'+pvName().slice(0,6)+'ฯ');g.strokeText(t,X,Y);T(t,X,Y,'#fff','center','middle')});
  // north + scale
  g.beginPath();g.arc(170,2700,78,0,7);g.fillStyle='#0f2236';g.fill();g.lineWidth=7;g.strokeStyle='#fff';g.stroke();g.fillStyle='#fff';g.beginPath();g.moveTo(170,2640);g.lineTo(205,2740);g.lineTo(170,2715);g.lineTo(135,2740);g.closePath();g.fill();F(700,38);T('N',170,2600,'#fff','center');
  const km10=10/111.32*sc;g.fillStyle='#fff';g.fillRect(96,2850,km10,10);F(500,32);T('0',96,2835,'#fff','center');T('10 กม.',96+km10,2835,'#fff','center');
  // district panel
  rr(1880,560,920,780,36);g.fillStyle='#16324d';g.fill();g.lineWidth=2;g.strokeStyle='#2c4f72';g.stroke();
  F(700,44);T('ฝนสูงสุดรายอำเภอ',1930,640,'#fff');F(400,28);T('มม. · (เฉลี่ย)',2760,640,'#9fb7cf','right');
- const gm=Math.max(1,...R.amps.map(a=>a.mx));R.amps.forEach((a,i)=>{const y=730+i*78;F(500,34);T(a.n.replace('เมืองประจวบคีรีขันธ์','เมืองฯ'),1930,y,'#fff');rr(2200,y-20,330,22,11);g.fillStyle='#2a4867';g.fill();rr(2200,y-20,Math.max(22,330*a.mx/gm),22,11);g.fillStyle=rmCol(a.mx);g.fill();F(700,34);T(fmt(a.mx,1),2640,y,'#fff','right');F(400,28);T('('+fmt(a.av,1)+')',2760,y,'#9fb7cf','right')});
+ const gm=Math.max(1,...R.amps.map(a=>a.mx));R.amps.forEach((a,i)=>{const y=730+i*78;F(500,34);T(a.n.replace('เมือง'+pvName(),'เมืองฯ'),1930,y,'#fff');rr(2200,y-20,330,22,11);g.fillStyle='#2a4867';g.fill();rr(2200,y-20,Math.max(22,330*a.mx/gm),22,11);g.fillStyle=rmCol(a.mx);g.fill();F(700,34);T(fmt(a.mx,1),2640,y,'#fff','right');F(400,28);T('('+fmt(a.av,1)+')',2760,y,'#9fb7cf','right')});
  // top callouts (middle)
  const top=R.srt.filter(r=>r.v>0).slice(0,7);top.forEach((r,i)=>{const y=1420+i*212;rr(1880,y,920,180,22);g.fillStyle='#fff';g.fill();F(700,38);T(fit(r.name,620),1920,y+70,'#0f172a');F(400,28);T(fit(`ต.${r.tam} อ.${r.amp} · ${(String(r.t).match(/\d+:\d+$/)||[''])[0]} น.`,620),1920,y+128,'#64748b');rr(2590,y+40,180,100,16);g.fillStyle=rmCol(r.v);g.fill();F(700,46);T(fmt(r.v,1),2680,y+108,'#0f172a','center');
   const[X,Y]=P(r.lng,r.lat);g.beginPath();g.moveTo(1880,y+90);g.lineTo(X,Y);g.lineWidth=2;g.strokeStyle='rgba(255,255,255,.55)';g.stroke()});
@@ -686,7 +687,7 @@ async function rmExport(){const R=window.__RM;if(!R||!R.st){alert('ยังไ�
  const rows=R.srt.slice(0,19);rows.forEach((r,i)=>{const y=640+i*112;g.beginPath();g.arc(2955,y+52,26,0,7);g.lineWidth=3;g.strokeStyle='#94a3b8';g.stroke();g.fillStyle='#94a3b8';g.beginPath();g.arc(2955,y+46,8,0,7);g.fill();
   F(700,34);T(fit(r.name,500),3000,y+48,'#0f172a');F(400,25);T(fit(`ต.${r.tam} อ.${r.amp} · ${r.ag}`,500),3000,y+88,'#64748b');F(500,30);T((String(r.t).match(/\d+:\d+$/)||[''])[0],3540,y+62,'#0f172a','center');
   rr(3615,y+18,150,76,12);g.fillStyle=rmCol(r.v);g.fill();F(700,40);T(fmt(r.v,1),3690,y+70,'#0f172a','center');g.fillStyle='#e2e8f0';g.fillRect(2920,y+110,830,2)});
- F(400,24);const ft=[`แสดง ${rows.length} อันดับแรก จากสถานีที่รายงาน ${R.st.length} สถานี (มีฝน ${R.wet} สถานี · ฝน 0 มม. ${R.st.length-R.wet} สถานี)`,`ข้อมูลอัปเดต ${R.tt} · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น`,'ขอบเขตอำเภอ: สำนักงานชลประทานที่ 14 · จัดทำ: โครงการชลประทานประจวบคีรีขันธ์'];ft.forEach((t,i)=>T(fit(t,820),2930,2858+i*34,'#64748b'));
+ F(400,24);const ft=[`แสดง ${rows.length} อันดับแรก จากสถานีที่รายงาน ${R.st.length} สถานี (มีฝน ${R.wet} สถานี · ฝน 0 มม. ${R.st.length-R.wet} สถานี)`,`ข้อมูลอัปเดต ${R.tt} · พื้นสีประมาณค่าจากสถานีวัดฝน (IDW) ใช้ดูแนวโน้มเท่านั้น`,'ขอบเขตอำเภอ: สำนักงานชลประทานที่ 14 · จัดทำ: '+pvPrj()];ft.forEach((t,i)=>T(fit(t,820),2930,2858+i*34,'#64748b'));
  const nm=`แผนที่ฝน_${mn.replace(/\s|\./g,'')}_${(R.tt||'').replace(/[: ]/g,'-')}.png`;
  c.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);if(bt){bt.disabled=false;bt.textContent='💾 บันทึกภาพ'}},'image/png')}
 window.rmExport=rmExport;
