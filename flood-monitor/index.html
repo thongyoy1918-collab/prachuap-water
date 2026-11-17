@@ -666,7 +666,7 @@ async function draw(){const L=W.list.filter(x=>W.sel.includes(x.src+x.id));
 })();
 document.getElementById('ovRid').onchange=drawRID;document.getElementById('ovLab').addEventListener('change',drawRID);
 loadRID();setInterval(loadRID,30*60*1000);
-map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el&&!el.dataset.done){el.dataset.done=1;wlMini(el,el.dataset.k,el.dataset.id).then(()=>e.popup.update())}});
+map.on('popupopen',e=>{const el=e.popup.getElement()&&e.popup.getElement().querySelector('.pm');if(el){const fix=()=>{try{e.popup._updateLayout();e.popup._updatePosition();e.popup._adjustPan&&e.popup._adjustPan()}catch(_){}};fix();wlMini(el,el.dataset.k,el.dataset.id).then(fix)}});
 </script>
 </body>
 </html>
