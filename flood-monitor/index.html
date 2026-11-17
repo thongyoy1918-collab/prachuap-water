@@ -302,7 +302,9 @@ let radarLayer=null, satLayer=null, floodLayer=null, clickMk=null;
 const SRC={
  rain:{n:'สถานีวัดฝน (สสน. ThaiWater)',d:'ฝน 1 ชม. / 24 ชม. / วันนี้ / เมื่อวาน จากสถานีโทรมาตรทุกหน่วยงาน (ชป., สสน., ทน., อตุ. ฯลฯ)',u:'https://www.thaiwater.net'},
  wl:{n:'โทรมาตรระดับน้ำ (สสน. ThaiWater)',d:'ระดับน้ำจริงเทียบระดับตลิ่ง (% ความจุลำน้ำ) และสถานะเฝ้าระวังรายสถานี',u:'https://www.thaiwater.net'},
- radar:{n:'เรดาร์ฝน (RainViewer)',d:'ภาพเรดาร์สะท้อนกลุ่มฝนย้อนหลัง 2 ชม. ราย 10 นาที (ภาพเคลื่อนไหว)',u:'https://www.rainviewer.com'},
+ rid:{n:'สถานีวัดน้ำท่า กรมชลประทาน (ศูนย์อุทกวิทยาชลประทานภาคตะวันตก)',d:'ระดับน้ำรายชั่วโมงย้อนหลัง 7 วัน เทียบระดับตลิ่ง ลุ่มน้ำชายฝั่งทะเลตะวันตก (เช่น Gt.7, Gt.20, Gt.21 คลองบางสะพาน) ใช้ทำกราฟรวมสถานี',u:'http://hydro-7.rid.go.th/index4.html'},
+ res:{n:'อ่างเก็บน้ำ (โครงการชลประทานประจวบคีรีขันธ์)',d:'อ่างขนาดใหญ่/กลาง 9 แห่ง จากรายงานประจำวัน พร้อมกราฟ Rule Curve และภาพรายงาน 4K · อ่างขนาดเล็ก 33 แห่ง',u:'https://thongyoy1918-collab.github.io/prachuap-water/'},
+ radar:{n:'เรดาร์ฝน + พยากรณ์ 3 ชม. (กรมอุตุนิยมวิทยา / สทนช.)',d:'ภาพเรดาร์คอมโพสิตทั้งประเทศของกรมอุตุฯ ราย 15 นาที ย้อนหลัง 1 ชม. และคาดการณ์กลุ่มฝนล่วงหน้า 3 ชม. (Nowcast) · สำรอง: RainViewer ย้อนหลัง 2 ชม.',u:'https://clpp-radar.onwr.go.th'},
  sat:{n:'ดาวเทียม Himawari-9 (JMA)',d:'ภาพเมฆอินฟราเรด / Sandwich / True Color อัปเดตทุก 10 นาที',u:'https://www.jma.go.jp/bosai/map.html#contents=himawari'},
  fc:{n:'พยากรณ์ฝน (Open-Meteo)',d:'ฝนราย 15 นาที 2 ชม., รายชั่วโมง 24 ชม., รายวัน 5 วัน (ECMWF/GFS/JMA/ICON)',u:'https://open-meteo.com'},
  flood:{n:'พื้นที่น้ำท่วมจากดาวเทียม (NASA GIBS)',d:'VIIRS / MODIS Combined Flood 1 วัน และ 3 วัน (ใช้แทน GISTDA ที่ต้องมี API key)',u:'https://www.earthdata.nasa.gov/data/instruments/viirs'},
@@ -464,12 +466,12 @@ async function loadRadar(){
  const src=($('radSrc')||{}).value||'tmd';
  if(src==='tmd'){try{const now=Math.floor(Date.now()/1000/900)*900;let base=null;for(let k=0;k<10&&!base;k++){const t=now-k*900;if(await imgOk(TMDR+t+'.png'))base=t}
    if(!base)throw new Error('ไม่พบภาพเรดาร์ล่าสุด');S.radar=[];for(let m=-60;m<=180;m+=15)S.radar.push({src:'tmd',time:base+m*60,nc:m>0,off:m,path:'tmd'+(base+m*60)});
-   const lastPast=4;$('tslider').max=S.radar.length-1;S.rIdx=lastPast;$('tslider').value=lastPast;setSt('radar','ok','TMD '+S.radar.length+' เฟรม');showRadar()}catch(e){setSt('radar','er',e.message)}return}
+   const lastPast=4;$('tslider').max=S.radar.length-1;S.rIdx=lastPast;$('tslider').value=lastPast;{const hm=t=>new Date(t*1000).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});setSt('radar','ok','กรมอุตุฯ ภาพล่าสุด '+hm(base)+' น. · พยากรณ์ถึง '+hm(base+10800)+' น.')};showRadar()}catch(e){setSt('radar','er',e.message)}return}
  try{const j=await getJ('https://api.rainviewer.com/public/weather-maps.json');rvHost=j.host;
   S.radar=[...(j.radar.past||[]).map(f=>({...f,nc:false})),...((j.radar.nowcast)||[]).map(f=>({...f,nc:true}))];
   const lastPast=(j.radar.past||[]).length-1;
   $('tslider').max=S.radar.length-1;S.rIdx=lastPast;$('tslider').value=lastPast;
-  setSt('radar','ok',S.radar.length+' เฟรม');showRadar();
+  setSt('radar','ok','RainViewer '+S.radar.length+' เฟรม');showRadar();
  }catch(e){setSt('radar','er',e.message)}
 }
 const radarCache={};
@@ -572,7 +574,7 @@ const RID={groups:[],st:[],byCode:{},ok:false};
 const ridP=(fn,o,ms=20000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(RIDB+fn,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({hydro:o}),signal:c.signal}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).finally(()=>clearTimeout(t))};
 const ridDate=v=>new Date(+String(v).match(/-?\d+/)[0]);
 const beDate=d=>`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
-async function loadRID(){try{
+async function loadRID(){setSt('rid','ld');try{
  const gl=await ridP('getStationGroup',{basinid:20,hydroid:7});const today=beDate(new Date());
  const cols=await Promise.all(gl.map(g=>ridP('GetColModelHLAD',{StationGroupID:String(g.StationGroupID),TimeCurrent:today}).catch(()=>null)));
  const ids=new Set();RID.groups=gl.map((g,i)=>{const L=(cols[i]&&cols[i].StationIDList)||[];L.forEach(x=>ids.add(x));return{id:g.StationGroupID,name:g.StationGroupName,ids:L}}).filter(g=>g.ids.length);
@@ -580,8 +582,8 @@ async function loadRID(){try{
  RID.st=[...ids].map((id,i)=>{const[d,h]=det[i];if(!d||!d.latitude)return null;const pts=(h||[]).filter(x=>x.values!=null).map(x=>({t:ridDate(x.time),v:+x.values})).sort((a,b)=>a.t-b.t);const last=pts[pts.length-1],prev=pts[pts.length-2];
   return{src:'rid',id,code:d.stationcode||d.name,name:d.stationdetail||'',amp:(d.amphurname||'').replace(/^อ\.|^อำเภอ/,''),provName:d.provincename,lat:+d.latitude,lng:+d.longitude,bank:d.braelevel,zg:d.ZG,crit:d.WLCriteria,qmax:d.QMax,
    wl:last?last.v:null,prev:prev?prev.v:null,t:last?last.t:null,cache7:pts,group:RID.groups.find(g=>g.ids.includes(id))}}).filter(Boolean);
- RID.byCode={};RID.st.forEach(x=>RID.byCode[(x.code||'').toLowerCase().replace(/\s/g,'')]=x);RID.ok=true;drawRID();renderRidTable();
-}catch(e){console.warn('RID',e);const n=document.getElementById('ridNote');if(n)n.textContent='โหลดข้อมูล ชป. ไม่ได้ ('+e.message+')'}}
+ RID.byCode={};RID.st.forEach(x=>RID.byCode[(x.code||'').toLowerCase().replace(/\s/g,'')]=x);RID.ok=true;drawRID();renderRidTable();{const lt=Math.max(...RID.st.filter(x=>x.t).map(x=>+x.t));setSt('rid','ok',RID.st.length+' สถานี · ล่าสุด '+new Date(lt).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})+' น.')}
+}catch(e){console.warn('RID',e);setSt('rid','er',e.message);const n=document.getElementById('ridNote');if(n)n.textContent='โหลดข้อมูล ชป. ไม่ได้ ('+e.message+')'}}
 function ridCol(w){if(w.wl==null||w.bank==null)return'#64748b';const d=w.bank-w.wl;if(d<=0)return'#FF0000';if(d<=1)return'#f97316';if(d<=2)return'#facc15';return'#22c55e'}
 function ridTxt(w){if(w.wl==null||w.bank==null)return'–';const d=w.bank-w.wl;return d<=0?`ล้นตลิ่ง ${fmt(-d,2)} ม.`:`ต่ำกว่าตลิ่ง ${fmt(d,2)} ม.`}
 const gRid=L.layerGroup().addTo(map);
@@ -686,7 +688,7 @@ loadRID();setInterval(loadRID,30*60*1000);
 const gRes=L.layerGroup().addTo(map);let RESV=null;
 const resCol=p=>p==null?'#94a3b8':p<=30?'#facc15':p<=50?'#22c55e':p<=80?'#38bdf8':'#ef4444';
 const resTxt=p=>p==null?'–':p<=30?'น้ำน้อย':p<=50?'น้ำพอใช้':p<=80?'น้ำดี':'น้ำดีมาก';
-async function loadRes(){try{RESV=await getJ('reservoirs.json?v='+Date.now());drawRes()}catch(e){console.warn('res',e)}}
+async function loadRes(){setSt('res','ld');try{RESV=await getJ('reservoirs.json?v='+Date.now());drawRes();setSt('res','ok',`อ่างใหญ่/กลาง ${RESV.date_ls} · อ่างเล็ก ${RESV.date_small}`)}catch(e){console.warn('res',e);setSt('res','er',e.message)}}
 function drawRes(){gRes.clearLayers();if(!RESV)return;const all=[...RESV.large_medium.map(r=>({...r,kind:r.size==='l'?'ขนาดใหญ่':'ขนาดกลาง',d:RESV.date_ls})),...RESV.small.map(r=>({...r,kind:'ขนาดเล็ก',size:'s',d:RESV.date_small}))];
  $('cRes').textContent=`${RESV.large_medium.filter(r=>r.size==='l').length} ใหญ่ · ${RESV.large_medium.filter(r=>r.size!=='l').length} กลาง · ${RESV.small.length} เล็ก`;if(!$('ovRes').checked)return;
  all.forEach(r=>{const sz=r.size==='l'?30:r.size==='m'?22:13,c=resCol(r.pct);
