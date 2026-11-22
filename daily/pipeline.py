@@ -1,0 +1,211 @@
+# -*- coding: utf-8 -*-
+"""รายงานน้ำประจำวัน คป.ประจวบฯ — สร้างชุดส่ง LINE บนคลาวด์ (GitHub Actions)
+ข้อมูลเข้า: ไฟล์ .xlsx  หรือ  payload.json {"s1":{เซลล์ชีต 1.0}, "sr":{เซลล์ชีต รวม}} ที่บอท LINE ส่งมา
+ผลลัพธ์: line/daily/<วันที่>/ (ภาพ 1–9, 11–15, PDF) + line/latest.json (ข้อความ → ภาพ → PDF)
+ใช้: python daily/pipeline.py <xlsx|payload.json> [run_id]
+"""
+import sys, os, re, json, base64, asyncio, datetime, io, warnings
+import requests
+from PIL import Image
+warnings.filterwarnings('ignore')
+HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
+A = lambda f: os.path.join(HERE, 'assets', f)
+REPO_RAW = 'https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/'
+PAGES = 'https://thongyoy1918-collab.github.io/prachuap-water/'
+TH_M = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+TH_S = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+EN_M = ['', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130 Safari/537.36'}
+
+# ---------------- ข้อมูล ----------------
+def cells_from_xlsx(path):
+    import openpyxl
+    wb = openpyxl.load_workbook(path, data_only=True)
+    def grab(ws, r0, r1, c1):
+        out = {}
+        for row in ws.iter_rows(min_row=r0, max_row=r1, max_col=c1):
+            for c in row:
+                v = c.value
+                if isinstance(v, datetime.datetime): v = (v - datetime.datetime(1899, 12, 30)).days
+                if isinstance(v, (int, float)) and not isinstance(v, bool): out[c.coordinate] = v
+        return out
+    return {'s1': grab(wb['1.0'], 1, 19, 26), 'sr': grab(wb['รวม'], 1, 26, 22)}
+
+def build_D(P):
+    s1, sr = P['s1'], P['sr']
+    t10 = {k: v for k, v in s1.items() if 10 <= int(re.sub(r'\D', '', k)) <= 19 and re.match(r'[E-Z]\d', k)}
+    n = lambda k: sr.get(k) or 0
+    rows = {'ปราณบุรี': 7, 'ไทรงาม': 9, 'มงคล': 10, 'ยางชุม': 11, 'วังเต็น': 12, 'คลองบึง': 13, 'อ่างหิน': 14,
+            'ช่องลม': 15, 'จะกระ': 16, 'สามร้อยยอด': 17, 'บางสะพาน': 18, 'บางสะพานน้อย': 19}
+    rain = {k: [n('L%d' % r), n('F%d' % r), n('U%d' % r) + n('F%d' % r)] for k, r in rows.items()}
+    g = {k: dict(lv=sr.get('B%d' % r), q=sr.get('C%d' % r), ylv=sr.get('I%d' % r))
+         for k, r in {'KY3': 21, 'GT7': 22, 'GT20': 24, 'GT9': 25, 'GT10': 26}.items()}
+    d = datetime.date(1899, 12, 30) + datetime.timedelta(days=int(sr['B3']))
+    return dict(iso=d.isoformat(), t10=t10, rain=rain, g=g), d
+
+# ---------------- ข้อความ LINE ----------------
+def line_text(D, d):
+    t = D['t10']; f = lambda k: float(t.get(k) or 0)
+    txt = open(A('line_template.txt'), encoding='utf-8-sig').read()
+    by = d.year + 543
+    txt = re.sub(r'ประจำวันที่\s+\d+\s+\S+\s+\d{4}', 'ประจำวันที่  %d %s  %d' % (d.day, TH_M[d.month], by), txt, count=1)
+    txt = re.sub(r'\d+ \S+\.\S*\s?\d{2} \(08\.00\)', '%d %s %d (08.00)' % (d.day, TH_S[d.month], by % 100), txt)
+    vals = {'ปริมาณน้ำ ': [], 'คิดเป็น': [], 'inflow': [], 'outflow': [], 'ปริมาณฝน': []}
+    for r in range(11, 19):
+        vals['ปริมาณน้ำ '].append('%.3f' % f('E%d' % r)); vals['คิดเป็น'].append('%.2f' % f('F%d' % r))
+        vals['inflow'].append('%.3f' % max(f('I%d' % r), 0))
+        vals['outflow'].append('%.3f' % sum(f(c + str(r)) for c in 'JLPR'))
+        vals['ปริมาณฝน'].append('%.1f' % f('X%d' % r))
+    cnt = {k: 0 for k in vals}; out = []
+    for line in txt.split('\n'):
+        for k in vals:
+            if line.startswith('-' + k) and not line.startswith('-ปริมาณน้ำเก็บกัก') and cnt[k] < len(vals[k]):
+                line = re.sub(r'-?\d+(\.\d+)?', vals[k][cnt[k]], line, count=1); cnt[k] += 1; break
+        out.append(line)
+    return '\n'.join(out)
+
+# ---------------- ภาพจากเว็บ ----------------
+def get(u, **kw):
+    r = requests.get(u, headers=UA, timeout=40, **kw); r.raise_for_status(); return r
+
+def save_img(path, data):
+    Image.open(io.BytesIO(data)).verify()   # ต้องเป็นภาพจริง
+    open(path, 'wb').write(data)
+
+def web_images(d, out):
+    ymd = d.strftime('%Y%m%d'); err = {}
+    def tmd(kind, name):
+        page = 'https://www.tmd.go.th/forecast/' + ('daily' if kind == 'daily' else 'heavyrainriskarea')
+        try:
+            m = re.search(r'(?:https://www\.tmd\.go\.th)?/media/forecast/daily-graphic/' + kind + r'-[^"\'\s?]+\.png', get(page).text)
+            if m:
+                u = m.group(0); u = u if u.startswith('http') else 'https://www.tmd.go.th' + u
+                return get(u).content
+        except Exception: pass
+        for hh in ['0600', '0500', '0400', '1200', '1800', '0000']:
+            try: return get('https://www.tmd.go.th/media/forecast/daily-graphic/%s-%d-%s-%d-%s.png' % (kind, d.day, EN_M[d.month], d.year, hh)).content
+            except Exception: pass
+        raise RuntimeError('ไม่พบภาพ')
+    def sat():
+        for hh in ['0700', '0600', '0800', '0500']:
+            try:
+                b = get('https://satda.tmd.go.th/wp-content/uploads/data/%s/%s%s_sat.jpg' % (ymd, ymd, hh)).content
+                if len(b) > 10000: return b
+            except Exception: pass
+        raise RuntimeError('ไม่พบภาพดาวเทียม')
+    jobs = {'5.png': lambda: tmd('daily', 5), '6.png': lambda: tmd('risk', 6), '7.jpg': sat,
+            '8.jpg': lambda: get('https://weather.tmd.go.th/ryg/ryg240_latest.jpg').content}
+    for name, fn in jobs.items():
+        try: save_img(os.path.join(out, name), fn())
+        except Exception as e: err[name] = str(e)
+    try:
+        lst = get('https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain7day_forecast').json()['data']['pre_rain']['data']
+        for i in range(3):
+            u = 'https://api-v3.thaiwater.net/api/v1/thaiwater30//shared/image?_csrf=&image=' + requests.utils.quote(lst[i]['media_path'], safe='')
+            save_img(os.path.join(out, '%d.jpg' % (11 + i)), get(u).content)
+    except Exception as e: err['11-13'] = str(e)
+    return err
+
+def rain24():
+    j = get('https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24h?province_code=77').json()
+    out = []
+    for x in j.get('data') or []:
+        st = x.get('station') or {}; g = x.get('geocode') or {}
+        th = lambda o: (o or {}).get('th', '') if isinstance(o, dict) else ''
+        lat = next((st[k] for k in st if 'lat' in k.lower()), None); lon = next((st[k] for k in st if 'long' in k.lower() or 'lon' in k.lower()), None)
+        v = float(x.get('rain_24h') or 0)
+        tm = (re.search(r'(\d{2}:\d{2})', str(x.get('rainfall_datetime') or '')) or [None, ''])[1]
+        if v > 0 and th(st.get('tele_station_name')) and lat and lon:
+            out.append(dict(lat=float(lat), lon=float(lon), st=th(st.get('tele_station_name')),
+                            loc='ต.%s อ.%s' % (th(g.get('tumbon_name')), th(g.get('amphoe_name'))), t=tm, v=v))
+    out.sort(key=lambda r: -r['v'])
+    return out
+
+# ---------------- ภาพที่วาดเอง ----------------
+def b64(p): return base64.b64encode(open(p, 'rb').read()).decode()
+
+def render_html(D, RAIN):
+    fonts = ''.join("@font-face{font-family:'Sarabun';font-weight:%s;src:url(data:font/woff2;base64,%s) format('woff2');unicode-range:%s;}" % (o['w'], o['b64'], o['r'])
+                    for o in json.load(open(A('sarabun.json'))))
+    tpl = {str(i): 'data:image/jpeg;base64,' + b64(A('t%d.jpg' % i)) for i in range(1, 5)}
+    return ('<!doctype html><html><head><meta charset=utf-8><style>%s</style></head><body>'
+            '<div style="font-family:Sarabun">ก <b>ข</b> <span style=font-weight:600>ค</span></div><script>%s</script><script>'
+            'var TPL=%s, D=%s, RAIN=%s, BASE=%s;'
+            'function loadImg(s){return new Promise(function(o,n){var i=new Image();i.onload=function(){o(i)};i.onerror=n;i.src=s;});}'
+            "window.run=async function(){await Promise.all(['400 15px Sarabun','600 20px Sarabun','700 20px Sarabun'].map(function(f){return document.fonts.load(f)}));"
+            "var out={};for(var n=1;n<=4;n++){out[n]=RR.render(n,await loadImg(TPL[n]),JSON.parse(JSON.stringify(D)),'Sarabun').toDataURL('image/jpeg',0.95);}"
+            "out[9]=(await RR9.render(RAIN,D.iso,BASE,'Sarabun')).toDataURL('image/jpeg',0.95);return out;};</script></body></html>") % (
+        fonts, open(A('rr.js'), encoding='utf-8').read(), json.dumps(tpl), json.dumps(D, ensure_ascii=False),
+        json.dumps(RAIN, ensure_ascii=False), open(A('basemap.json')).read())
+
+def onesheet_html(D, d):
+    t = D['t10']; pos = json.load(open(A('positions.json'), encoding='utf-8'))
+    res = [('เขื่อนปราณบุรี', 'ปราณบุรี', 391, 10, 'ปราณบุรี'), ('ห้วยไทรงาม', 'หัวหิน', 9.75, 11, 'ไทรงาม'), ('ห้วยมงคล', 'หัวหิน', 5.85, 12, 'มงคล'),
+           ('ยางชุม', 'กุยบุรี', 41.1, 13, 'ยางชุม'), ('ห้วยวังเต็น', 'กุยบุรี', 11.4, 14, 'วังเต็น'), ('คลองบึง', 'เมืองฯ', 22.2, 15, 'คลองบึง'),
+           ('ห้วยอ่างหิน', 'เมืองฯ', 2.8, 16, 'อ่างหิน'), ('คลองช่องลม', 'ทับสะแก', 5.5, 17, 'ช่องลม'), ('คลองจะกระ', 'ทับสะแก', 10.4, 18, 'จะกระ')]
+    R = [dict(size=('l' if cap > 100 else 'm'), n=nm, a=a, cap=cap, s=t['E%d' % r], p=t['F%d' % r], room=t['H%d' % r],
+              inf=max(0, t.get('I%d' % r) or 0), out=sum((t.get(c + str(r)) or 0) for c in 'JLNPR'),
+              lat=pos[k][0], lon=pos[k][1], rain=D['rain'][k]) for nm, a, cap, r, k in res]
+    G = [('GT7', 'Gt.7', 'คลองบางสะพาน', 'บ้านวังยาง', 7.5), ('GT20', 'Gt.20', 'คลองบางสะพาน', 'อ.บางสะพาน', 6), ('KY3', 'Ky.3', 'คลองกุยบุรี', 'บ้านทุ่งแฝก', 4.4),
+         ('GT9', 'Gt.9', 'คลองทับสะแก', 'บ้านกลาง', 4), ('GT10', 'Gt.10', 'คลองกรูด', 'บ้านหนองหญ้าปล้อง', 3.5)]
+    g = [dict(c=c, n=nm, p=pl, bank=b, **D['g'][k]) for k, c, nm, pl, b in G]
+    order = ['ไทรงาม', 'มงคล', 'ปราณบุรี', 'สามร้อยยอด', 'ยางชุม', 'วังเต็น', 'คลองบึง', 'อ่างหิน', 'ช่องลม', 'จะกระ', 'บางสะพาน', 'บางสะพานน้อย']
+    rain = [dict(n=k, y=D['rain'][k][0], t=D['rain'][k][1], c=D['rain'][k][2], lat=pos[k][0], lon=pos[k][1]) for k in order]
+    data = dict(R=R, g=g, rain=rain, tot=dict(s=t['E19'], p=t['F19'], inf=t['I19'], out=sum(x['out'] for x in R), room=t['H19']))
+    ff = ''.join("@font-face{font-family:'%s';font-weight:%s;src:url(data:font/woff2;base64,%s) format('woff2');unicode-range:%s;}" % (o['fam'], o['w'], o['b64'], o['r'])
+                 for o in json.load(open(A('f2.json'))))
+    html = open(A('onesheet.html'), encoding='utf-8').read()
+    for k, v in [('/*FONT*/', ff), ('__DATA__', json.dumps(data, ensure_ascii=False)), ('__LOGO__', 'data:image/png;base64,' + b64(A('rid_logo_w.png'))),
+                 ('__PROV__', open(A('prov.json')).read()), ('__GEO__', open(A('geo.json')).read()),
+                 ('__TERR__', 'data:image/webp;base64,' + b64(A('terrain.webp'))), ('__DATE__', '%d %s %d' % (d.day, TH_S[d.month], d.year + 543))]:
+        html = html.replace(k, v)
+    return html
+
+async def render_all(D, d, RAIN, out, tmp):
+    from playwright.async_api import async_playwright
+    async with async_playwright() as p:
+        exe = '/usr/bin/google-chrome' if os.path.exists('/usr/bin/google-chrome') and not os.environ.get('CI') else None
+        b = await p.chromium.launch(executable_path=exe) if exe else await p.chromium.launch()
+        h1 = os.path.join(tmp, 'r.html'); open(h1, 'w', encoding='utf-8').write(render_html(D, RAIN))
+        pg = await b.new_page(); await pg.goto('file://' + h1); await pg.wait_for_timeout(300)
+        res = await pg.evaluate('run()')
+        for k, v in res.items(): open(os.path.join(out, '%s.jpg' % k), 'wb').write(base64.b64decode(v.split(',')[1]))
+        await pg.close()
+        h2 = os.path.join(tmp, 'o.html'); open(h2, 'w', encoding='utf-8').write(onesheet_html(D, d))
+        pg = await b.new_page(viewport={'width': 1920, 'height': 1600}, device_scale_factor=2)
+        await pg.goto('file://' + h2); await pg.evaluate('document.fonts.ready'); await pg.wait_for_timeout(800)
+        els = await pg.query_selector_all('.pg')
+        await els[-4].screenshot(path=os.path.join(tmp, '14.png')); await els[1].screenshot(path=os.path.join(tmp, '15.png'))
+        for n in (14, 15): Image.open(os.path.join(tmp, '%d.png' % n)).convert('RGB').save(os.path.join(out, '%d.jpg' % n), quality=92)
+        await b.close()
+
+# ---------------- หลัก ----------------
+def main(src, run_id='local'):
+    P = json.load(open(src, encoding='utf-8')) if src.endswith('.json') else cells_from_xlsx(src)
+    D, d = build_D(P); iso = D['iso']
+    out = os.path.join(ROOT, 'line', 'daily', iso); os.makedirs(out, exist_ok=True)
+    tmp = os.path.join(ROOT, '.tmp_daily'); os.makedirs(tmp, exist_ok=True)
+    text = line_text(D, d); open(os.path.join(out, 'line_text.txt'), 'w', encoding='utf-8').write(text)
+    err = web_images(d, out)
+    try: RAIN = rain24()
+    except Exception as e: RAIN = []; err['rain24'] = str(e)
+    asyncio.run(render_all(D, d, RAIN, out, tmp))
+    # PDF ภาพ 1–4
+    pages = [Image.open(os.path.join(out, '%d.jpg' % i)).convert('RGB') for i in range(1, 5)]
+    pages[0].save(os.path.join(out, 'report_1-4.pdf'), save_all=True, append_images=pages[1:], resolution=200)
+    order = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.png', '6.png', '7.jpg', '8.jpg', '9.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg']
+    msgs = [dict(type='text', text=text)]
+    for f in order:
+        p = os.path.join(out, f)
+        if not os.path.exists(p): continue
+        stem = f.split('.')[0]; pv = Image.open(p).convert('RGB'); pv.thumbnail((1024, 1024)); pv.save(os.path.join(out, stem + '_pv.jpg'), quality=85)
+        base = REPO_RAW + 'line/daily/%s/' % iso
+        msgs.append(dict(type='image', originalContentUrl=base + f, previewImageUrl=base + stem + '_pv.jpg'))
+    msgs.append(dict(type='text', text='📄 ไฟล์ PDF รายงานภาพ 1–4 วันที่ %d %s %d\n%sline/daily/%s/report_1-4.pdf' % (d.day, TH_M[d.month], d.year + 543, PAGES, iso)))
+    feed = 'test_latest.json' if os.environ.get('NOSEND') else 'latest.json'   # ทดสอบ: ไม่ส่งเข้า LINE
+    json.dump(dict(id='daily-%s-%s' % (iso, run_id), messages=msgs), open(os.path.join(ROOT, 'line', feed), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump(dict(iso=iso, errors=err, images=len(msgs) - 2), open(os.path.join(out, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('OK', iso, 'images', len(msgs) - 2, 'errors', err)
+
+if __name__ == '__main__':
+    main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else 'local')
