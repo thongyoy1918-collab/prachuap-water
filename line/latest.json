@@ -1,5 +1,5 @@
 {
- "id": "daily-2026-11-22",
+ "id": "daily-2026-11-22-v2",
  "messages": [
   {
    "type": "text",
@@ -64,6 +64,16 @@
    "type": "image",
    "originalContentUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/13.jpg",
    "previewImageUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/13_pv.jpg"
+  },
+  {
+   "type": "image",
+   "originalContentUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/14.jpg",
+   "previewImageUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/14_pv.jpg"
+  },
+  {
+   "type": "image",
+   "originalContentUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/15.jpg",
+   "previewImageUrl": "https://raw.githubusercontent.com/thongyoy1918-collab/prachuap-water/main/line/daily/2026-11-22/15_pv.jpg"
   },
   {
    "type": "text",
