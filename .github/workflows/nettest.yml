@@ -1,0 +1,9 @@
+name: nettest
+on: workflow_dispatch
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for u in https://www.tmd.go.th/forecast/daily https://www.tmd.go.th/forecast/heavyrainriskarea https://satda.tmd.go.th/ https://weather.tmd.go.th/ryg/ryg240_latest.jpg "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain7day_forecast" "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24h?province_code=77"; do
+            curl -s -o /dev/null -m 30 -A "Mozilla/5.0 Chrome/130" -w "%{http_code} %{size_download} $u\n" "$u"; done
