@@ -38,7 +38,7 @@ jobs:
       - name: Build
         env:
           SRC: ${{ github.event_name == 'repository_dispatch' && '/tmp/payload.json' || inputs.src }}
-          NOSEND: ${{ github.event_name == 'workflow_dispatch' && inputs.send != 'true' && '1' || '' }}
+          NOSEND: ${{ (github.event_name == 'workflow_dispatch' && inputs.send != 'true' || github.event.client_payload.nosend) && '1' || '' }}
         run: python daily/pipeline.py "$SRC" "${{ github.run_id }}"
       - name: Commit
         run: |
