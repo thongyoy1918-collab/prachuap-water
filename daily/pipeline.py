@@ -87,9 +87,11 @@ def web_images(d, out):
             except Exception: pass
         raise RuntimeError('ไม่พบภาพ')
     def sat():
-        for hh in ['0700', '0600', '0800', '0500']:
+        prev = (d - datetime.timedelta(days=1)).strftime('%Y%m%d')
+        tries = [(ymd, h) for h in ['0700', '0600', '0500', '0400', '0300', '0200', '0100', '0000']] + [(prev, h) for h in ['2300', '2200', '2100']]
+        for day, hh in tries:
             try:
-                b = get('https://satda.tmd.go.th/wp-content/uploads/data/%s/%s%s_sat.jpg' % (ymd, ymd, hh)).content
+                b = get('https://satda.tmd.go.th/wp-content/uploads/data/%s/%s%s_sat.jpg' % (day, day, hh)).content
                 if len(b) > 10000: return b
             except Exception: pass
         raise RuntimeError('ไม่พบภาพดาวเทียม')
@@ -202,6 +204,17 @@ def main(src, run_id='local'):
         base = REPO_RAW + 'line/daily/%s/' % iso
         msgs.append(dict(type='image', originalContentUrl=base + f, previewImageUrl=base + stem + '_pv.jpg'))
     msgs.append(dict(type='text', text='📄 ไฟล์ PDF รายงานภาพ 1–4 วันที่ %d %s %d\n%sline/daily/%s/report_1-4.pdf' % (d.day, TH_M[d.month], d.year + 543, PAGES, iso)))
+    # หน้าเว็บรวมรายงานของวัน (เปิด/แชร์ลิงก์ได้)
+    cards = ''.join('<a href="%s"><img loading=lazy src="%s"></a>' % (f, f.split('.')[0] + '_pv.jpg') for f in order if os.path.exists(os.path.join(out, f)))
+    page = ('<!doctype html><html lang=th><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">'
+            '<title>รายงานน้ำประจำวัน %s</title><style>body{font-family:sans-serif;margin:0;background:#eef2f6;color:#0f2a4a}'
+            'header{background:#0f2a4a;color:#fff;padding:14px 16px}h1{font-size:18px;margin:0}main{max-width:900px;margin:auto;padding:12px}'
+            'pre{white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;font-size:14px}a.pdf{display:inline-block;margin:8px 0;padding:10px 14px;background:#1a73e8;color:#fff;border-radius:6px;text-decoration:none}'
+            '.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.g img{width:100%%;border-radius:6px;background:#fff}</style></head>'
+            '<body><header><h1>รายงานสถานการณ์น้ำประจำวัน คป.ประจวบคีรีขันธ์ — %d %s %d</h1></header><main>'
+            '<a class=pdf href="report_1-4.pdf">📄 PDF รายงานภาพ 1–4</a><div class=g>%s</div><pre>%s</pre></main></body></html>') % (
+        iso, d.day, TH_M[d.month], d.year + 543, cards, text.replace('&', '&amp;').replace('<', '&lt;'))
+    open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
     feed = 'test_latest.json' if os.environ.get('NOSEND') else 'latest.json'   # ทดสอบ: ไม่ส่งเข้า LINE
     json.dump(dict(id='daily-%s-%s' % (iso, run_id), messages=msgs), open(os.path.join(ROOT, 'line', feed), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(iso=iso, errors=err, images=len(msgs) - 2), open(os.path.join(out, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
