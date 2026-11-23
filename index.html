@@ -2390,6 +2390,10 @@ el.innerHTML=`<h3>สรุปพื้นที่ประสบอุทก�
         <p class="wx-note" id="wxNote">ระบบเปิดในแท็บใหม่ · ถ้าเปิดจากแอปข้อมูลน้ำประจวบฯ จะแสดงระบบในหน้านี้ด้วย</p>
         <script>document.addEventListener("click",e=>{const el=e.target.closest('[data-t="wxmon"],[data-id="wxmon"],[data-o="wxmon"],a[href="#wxmon"]');if(!el||el.closest("#wxmon"))return;e.preventDefault();e.stopImmediatePropagation();if(/github\.io$/.test(location.hostname)){location.href="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/"}else{const a=document.createElement("a");a.href="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/";a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}},true);</script><script>document.addEventListener("DOMContentLoaded",()=>{try{if(/github\.io$/.test(location.hostname)){const f=document.getElementById("wxFrame");f.innerHTML='<iframe src="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/" title="ระบบติดตามและพยากรณ์อากาศ" loading="lazy"></iframe>';f.hidden=false;document.getElementById("wxNote").textContent="แสดงระบบจริงด้านบน · กดปุ่มเพื่อเปิดเต็มจอ"}}catch(e){}})</script>
       </section>
+      <section id="dailyrep">
+        <div class="sec-h"><div><h2>รายงานน้ำประจำวัน</h2><p>ข้อความรายงาน LINE ภาพรายงาน 14 ภาพ และไฟล์ PDF ของทุกเช้า ย้อนหลังรายวัน</p></div></div>
+        <p class="wx-note">เปิดหน้ารายงานน้ำประจำวันในแท็บใหม่ · <a href="https://thongyoy1918-collab.github.io/prachuap-water/report/" target="_blank" rel="noopener">https://thongyoy1918-collab.github.io/prachuap-water/report/</a></p>
+      </section>
       <section id="floodrep">
         <style>
         .fr-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
@@ -6552,7 +6556,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
 (function(){
   const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
   const ic=p=>`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
-  const I={help:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  const I={doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',help:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
     dam:'<path d="M3 20h18"/><path d="M5 20V9l5 3V6l9 4v10"/>',flow:'<path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 19c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5"/>',
     trend:'<path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/>',rain:'<path d="M7 15a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 15H7z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/>',
     dots:'<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/>',
@@ -6582,6 +6586,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
     {id:"flood",cat:"อุทกภัย 69",chip:["ดำเนินการ "+FLOOD.sites.length+" จุด","info"],t:"การให้ความช่วยเหลือ อุทกภัย 69",d:"สนับสนุนเครื่องสูบน้ำ รถขุด และเครื่องจักร-เครื่องมือในพื้นที่ประสบภัย",ic:I.help,c:"#E07A1F",n:String(FLOOD.sites.length),u:"จุด",s:Object.entries(FLOOD.types).map(([k,t])=>[t[0].replace(/ .*/,""),FLOOD.sites.filter(x=>x.type===k).reduce((a,x)=>a+x.count,0)]).filter(x=>x[1]).map(x=>x[0]+" "+x[1]).join(" · ")},
     {id:"floodrep",cat:"อุทกภัย 69",chip:["ล่าสุด "+FLOOD.reps[0].date,"bad"],t:"รายงานน้ำท่วม",d:"สรุปสถานการณ์อุทกภัยรายครั้ง ภาพ 16:9 และข้อความรายงานพร้อมส่ง",ic:I.help,c:"#C62828",n:String(FLOOD.reps[0].rows.reduce((a,r)=>a+(r[5]||0),0)),u:"ครัวเรือน",s:FLOOD.reps[0].date+" "+FLOOD.reps[0].time+" น. · "+FLOOD.reps[0].rows.length+" พื้นที่ · "+FLOOD.reps.length+" รายงาน"},
     {id:"wxmon",cat:"พยากรณ์อากาศ",chip:["อัปเดตอัตโนมัติ","info"],t:"ระบบติดตามและพยากรณ์อากาศ",d:"ฝนสะสม 24 ชม. ระดับน้ำ พยากรณ์ฝนรายชั่วโมงและแนวโน้ม 5 วัน",ic:I.wave,c:"#1C86C0",n:"5",u:"วันล่วงหน้า",s:"thaiwater.net · Open-Meteo · ข้อความรายงาน LINE"},
+    {id:"dailyrep",cat:"รายงาน",chip:["ทุกเช้า 07.00 น.","info"],t:"รายงานน้ำประจำวัน",d:"ข้อความ LINE ภาพรายงานทั้งชุด และ PDF ย้อนหลังรายวัน",ic:I.doc,c:"#17A398",n:"14",u:"ภาพ",s:"ข้อความ LINE · ภาพ 1–15 · PDF"},
     {id:"present",cat:"Present",chip:["16:9","info"],t:"ข้อมูลสำหรับ Present",d:"ภาพแนวนอน 16:9 พร้อมใส่สไลด์นำเสนอ",ic:I.grid,c:"#123B7A",n:"8",u:"ภาพ",s:"สถานการณ์น้ำ · อ่างเกิน 80% · Inflow/Outflow · ฝนสะสม · จุดเสี่ยง · เครื่องจักร",viz:""},
     {id:"maps",cat:"แผนที่",chip:["4K · 8 อำเภอ","info"],t:"แผนที่แหล่งน้ำ และทางน้ำ",d:"แผนที่แหล่งน้ำ ทางน้ำรายอำเภอ และรายตำบล จังหวัดประจวบคีรีขันธ์",ic:I.grid,c:"#0E8A7A",n:"8",u:"อำเภอ",s:"64 แผ่น · รายงาน PDF รายอำเภอ",viz:""},{id:"gallery",cat:"รูปภาพ",chip:["8 อ่าง","info"],t:"รูปภาพอ่างเก็บน้ำ",d:"อ่างเก็บน้ำขนาดกลาง 8 แห่ง แขวนเป็นภาพ คลิกเพื่อดูแบบเต็มจอ",ic:I.grid,c:"#0E7490",n:"8",u:"อ่าง",s:"ภาพถ่ายอ่างเก็บน้ำ · ดูแบบเต็มจอ",viz:""},
   ].filter(t=>document.getElementById(t.id));
@@ -6696,7 +6701,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest("#flPdf,#fl
   }
   const h1=document.querySelector(".top .crumb h1"),cs=document.querySelector(".top .crumb .tx span"),secs=[...document.querySelectorAll(".content>section")];
   function show(id,push){
-    if(id==="wxmon"){const U="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/";if(/github\.io$/.test(location.hostname)){location.href=U}else{const a=document.createElement("a");a.href=U;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}return}
+    if(id==="dailyrep"){const U="https://thongyoy1918-collab.github.io/prachuap-water/report/";if(/github\.io$/.test(location.hostname)){location.href=U}else{const a=document.createElement("a");a.href=U;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}return}if(id==="wxmon"){const U="https://thongyoy1918-collab.github.io/prachuap-water/flood-monitor/";if(/github\.io$/.test(location.hostname)){location.href=U}else{const a=document.createElement("a");a.href=U;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}return}
     const t=T.find(x=>x.id===id);const sec=t&&document.getElementById(id);
     secs.forEach(s=>s.classList.toggle("cur",s===sec));
     document.body.classList.toggle("in-topic",!!sec);

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>รายงานน้ำประจำวัน</title>
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#14263a;--mut:#5b6b7a;--line:#dbe3ec;--nv:#0f2c4f;--ac:#1e6fd8;--gold:#f5c518;--ok:#1f8f4e;--bad:#d64541;--fd:"Kanit","IBM Plex Sans Thai",sans-serif;--fb:"IBM Plex Sans Thai",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1522;--card:#13212f;--ink:#e3ecf5;--mut:#9fb2c4;--line:#25384b;--ac:#6eaaff;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--fb)}
+header{background:linear-gradient(100deg,#0c2443,#163c66);color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 18px max(16px,env(safe-area-inset-left,0px))}
+.hd{max-width:1400px;margin:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hd img{width:52px;height:52px}
+.hd h1{font:700 clamp(22px,3vw,30px)/1.2 var(--fd);margin:0}.hd p{margin:2px 0 0;color:#c9d8ea;font-size:14px}
+.hd .bk{margin-left:auto;color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.45);border-radius:999px;padding:7px 16px;font:600 14px var(--fd);white-space:nowrap}
+.hd .bk:hover{background:rgba(255,255,255,.1)}
+main{max-width:1400px;margin:auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:grid;gap:16px}
+.days{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}
+.days button{flex:none;font:600 14px var(--fd);border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;text-align:center;line-height:1.25}
+.days button small{display:block;font:500 11.5px var(--fb);color:var(--mut)}
+.days button[aria-pressed="true"]{background:var(--nv);border-color:var(--nv);color:#fff}.days button[aria-pressed="true"] small{color:#c9d8ea}
+.days button:focus-visible,.btn:focus-visible,.g button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.top{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.top{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0}
+.card h2{font:600 18px var(--fd);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.card h2::before{content:"";width:5px;height:20px;border-radius:3px;background:#17a398}
+.card h2 .sp{margin-left:auto;display:flex;gap:8px}
+.btn{font:600 13.5px var(--fd);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.pri{background:var(--nv);border-color:var(--nv);color:#fff}
+pre{white-space:pre-wrap;word-break:break-word;margin:0;font:14px/1.65 var(--fb);max-height:460px;overflow:auto;background:var(--bg);border-radius:12px;padding:12px 14px}
+.stat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stat div{background:var(--bg);border-radius:12px;padding:10px 12px}.stat small{color:var(--mut);display:block;font-size:12.5px}.stat b{font:700 24px var(--fd)}
+.pdf{display:flex;gap:12px;align-items:center;background:var(--bg);border-radius:12px;padding:12px 14px}
+.pdf .ic{width:44px;height:52px;border-radius:6px;background:#d64541;color:#fff;font:700 13px var(--fd);display:flex;align-items:end;justify-content:center;padding-bottom:6px;flex:none}
+.pdf .tx{min-width:0;flex:1}.pdf .tx b{display:block}.pdf .tx small{color:var(--mut)}
+.err{margin-top:12px;color:var(--bad);font-size:13.5px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.g figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.g button{all:unset;cursor:zoom-in;display:block;aspect-ratio:4/3;background:#0d1c2c}
+.g img{width:100%;height:100%;object-fit:contain;display:block}
+.g figcaption{padding:8px 12px 10px;font-size:13.5px;display:flex;gap:8px;align-items:baseline}
+.g figcaption b{font:700 13px var(--fd);color:#fff;background:var(--nv);border-radius:6px;padding:1px 7px;flex:none}
+.g figcaption span{min-width:0}
+.empty{color:var(--mut);padding:30px;text-align:center}
+#lb{position:fixed;inset:0;background:rgba(4,12,22,.92);z-index:50;display:none;flex-direction:column}
+#lb.on{display:flex}
+#lb .bar{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;color:#fff}
+#lb .bar b{font:600 16px var(--fd);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lb .bar a,#lb .bar button{color:#fff;background:rgba(255,255,255,.12);border:0;border-radius:10px;padding:7px 12px;font:600 13.5px var(--fd);text-decoration:none;cursor:pointer}
+#lb .im{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 8px 16px;position:relative}
+#lb .im img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;background:#fff}
+#lb .nv{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:24px;cursor:pointer}
+#lb .pv{left:12px}#lb .nx{right:12px}
+</style></head><body>
+<header><div class="hd"><img src="../icon-192.png" alt=""><div><h1>รายงานน้ำประจำวัน</h1><p>โครงการชลประทานประจวบคีรีขันธ์ · ข้อความและภาพรายงานที่ส่งกลุ่ม LINE ทุกเช้า</p></div><a class="bk" href="../">← แดชบอร์ดข้อมูลน้ำ</a></div></header>
+<main>
+  <nav class="days" id="days" aria-label="เลือกวันที่"></nav>
+  <div class="top">
+    <section class="card"><h2>ข้อความรายงาน LINE<span class="sp"><button class="btn" id="cp" type="button">คัดลอกข้อความ</button></span></h2><pre id="txt">กำลังโหลด…</pre></section>
+    <section class="card"><h2>สรุปชุดรายงาน</h2>
+      <div class="stat"><div><small>วันที่</small><b id="sD">–</b></div><div><small>จำนวนภาพ</small><b id="sN">–</b></div><div><small>สถานะ</small><b id="sS">–</b></div></div>
+      <div class="pdf"><div class="ic">PDF</div><div class="tx"><b>รายงานภาพ 1–4</b><small id="pdfN">report_1-4.pdf</small></div><a class="btn pri" id="pdfA" target="_blank" rel="noopener">เปิด PDF</a></div>
+      <div class="err" id="err" hidden></div>
+    </section>
+  </div>
+  <section class="card"><h2>ภาพรายงาน<span class="sp"><span id="gN" style="color:var(--mut);font:500 13.5px var(--fb)"></span></span></h2><div class="g" id="g"></div></section>
+</main>
+<div id="lb" role="dialog" aria-modal="true" aria-label="ดูภาพ"><div class="bar"><b id="lbT"></b><a id="lbO" target="_blank" rel="noopener">เปิดภาพเต็ม</a><a id="lbD" download>ดาวน์โหลด</a><button type="button" id="lbX" aria-label="ปิด">✕</button></div><div class="im"><button class="nv pv" type="button" id="lbP" aria-label="ก่อนหน้า">‹</button><img id="lbI" alt=""><button class="nv nx" type="button" id="lbN" aria-label="ถัดไป">›</button></div></div>
+<script>
+const BASE="../line/daily/",$=id=>document.getElementById(id);
+const LBL={1:"รายงานสถานการณ์น้ำ ภาพที่ 1",2:"รายงานสถานการณ์น้ำ ภาพที่ 2",3:"รายงานสถานการณ์น้ำ ภาพที่ 3",4:"รายงานสถานการณ์น้ำ ภาพที่ 4",5:"พยากรณ์อากาศประจำวัน (กรมอุตุนิยมวิทยา)",6:"พื้นที่เสี่ยงฝนตกหนัก (กรมอุตุนิยมวิทยา)",7:"ภาพถ่ายดาวเทียม (กรมอุตุนิยมวิทยา)",8:"เรดาร์ตรวจอากาศระยอง",9:"ปริมาณฝน จ.ประจวบคีรีขันธ์ (ThaiWater)",10:"ปริมาณฝน (ThaiWater)",11:"พยากรณ์ฝน 24 ชม. วันที่ 1 (ThaiWater WRF-ROMS)",12:"พยากรณ์ฝน 24 ชม. วันที่ 2 (ThaiWater WRF-ROMS)",13:"พยากรณ์ฝน 24 ชม. วันที่ 3 (ThaiWater WRF-ROMS)",14:"ภาพรวมสถานการณ์น้ำ (แผ่นเดียว)",15:"รายงานปริมาณฝน"};
+const TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."],TD=["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+const thD=iso=>{const d=new Date(iso+"T00:00:00");return `${d.getDate()} ${TM[d.getMonth()]} ${String(d.getFullYear()+543).slice(-2)}`};
+let IMGS=[],cur=-1;
+const ok=u=>fetch(u,{method:"HEAD",cache:"no-store"}).then(r=>r.ok).catch(()=>false);
+const probe=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=src});
+async function days(){const out=[],now=new Date(Date.now()+7*36e5);const isos=[];for(let k=0;k<45;k++){isos.push(new Date(now-k*864e5).toISOString().slice(0,10))}
+  const res=await Promise.all(isos.map(d=>ok(BASE+d+"/status.json")));isos.forEach((d,i)=>{if(res[i])out.push(d)});return out}
+async function load(iso){document.querySelectorAll("#days button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===iso));try{history.replaceState(null,"","#"+iso)}catch(e){}
+  const P=BASE+iso+"/";$("sD").textContent=thD(iso);$("txt").textContent="กำลังโหลด…";$("g").innerHTML='<div class="empty">กำลังโหลดภาพ…</div>';
+  $("pdfA").href=P+"report_1-4.pdf";$("pdfN").textContent=`report_1-4.pdf · ${thD(iso)}`;
+  fetch(P+"line_text.txt",{cache:"no-store"}).then(r=>r.ok?r.text():"").then(t=>{$("txt").textContent=t||"ไม่มีข้อความของวันนี้"}).catch(()=>{$("txt").textContent="โหลดข้อความไม่สำเร็จ"});
+  let st={};try{st=await (await fetch(P+"status.json",{cache:"no-store"})).json()}catch(e){}
+  const errs=Object.entries(st.errors||{});$("sS").textContent=errs.length?"มีบางภาพผิดพลาด":"ครบถ้วน";$("sS").style.color=errs.length?"var(--bad)":"var(--ok)";
+  $("err").hidden=!errs.length;$("err").textContent=errs.map(([k,v])=>`ภาพ ${k}: ${v}`).join(" · ");
+  const found=await Promise.all(Array.from({length:15},(_,i)=>i+1).map(async n=>{const pv=P+n+"_pv.jpg";if(!await probe(pv))return null;const full=await probe(P+n+".jpg")?P+n+".jpg":P+n+".png";return{n,pv,full,t:LBL[n]||"ภาพที่ "+n}}));
+  IMGS=found.filter(Boolean);$("sN").textContent=IMGS.length;$("gN").textContent=IMGS.length+" ภาพ";
+  $("g").innerHTML=IMGS.length?IMGS.map((m,i)=>`<figure><button type="button" data-i="${i}" aria-label="ดูภาพ ${m.n} ${m.t}"><img loading="lazy" src="${m.pv}" alt="${m.t}"></button><figcaption><b>${m.n}</b><span>${m.t}</span></figcaption></figure>`).join(""):'<div class="empty">ยังไม่มีภาพของวันนี้</div>'}
+function show(i){if(!IMGS.length)return;cur=(i+IMGS.length)%IMGS.length;const m=IMGS[cur];$("lbI").src=m.full;$("lbI").alt=m.t;$("lbT").textContent=`${m.n}. ${m.t}`;$("lbO").href=m.full;$("lbD").href=m.full;$("lbD").setAttribute("download",`${m.n}_${m.full.split("/").slice(-2,-1)[0]}.${m.full.split(".").pop()}`);$("lb").classList.add("on")}
+$("g").addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(b)show(+b.dataset.i)});
+$("lbX").onclick=()=>$("lb").classList.remove("on");$("lbP").onclick=()=>show(cur-1);$("lbN").onclick=()=>show(cur+1);
+addEventListener("keydown",e=>{if(!$("lb").classList.contains("on"))return;if(e.key==="Escape")$("lb").classList.remove("on");if(e.key==="ArrowLeft")show(cur-1);if(e.key==="ArrowRight")show(cur+1)});
+$("cp").onclick=async()=>{const t=$("txt").textContent;try{await navigator.clipboard.writeText(t);$("cp").textContent="คัดลอกแล้ว ✓"}catch(e){const r=document.createRange();r.selectNodeContents($("txt"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("cp").textContent="เลือกข้อความแล้ว"}setTimeout(()=>$("cp").textContent="คัดลอกข้อความ",1800)};
+(async()=>{const D=await days();if(!D.length){$("txt").textContent="ยังไม่มีรายงาน";$("g").innerHTML='<div class="empty">ยังไม่มีรายงาน</div>';return}
+  $("days").innerHTML=D.map(d=>{const x=new Date(d+"T00:00:00");return `<button type="button" data-d="${d}" aria-pressed="false">${thD(d)}<small>${TD[x.getDay()]}</small></button>`}).join("");
+  $("days").addEventListener("click",e=>{const b=e.target.closest("button[data-d]");if(b)load(b.dataset.d)});
+  const h=location.hash.slice(1);load(D.includes(h)?h:D[0])})();
+</script></body></html>
