@@ -181,6 +181,47 @@ async def render_all(D, d, RAIN, out, tmp):
         for n in (14, 15): Image.open(os.path.join(tmp, '%d.png' % n)).convert('RGB').save(os.path.join(out, '%d.jpg' % n), quality=92)
         await b.close()
 
+# ---------------- หน้าเว็บของวัน ----------------
+def write_page(out, iso, d, text, order):
+    import zipfile, html as H
+    have = [f for f in order if os.path.exists(os.path.join(out, f))]
+    zname = 'รายงานน้ำ_%s.zip' % iso
+    with zipfile.ZipFile(os.path.join(out, 'images.zip'), 'w', zipfile.ZIP_STORED) as z:
+        for f in have: z.write(os.path.join(out, f), 'ภาพ%s%s' % (f.split('.')[0].zfill(2), os.path.splitext(f)[1]))
+        if os.path.exists(os.path.join(out, 'report_1-4.pdf')): z.write(os.path.join(out, 'report_1-4.pdf'), 'รายงานภาพ1-4_%s.pdf' % iso)
+    page_url = PAGES + 'line/daily/%s/' % iso
+    title = '%d %s %d' % (d.day, TH_M[d.month], d.year + 543)
+    cards = ''.join('<figure><a href="%s" target=_blank><img loading=lazy src="%s"></a><figcaption>ภาพที่ %s <a href="%s" download>⬇︎ บันทึก</a></figcaption></figure>'
+                    % (f, f.split('.')[0] + '_pv.jpg', f.split('.')[0], f) for f in have)
+    page = """<!doctype html><html lang=th><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>รายงานน้ำประจำวัน %(iso)s</title><style>
+body{font-family:system-ui,sans-serif;margin:0;background:#eef2f6;color:#0f2a4a}header{background:#0f2a4a;color:#fff;padding:14px 16px}
+h1{font-size:18px;margin:0}main{max-width:960px;margin:auto;padding:12px}.bar{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.b{display:inline-flex;align-items:center;gap:6px;padding:11px 16px;border:0;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;color:#fff}
+.copy{background:#06c755}.dl{background:#1a73e8}.pdf{background:#5b6b7f}.share{background:#00a64f}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}figure{margin:0;background:#fff;border-radius:8px;overflow:hidden}
+figure img{width:100%%;display:block}figcaption{display:flex;justify-content:space-between;padding:6px 10px;font-size:13px}figcaption a{color:#1a73e8;text-decoration:none}
+h2{font-size:16px;margin:18px 0 6px}pre{white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;font-size:14px;font-family:inherit}
+#t{position:fixed;left:50%%;bottom:24px;transform:translateX(-50%%);background:#0f2a4a;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s}#t.on{opacity:1}
+</style></head><body><header><h1>รายงานสถานการณ์น้ำประจำวัน คป.ประจวบคีรีขันธ์ — %(title)s</h1></header><main>
+<div class=bar>
+<button class="b copy" onclick="cp()">📋 คัดลอกข้อความส่ง LINE</button>
+<a class="b dl" href="images.zip" download="%(zname)s">⬇︎ ดาวน์โหลดภาพทั้งหมด (.zip)</a>
+<a class="b pdf" href="report_1-4.pdf" target=_blank>📄 PDF ภาพ 1–4</a>
+<a class="b share" href="https://line.me/R/share?text=%(share)s">💬 แชร์ลิงก์นี้ใน LINE</a>
+</div>
+<div class=g>%(cards)s</div>
+<h2>ข้อความส่ง LINE</h2><pre id=msg>%(text)s</pre></main><div id=t></div>
+<script>
+function toast(s){var t=document.getElementById('t');t.textContent=s;t.className='on';setTimeout(function(){t.className=''},2000)}
+function cp(){var s=document.getElementById('msg').innerText;
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(s).then(function(){toast('คัดลอกข้อความแล้ว')},fb)}else fb();
+ function fb(){var a=document.createElement('textarea');a.value=s;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();a.setSelectionRange(0,s.length);
+  var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(a);toast(ok?'คัดลอกข้อความแล้ว':'กดค้างที่ข้อความด้านล่างเพื่อคัดลอก')}}
+</script></body></html>""" % dict(iso=iso, title=title, zname=zname, cards=cards, text=H.escape(text),
+                       share=requests.utils.quote('รายงานสถานการณ์น้ำประจำวัน คป.ประจวบฯ %s\n%s' % (title, page_url), safe=''))
+    open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
+
 # ---------------- หลัก ----------------
 def main(src, run_id='local'):
     P = json.load(open(src, encoding='utf-8')) if src.endswith('.json') else cells_from_xlsx(src)
@@ -225,17 +266,8 @@ def main(src, run_id='local'):
     msgs = [dict(type='text', text=text)]
     if first: msgs.append(carousel(first, [], 'ภาพรายงาน 1–9 วันที่ %s' % thd))
     msgs.append(carousel(second, [links], 'ภาพรายงาน 11–15 และ PDF วันที่ %s' % thd))
-    # หน้าเว็บรวมรายงานของวัน (เปิด/แชร์ลิงก์ได้)
-    cards = ''.join('<a href="%s"><img loading=lazy src="%s"></a>' % (f, f.split('.')[0] + '_pv.jpg') for f in order if os.path.exists(os.path.join(out, f)))
-    page = ('<!doctype html><html lang=th><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">'
-            '<title>รายงานน้ำประจำวัน %s</title><style>body{font-family:sans-serif;margin:0;background:#eef2f6;color:#0f2a4a}'
-            'header{background:#0f2a4a;color:#fff;padding:14px 16px}h1{font-size:18px;margin:0}main{max-width:900px;margin:auto;padding:12px}'
-            'pre{white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;font-size:14px}a.pdf{display:inline-block;margin:8px 0;padding:10px 14px;background:#1a73e8;color:#fff;border-radius:6px;text-decoration:none}'
-            '.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.g img{width:100%%;border-radius:6px;background:#fff}</style></head>'
-            '<body><header><h1>รายงานสถานการณ์น้ำประจำวัน คป.ประจวบคีรีขันธ์ — %d %s %d</h1></header><main>'
-            '<a class=pdf href="report_1-4.pdf">📄 PDF รายงานภาพ 1–4</a><div class=g>%s</div><pre>%s</pre></main></body></html>') % (
-        iso, d.day, TH_M[d.month], d.year + 543, cards, text.replace('&', '&amp;').replace('<', '&lt;'))
-    open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
+    # หน้าเว็บรวมรายงานของวัน (คัดลอกข้อความ / ดาวน์โหลดภาพทั้งหมด / แชร์ลิงก์)
+    write_page(out, iso, d, text, order)
     feed = 'test_latest.json' if os.environ.get('NOSEND') else 'latest.json'   # ทดสอบ: ไม่ส่งเข้า LINE
     feed_obj = dict(id='daily-%s-%s' % (iso, run_id), messages=msgs)
     if P.get('to'): feed_obj['to'] = P['to']   # ส่งกลับแชตที่ส่งไฟล์มา
