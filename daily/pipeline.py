@@ -237,7 +237,9 @@ def main(src, run_id='local'):
         iso, d.day, TH_M[d.month], d.year + 543, cards, text.replace('&', '&amp;').replace('<', '&lt;'))
     open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
     feed = 'test_latest.json' if os.environ.get('NOSEND') else 'latest.json'   # ทดสอบ: ไม่ส่งเข้า LINE
-    json.dump(dict(id='daily-%s-%s' % (iso, run_id), messages=msgs), open(os.path.join(ROOT, 'line', feed), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    feed_obj = dict(id='daily-%s-%s' % (iso, run_id), messages=msgs)
+    if P.get('to'): feed_obj['to'] = P['to']   # ส่งกลับแชตที่ส่งไฟล์มา
+    json.dump(feed_obj, open(os.path.join(ROOT, 'line', feed), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(iso=iso, errors=err, images=len(have)), open(os.path.join(out, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('OK', iso, 'images', len(have), 'messages', len(msgs), 'errors', err)
 
