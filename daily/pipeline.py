@@ -198,13 +198,14 @@ def write_page(out, iso, d, text, order):
 body{font-family:system-ui,sans-serif;margin:0;background:#eef2f6;color:#0f2a4a}header{background:#0f2a4a;color:#fff;padding:14px 16px}
 h1{font-size:18px;margin:0}main{max-width:960px;margin:auto;padding:12px}.bar{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
 .b{display:inline-flex;align-items:center;gap:6px;padding:11px 16px;border:0;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;color:#fff}
-.copy{background:#06c755}.dl{background:#1a73e8}.pdf{background:#5b6b7f}.share{background:#00a64f}
+.copy{background:#06c755}.sh{background:#e8590c}.b:disabled{opacity:.6}.dl{background:#1a73e8}.pdf{background:#5b6b7f}.share{background:#00a64f}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}figure{margin:0;background:#fff;border-radius:8px;overflow:hidden}
 figure img{width:100%%;display:block}figcaption{display:flex;justify-content:space-between;padding:6px 10px;font-size:13px}figcaption a{color:#1a73e8;text-decoration:none}
 h2{font-size:16px;margin:18px 0 6px}pre{white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;font-size:14px;font-family:inherit}
 #t{position:fixed;left:50%%;bottom:24px;transform:translateX(-50%%);background:#0f2a4a;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s}#t.on{opacity:1}
 </style></head><body><header><h1>รายงานสถานการณ์น้ำประจำวัน คป.ประจวบคีรีขันธ์ — %(title)s</h1></header><main>
 <div class=bar>
+<button class="b sh" id=shb onclick="shareAll()" disabled>⏳ กำลังเตรียมภาพ…</button>
 <button class="b copy" onclick="cp()">📋 คัดลอกข้อความส่ง LINE</button>
 <a class="b dl" href="images.zip" download="%(zname)s">⬇︎ ดาวน์โหลดภาพทั้งหมด (.zip)</a>
 <a class="b pdf" href="report_1-4.pdf" target=_blank>📄 PDF ภาพ 1–4</a>
@@ -214,11 +215,21 @@ h2{font-size:16px;margin:18px 0 6px}pre{white-space:pre-wrap;background:#fff;pad
 <h2>ข้อความส่ง LINE</h2><pre id=msg>%(text)s</pre></main><div id=t></div>
 <script>
 function toast(s){var t=document.getElementById('t');t.textContent=s;t.className='on';setTimeout(function(){t.className=''},2000)}
+var SH=%(shfiles)s, FILES=null;
+(function(){var bt=document.getElementById('shb');
+ if(!(navigator.canShare&&window.File)){bt.textContent='📤 แชร์ข้อความ+ภาพ 1–13';bt.disabled=false;return;}
+ Promise.all(SH.map(function(f){return fetch(f).then(function(r){return r.blob()}).then(function(b){return new File([b],'ภาพ'+f.split('.')[0]+'.'+f.split('.')[1],{type:b.type||'image/jpeg'})})}))
+ .then(function(fs){FILES=fs;bt.textContent='📤 แชร์ข้อความ+ภาพ 1–13';bt.disabled=false})
+ .catch(function(){bt.textContent='📤 แชร์ข้อความ+ภาพ 1–13';bt.disabled=false})})();
+function shareAll(){var s=document.getElementById('msg').innerText;
+ if(!(FILES&&navigator.canShare&&navigator.canShare({files:FILES}))){toast('เบราว์เซอร์นี้แชร์ภาพไม่ได้ ให้เปิดหน้านี้ใน Chrome หรือ Safari');return;}
+ try{navigator.clipboard&&navigator.clipboard.writeText(s)}catch(e){}
+ navigator.share({files:FILES,text:s}).then(function(){toast('แชร์แล้ว — ถ้าข้อความไม่ติดไป ให้กดวางในแชต (คัดลอกไว้ให้แล้ว)')}).catch(function(){});}
 function cp(){var s=document.getElementById('msg').innerText;
  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(s).then(function(){toast('คัดลอกข้อความแล้ว')},fb)}else fb();
  function fb(){var a=document.createElement('textarea');a.value=s;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();a.setSelectionRange(0,s.length);
   var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(a);toast(ok?'คัดลอกข้อความแล้ว':'กดค้างที่ข้อความด้านล่างเพื่อคัดลอก')}}
-</script></body></html>""" % dict(iso=iso, title=title, zname=zname, cards=cards, text=H.escape(text),
+</script></body></html>""" % dict(iso=iso, title=title, zname=zname, cards=cards, text=H.escape(text), shfiles=json.dumps([f for f in have if int(f.split('.')[0]) <= 13]),
                        share=requests.utils.quote('รายงานสถานการณ์น้ำประจำวัน คป.ประจวบฯ %s\n%s' % (title, page_url), safe=''))
     open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
 
