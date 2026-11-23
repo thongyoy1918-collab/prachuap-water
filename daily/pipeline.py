@@ -196,14 +196,35 @@ def main(src, run_id='local'):
     pages = [Image.open(os.path.join(out, '%d.jpg' % i)).convert('RGB') for i in range(1, 5)]
     pages[0].save(os.path.join(out, 'report_1-4.pdf'), save_all=True, append_images=pages[1:], resolution=200)
     order = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.png', '6.png', '7.jpg', '8.jpg', '9.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg']
+    # ส่ง LINE แบบประหยัดโควตา: 3 ข้อความ = ข้อความรายงาน + การ์ดเลื่อนดู 2 ชุด (กดการ์ด = เปิดภาพเต็ม)
+    base = REPO_RAW + 'line/daily/%s/' % iso
+    page_url = PAGES + 'line/daily/%s/' % iso
+    pdf_url = PAGES + 'line/daily/%s/report_1-4.pdf' % iso
+    thd = '%d %s %d' % (d.day, TH_S[d.month], (d.year + 543) % 100)
+    def bubble(f):
+        p = os.path.join(out, f); stem = f.split('.')[0]
+        im = Image.open(p); w, h = im.size
+        pv = im.convert('RGB'); pv.thumbnail((1024, 1024)); pv.save(os.path.join(out, stem + '_pv.jpg'), quality=85)
+        r = max(1 / 3, min(3, w / h)); ar = '%d:%d' % (round(r * 100), 100)
+        return {'type': 'bubble', 'size': 'giga',
+                'hero': {'type': 'image', 'url': base + stem + '_pv.jpg', 'size': 'full', 'aspectRatio': ar, 'aspectMode': 'fit',
+                         'action': {'type': 'uri', 'label': 'ดูภาพเต็ม', 'uri': base + f}},
+                'footer': {'type': 'box', 'layout': 'horizontal', 'paddingAll': '8px', 'contents': [
+                    {'type': 'text', 'text': 'ภาพที่ %s' % stem, 'size': 'sm', 'color': '#0f2a4a', 'weight': 'bold', 'flex': 1},
+                    {'type': 'text', 'text': 'แตะเพื่อดูภาพเต็ม', 'size': 'xs', 'color': '#888888', 'align': 'end', 'flex': 2}]}}
+    have = [f for f in order if os.path.exists(os.path.join(out, f))]
+    first = [f for f in have if int(f.split('.')[0]) <= 9]
+    second = [f for f in have if int(f.split('.')[0]) > 9]
+    links = {'type': 'bubble', 'size': 'giga', 'body': {'type': 'box', 'layout': 'vertical', 'spacing': 'md', 'contents': [
+        {'type': 'text', 'text': 'รายงานน้ำประจำวัน %s' % thd, 'weight': 'bold', 'size': 'lg', 'color': '#0f2a4a', 'wrap': True},
+        {'type': 'text', 'text': 'คป.ประจวบคีรีขันธ์', 'size': 'sm', 'color': '#666666'},
+        {'type': 'button', 'style': 'primary', 'color': '#1a73e8', 'action': {'type': 'uri', 'label': '📄 PDF รายงานภาพ 1–4', 'uri': pdf_url}},
+        {'type': 'button', 'style': 'secondary', 'action': {'type': 'uri', 'label': 'ดูรายงานทั้งหมด', 'uri': page_url}}]}}
+    def carousel(files, extra, alt):
+        return {'type': 'flex', 'altText': alt, 'contents': {'type': 'carousel', 'contents': [bubble(f) for f in files] + extra}}
     msgs = [dict(type='text', text=text)]
-    for f in order:
-        p = os.path.join(out, f)
-        if not os.path.exists(p): continue
-        stem = f.split('.')[0]; pv = Image.open(p).convert('RGB'); pv.thumbnail((1024, 1024)); pv.save(os.path.join(out, stem + '_pv.jpg'), quality=85)
-        base = REPO_RAW + 'line/daily/%s/' % iso
-        msgs.append(dict(type='image', originalContentUrl=base + f, previewImageUrl=base + stem + '_pv.jpg'))
-    msgs.append(dict(type='text', text='📄 ไฟล์ PDF รายงานภาพ 1–4 วันที่ %d %s %d\n%sline/daily/%s/report_1-4.pdf' % (d.day, TH_M[d.month], d.year + 543, PAGES, iso)))
+    if first: msgs.append(carousel(first, [], 'ภาพรายงาน 1–9 วันที่ %s' % thd))
+    msgs.append(carousel(second, [links], 'ภาพรายงาน 11–15 และ PDF วันที่ %s' % thd))
     # หน้าเว็บรวมรายงานของวัน (เปิด/แชร์ลิงก์ได้)
     cards = ''.join('<a href="%s"><img loading=lazy src="%s"></a>' % (f, f.split('.')[0] + '_pv.jpg') for f in order if os.path.exists(os.path.join(out, f)))
     page = ('<!doctype html><html lang=th><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">'
@@ -217,8 +238,8 @@ def main(src, run_id='local'):
     open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(page)
     feed = 'test_latest.json' if os.environ.get('NOSEND') else 'latest.json'   # ทดสอบ: ไม่ส่งเข้า LINE
     json.dump(dict(id='daily-%s-%s' % (iso, run_id), messages=msgs), open(os.path.join(ROOT, 'line', feed), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    json.dump(dict(iso=iso, errors=err, images=len(msgs) - 2), open(os.path.join(out, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    print('OK', iso, 'images', len(msgs) - 2, 'errors', err)
+    json.dump(dict(iso=iso, errors=err, images=len(have)), open(os.path.join(out, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('OK', iso, 'images', len(have), 'messages', len(msgs), 'errors', err)
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else 'local')
