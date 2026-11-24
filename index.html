@@ -5391,60 +5391,69 @@ const RISK={"year": "2569", "total": 17, "groups": [{"ag": "คป.ประจ�
 const EV_D={"G9":[null, 7.14, 7.14, 7.14, 7.14, 7.13, 7.15, 7.13, 7.13, 7.13, 7.13, 7.13, 7.13, 7.28, 7.56, 7.95, 8.23, 8.35, 8.51, 8.78, 9.04, 9.11, 9.0, 8.83, 8.65, 8.48, 8.38, 8.3, 8.25, 8.23, 8.25, 8.39, 8.63, 8.77, 8.93, 9.09, 9.27, 9.65, 10.1, 10.49, 10.91, 11.01, 10.97, 10.89, 10.76, 10.61, 10.33, 10.03, 9.77, 9.5, 9.29, 9.09, 8.96, 8.81, 8.69, 8.57],"G11":[38.4, 38.38, 38.33, 38.33, 38.33, 38.32, 38.33, 38.3, 38.31, 38.39, 38.64, 39.23, 39.38, 39.28, 39.23, 39.29, 39.48, 39.46, 39.37, 39.27, 39.21, 39.15, 39.09, 39.04, 39.0, 38.95, 38.97, 38.97, 38.98, 39.03, 39.11, 39.21, 39.53, 40.57, 41.34, 41.52, 41.7, 41.93, 41.55, 40.65, 40.39, 40.16, 39.96, 39.8, 39.68, 39.59, 39.52, 39.45, 39.38, 39.31, 39.27, 39.23, 39.19, 39.16, 39.13, 39.1],"R": [0, 0, 0, 0, 0, 0, 0, 0, 0.08, 0.17, 0.7, 1.33, 5.15, 10.38, 5.12, 3.12, 0.72, 0.12, 0.02, 0, 0.02, 0.33, 0.42, 0.28, 4.21, 6.67, 8.73, 15.72, 7.88, 5.6, 3.39, 7.28, 13.55, 15.4, 16.0, 5.79, 11.63, 9.42, 4.55, 1.88, 0.95, 0.3, 0.03, 0.03, 0, 0, 0, 0, 0.02, 0, 0, 0.09, 0.46, 0.37, 0.07, 0], "W7": [2.1, 2.15, 2.15, 2.13, 2.1, 2.07, 2.05, 2.02, 2.01, 1.99, 1.98, 1.97, 1.96, 1.97, 1.98, 2.06, 2.18, 2.31, 2.57, 2.78, 2.82, 2.8, 2.75, 2.68, 2.62, 2.58, 2.55, 2.6, 2.87, 3.74, 4.14, 4.6, 4.9, 4.88, 5.03, 5.26, 5.61, 5.94, 6.2, 6.31, 6.37, 6.32, 6.06, 5.56, 4.87, 4.22, 3.69, 3.34, 3.09, 2.9, 2.75, 2.62, 2.51, 2.42, 2.34, 2.26], "Q7": [35, 38.25, 38.25, 36.95, 35, 33.05, 31.75, 29.8, 29.15, 27.95, 27.4, 26.85, 26.3, 26.85, 27.4, 32.4, 40.2, 48.7, 68.45, 87.1, 90.9, 89, 84.25, 77.8, 72.7, 69.3, 66.75, 71, 95.65, 196.7, 251.1, 317, 362.5, 359.4, 382.8, 419.6, 477.7, 534.5, 580, 599.8, 610.6, 601.6, 555.5, 469.2, 357.85, 262.3, 190.2, 147.1, 118.45, 98.5, 84.25, 72.7, 63.35, 56.5, 50.8, 45.4], "W20": [0.04, 0.09, 0.18, 0.35, 0.49, 0.53, 0.67, 0.87, 1.06, 1.24, 1.42, 1.54, 1.56, 1.5, 1.35, 1.17, 0.99, 0.75, 0.6, 0.46, 0.43, 0.57, 0.89, 1.09, 1.23, 1.33, 1.42, 1.5, 1.54, 1.64, 1.78, 2.52, 2.73, 2.86, 3.16, 3.35, 3.55, 3.71, 3.8, 3.9, 4.01, 4.12, 4.19, 4.2, 4.22, 4.16, 4.05, 3.8, 3.51, 3.17, 2.84, 2.56, 2.29, 2.06, 1.87, 1.84]};
 function drawEv2829(K){
   const W=1920,H=1080,cv=document.createElement("canvas");cv.width=W*2;cv.height=H*2;const c=cv.getContext("2d");c.scale(2,2);
-  {const bg=c.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#FFFFFF");bg.addColorStop(1,"#F1F6FC");c.fillStyle=bg;c.fillRect(0,0,W,H)}
-  const NV="#123B7A",MUT="#5B6B7A",M=24,E=EV_D,N=E.R.length;
-  const shadowCard=(x,y,w,h,r=16)=>{c.save();c.shadowColor="rgba(18,59,122,.12)";c.shadowBlur=18;c.shadowOffsetY=6;rr(c,x,y,w,h,r);c.fillStyle="#fff";c.fill();c.restore()};
-  const head=(x,y,w,t,sub)=>{c.save();rr(c,x,y,w,50,14);c.clip();const g=c.createLinearGradient(x,0,x+w,0);g.addColorStop(0,"#0E2F66");g.addColorStop(1,"#1A4F9C");c.fillStyle=g;c.fillRect(x,y,w,50);c.restore();T(c,t,x+20,y+34,{s:21,w:700,c:"#fff"});if(sub)T(c,sub,x+w-18,y+33,{s:16,w:700,c:"#F5C518",a:"right"})};
-  band169(c,M,[["สถานการณ์ฝนตกและระดับน้ำ ","#fff"],["28–29 ต.ค. 2569","#F5C518"]],"ฝนตกหนัก อ.บางสะพาน · อ.บางสะพานน้อย · อ.ทับสะแก จังหวัดประจวบคีรีขันธ์");
-  const pk=A=>A.reduce((m,v,i)=>v!=null&&(A[m]==null||v>A[m])?i:m,0),p7=pk(E.W7),p20=pk(E.W20),p9=pk(E.G9),p11=pk(E.G11);
-  {const kx=M+1270+20,kw=W-M-kx,tw=(kw-16)/3;[["ฝนสูงสุด","250.0","มม. · ฝายวังยาว","#1A4F9C","#EAF2FC"],["ยอดน้ำ Gt.7",fmt(E.W7[p7],2),`ม. · ${fmt(E.Q7[p7],1)} ลบ.ม./วิ`,"#B4432C","#FBEDE9"],["Gt.20 ตัวเมือง","+"+fmt(E.W20[p20]-3.7,2),"ม. สูงกว่าตลิ่ง","#7A4FC1","#F1EBFA"]].forEach(([a,n,u,col,bg],k)=>{const x=kx+k*(tw+8);rr(c,x,M,tw,150,16);c.fillStyle=bg;c.fill();c.fillStyle=col;rr(c,x,M,tw,6,3);c.fill();
+  {const bg=c.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#FFFFFF");bg.addColorStop(1,"#EEF3FA");c.fillStyle=bg;c.fillRect(0,0,W,H)}
+  const NV="#123B7A",MUT="#5B6B7A",INK="#1E2F40",M=24,E=EV_D,N=E.R.length,C7="#B4432C",C20="#7A4FC1",CR="#1F5FA8",CC="#0F5A8F";
+  const card=(x,y,w,h)=>{c.save();c.shadowColor="rgba(18,59,122,.12)";c.shadowBlur=18;c.shadowOffsetY=6;rr(c,x,y,w,h,16);c.fillStyle="#fff";c.fill();c.restore()};
+  const head=(x,y,w,t)=>{c.save();rr(c,x,y,w,50,14);c.clip();const g=c.createLinearGradient(x,0,x+w,0);g.addColorStop(0,"#0E2F66");g.addColorStop(1,"#1A4F9C");c.fillStyle=g;c.fillRect(x,y,w,50);c.restore();T(c,t,x+20,y+34,{s:21,w:700,c:"#fff"})};
+  const leg=(x,y,items)=>{let lx=x;items.slice().reverse().forEach(([col,t,kind])=>{c.font=`600 14px ${FF}`;const tw=c.measureText(t).width;T(c,t,lx,y,{s:14,w:600,c:"#fff",a:"right"});c.fillStyle=col;if(kind==="bar")c.fillRect(lx-tw-26,y-12,14,14);else c.fillRect(lx-tw-36,y-7,26,4);lx-=tw+(kind==="bar"?46:56)})};
+  band169(c,M,[["สถานการณ์ฝนตกและระดับน้ำ ","#fff"],["28–29 ต.ค. 2569","#F5C518"]],"ลุ่มน้ำคลองบางสะพาน · อ.บางสะพาน อ.บางสะพานน้อย อ.ทับสะแก จังหวัดประจวบคีรีขันธ์");
+  const pk=A=>A.reduce((m,v,i)=>v!=null&&(A[m]==null||v>A[m])?i:m,0),p7=pk(E.W7),p20=pk(E.W20);
+  {const kx=M+1270+20,kw=W-M-kx,tw=(kw-16)/3;[["ฝนสูงสุด","250.0","มม. · ฝายวังยาว",CR,"#EAF2FC"],["ยอดน้ำ Gt.7",fmt(E.W7[p7],2),`ม. · เกินเกณฑ์วิกฤต`,C7,"#FBEDE9"],["Gt.20 ตัวเมือง","+"+fmt(E.W20[p20]-3.7,2),"ม. สูงกว่าตลิ่ง",C20,"#F1EBFA"]].forEach(([a,n,u,col,bg],k)=>{const x=kx+k*(tw+8);rr(c,x,M,tw,150,16);c.fillStyle=bg;c.fill();c.fillStyle=col;rr(c,x,M,tw,6,3);c.fill();
     T(c,a,x+tw/2,M+42,{s:19,w:700,c:NV,a:"center"});fitT(c,n,x+tw/2,M+112,tw-16,{s:60,w:800,c:col,a:"center"});T(c,u,x+tw/2,M+138,{s:15,w:700,c:MUT,a:"center"})})}
-  const by=M+168,bh=H-by-46;
-  // time axis helper (28 ต.ค. 00.00 → 30 ต.ค. 07.00, hourly)
-  const axis=(gx,gw,y0)=>{const hx=i=>gx+(i+.5)*gw/N;c.strokeStyle="#C9D6E6";c.lineWidth=1;c.beginPath();c.moveTo(gx,y0);c.lineTo(gx+gw,y0);c.stroke();
-    for(let i=0;i<N;i++){const h=i%24,d=28+Math.floor(i/24);if(h%6===0){const x=gx+i*gw/N;c.strokeStyle=h===0?"#9DB0C6":"#D5DEEA";c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+(h===0?10:5));c.stroke();T(c,String(h).padStart(2,"0")+".00",x,y0+22,{s:13,c:MUT,a:"center"});if(h===0)T(c,`${d} ต.ค.`,x+4,y0+42,{s:15,w:700,c:NV})}}return hx};
-  const grid=(gx,gw,Yf,vals,fmtL,al)=>{c.strokeStyle="#EEF2F6";c.lineWidth=1;vals.forEach(v=>{c.beginPath();c.moveTo(gx,Yf(v));c.lineTo(gx+gw,Yf(v));c.stroke();T(c,fmtL(v),gx-8,Yf(v)+4,{s:13,c:MUT,a:"right"})})};
-  // ===== top: rain (full width)
-  {const x=M,w=W-2*M,y=by,h=330;shadowCard(x,y,w,h);head(x,y,w,"ฝนเฉลี่ยรายชั่วโมงทั้งลุ่มน้ำคลองบางสะพาน (≈409 ตร.กม. · 12 สถานี)","มม./ชม. · ฝนสะสม มม.");
-   const gx=x+70,gw=w-70-330,r0=y+74,rh=176,rb=r0+rh,rmax=20,cmax=180,Yr=v=>rb-v/rmax*rh;
-   grid(gx,gw,Yr,[0,5,10,15,20],String);[0,60,120,180].forEach(v=>T(c,String(v),gx+gw+10,rb-v/cmax*rh+4,{s:13,c:"#0F5A8F"}));
-   const hx=i=>gx+(i+.5)*gw/N;E.R.forEach((v,i)=>{const bw=gw/N*.78;c.fillStyle=v>=10?"#1F5FA8":"#5DA1DE";c.fillRect(hx(i)-bw/2,Yr(v),bw,rb-Yr(v))});
-   let cm=0;const CM=E.R.map(v=>cm+=v);c.strokeStyle="#0F5A8F";c.lineWidth=2.6;c.beginPath();CM.forEach((v,i)=>{const yy=rb-v/cmax*rh;i?c.lineTo(hx(i),yy):c.moveTo(hx(i),yy)});c.stroke();
-   T(c,`สะสม ${fmt(cm,0)} มม.`,hx(N-1),rb-cm/cmax*rh-10,{s:15,w:800,c:"#0F5A8F",a:"right"});
-   T(c,`${fmt(E.R[34],1)} มม./ชม. · 29 ต.ค. 10.00 น.`,hx(34),Yr(E.R[34])-8,{s:14,w:700,c:"#1F5FA8",a:"center"});
-   T(c,`${fmt(E.R[13],1)} มม./ชม. · 28 ต.ค. 13.00 น.`,hx(13)+10,Yr(E.R[13])+4,{s:14,w:700,c:"#1F5FA8"});
-   axis(gx,gw,rb);
-   // right panel: station maxima + 24h totals
-   const sx=gx+gw+70,sw=x+w-20-sx;let yy=y+80;T(c,"ฝนสูงสุดรายสถานี (เช้า 29 ต.ค.)",sx,yy,{s:16,w:800,c:NV});yy+=14;
-   [["ฝายวังยาว","อ.บางสะพาน",250.0],["รร.บ้านทุ่งสีเสียด","อ.บางสะพานน้อย",164.5],["บ้านสวนขนุน","อ.ทับสะแก",163.5]].forEach(([a,b,v])=>{rr(c,sx,yy,sw,48,10);c.fillStyle="#F6F9FC";c.fill();T(c,a,sx+12,yy+21,{s:15.5,w:700,c:"#11283B"});T(c,b,sx+12,yy+40,{s:12.5,c:MUT});T(c,fmt(v,1),sx+sw-12,yy+33,{s:24,w:800,c:"#C62828",a:"right"});yy+=54});
-   fitT(c,`ฝนเฉลี่ยลุ่มน้ำ 28 ต.ค. ${fmt(CM[23],0)} มม. · 29 ต.ค. ${fmt(CM[47]-CM[23],0)} มม.`,sx,yy+20,sw,{s:14,w:700,c:"#0F5A8F"})}
-  // ===== bottom-left: Gt.7 / Gt.20 hydrograph
-  const y2=by+330+18,h2=by+bh-y2;
-  {const x=M,w=1220,y=y2,h=h2;shadowCard(x,y,w,h);head(x,y,w,"ระดับน้ำรายชั่วโมง คลองบางสะพาน (ม.รทก.)");
-   const gx=x+60,gw=w-60-28,w0=y+66,wh=h-66-128,wb=w0+wh,lo=0,hi=7,Y=v=>wb-(v-lo)/(hi-lo)*wh,hx=i=>gx+(i+.5)*gw/N;
-   grid(gx,gw,Y,[0,1,2,3,4,5,6,7],String);
-   const thr=(v,col,t,dy)=>{c.save();c.setLineDash([7,5]);c.strokeStyle=col;c.lineWidth=1.6;c.beginPath();c.moveTo(gx,Y(v));c.lineTo(gx+gw,Y(v));c.stroke();c.restore();T(c,t,gx+8,Y(v)+dy,{s:13.5,w:700,c:col})};
-   thr(5.7,"#C62828","Gt.7 เกณฑ์วิกฤต 5.70 ม.",-6);thr(4.6,"#E08A00","Gt.7 เกณฑ์เฝ้าระวัง 4.60 ม.",-6);thr(3.7,"#7A4FC1","Gt.20 ระดับตลิ่ง 3.70 ม.",17);
-   c.fillStyle="rgba(122,79,193,.16)";E.W20.forEach((v,i)=>{if(v!=null&&v>3.7){const bw=gw/N;c.fillRect(hx(i)-bw/2,Y(v),bw,Y(3.7)-Y(v))}});
-   const line=(A,col,lw)=>{c.strokeStyle=col;c.lineWidth=lw;c.lineJoin="round";c.beginPath();let st=0;A.forEach((v,i)=>{if(v==null)return;st?c.lineTo(hx(i),Y(v)):c.moveTo(hx(i),Y(v));st=1});c.stroke()};
-   line(E.W7,"#B4432C",3.2);line(E.W20,"#7A4FC1",3.2);
-   const dot=(i,v,col)=>{c.beginPath();c.arc(hx(i),Y(v),6,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=2;c.stroke()};dot(p7,E.W7[p7],"#B4432C");dot(p20,E.W20[p20],"#7A4FC1");
-   T(c,`ยอดน้ำ Gt.7 ${fmt(E.W7[p7],2)} ม. · ${fmt(E.Q7[p7],1)} ลบ.ม./วิ (29 ต.ค. 16.00 น.)`,hx(p7)-12,Y(E.W7[p7])-12,{s:15,w:800,c:"#B4432C",a:"right"});
-   {const tx=gx+gw-4;c.strokeStyle="#7A4FC1";c.lineWidth=1.2;c.beginPath();c.moveTo(hx(p20),Y(E.W20[p20])-7);c.lineTo(hx(p20)+30,Y(6.05)+8);c.lineTo(tx-200,Y(6.05)+8);c.stroke();T(c,`ยอดน้ำ Gt.20 ${fmt(E.W20[p20],2)} ม.`,tx,Y(6.55),{s:15,w:800,c:"#7A4FC1",a:"right"});T(c,`20.00 น. · สูงกว่าตลิ่ง ${fmt(E.W20[p20]-3.7,2)} ม.`,tx,Y(6.12),{s:14,w:700,c:"#7A4FC1",a:"right"})}
-   axis(gx,gw,wb);
-   {let lx=x+w-20,ly=y+31;[["#7A4FC1","Gt.20 สะพาน ร.ร.อนุบาลบางสะพาน"],["#FF8A70","Gt.7 สะพานบ้านวังยาว"]].forEach(([col,t])=>{c.font=`600 14.5px ${FF}`;const tw=c.measureText(t).width;T(c,t,lx,ly,{s:14.5,w:600,c:"#fff",a:"right"});c.fillStyle=col==="#7A4FC1"?"#C9B3F5":col;c.fillRect(lx-tw-34,ly-7,24,5);lx-=tw+60})}
-   const ch=[["เตือนล่วงหน้า 6 ชม.","Gt.7 ถึงเกณฑ์เฝ้าระวัง 07.00 น. → Gt.20 ล้นตลิ่ง 13.00 น."],["ฝนหนักสุด → ยอดน้ำ Gt.7 6 ชม.","ฝน 10.00 น. → Gt.7 สูงสุด 16.00 น."],["ยอดน้ำ Gt.7 → Gt.20 อีก 4 ชม.","ยอดน้ำในตัวเมือง 20.00 น."]],cw=(w-44-16)/3,cy=y+h-66;
-   ch.forEach(([a,b],k)=>{const xx=x+22+k*(cw+8);rr(c,xx,cy,cw,52,10);c.fillStyle="#F3F6FB";c.fill();fitT(c,a,xx+14,cy+22,cw-24,{s:16,w:800,c:NV});fitT(c,b,xx+14,cy+42,cw-24,{s:13.5,c:MUT})})}
-  // ===== bottom-right: narrative
-  {const x=M+1220+18,w=W-M-x,y=y2,h=h2;shadowCard(x,y,w,h);head(x,y,w,"สรุปสถานการณ์");
-   const P=[["#1F5FA8","ฝนตก 2 ช่วง","28 ต.ค. ช่วงบ่าย ฝนเฉลี่ยลุ่มน้ำ 28 มม. ทำให้ดินอิ่มน้ำ และเช้า 29 ต.ค. 04.00–14.00 น. ฝนหนักที่สุด 16.0 มม./ชม. (10.00 น.) รวม 139 มม. สูงสุดที่ฝายวังยาว 250.0 มม."],
-     ["#B4432C","คลองบางสะพาน Gt.7","ถึงเกณฑ์เฝ้าระวัง 4.60 ม. เวลา 07.00 น. เกินเกณฑ์วิกฤต 5.70 ม. เวลา 13.00 น. ยอดน้ำ 6.37 ม. (610.6 ลบ.ม./วิ) เวลา 16.00 น."],
-     ["#7A4FC1","ตัวเมืองบางสะพาน Gt.20","ล้นตลิ่งตั้งแต่ 13.00 น. ยอดน้ำ 4.22 ม. เวลา 20.00 น. สูงกว่าตลิ่ง 0.52 ม. ลดต่ำกว่าตลิ่ง 30 ต.ค. 00.00 น."],
-     ["#E08A00","คลองใหญ่ GT.11 · อ.บางสะพานน้อย","ล้นตลิ่ง 10.00–15.00 น. สูงสุด 1.33 ม. เหนือตลิ่ง เวลา 13.00 น."],
-     ["#0E7C86","คลองทับสะแก GT.9 · อ.ทับสะแก","ล้นตลิ่ง 16.00–18.00 น. สูงสุด 0.11 ม. เหนือตลิ่ง เวลา 17.00 น."],
-     ["#2E8B3A","แนวโน้ม","30 ต.ค. ระดับน้ำทุกสถานีลดลงต่ำกว่าตลิ่ง สถานการณ์คลี่คลาย"]];
-   let yy=y+76;P.forEach(([col,t,d])=>{c.fillStyle=col;rr(c,x+20,yy-15,6,Math.max(20,1),3);c.fill();T(c,t,x+36,yy,{s:17,w:800,c:col});yy+=24;const n=wrapT(c,d,x+36,yy,w-58,23,{s:15,c:"#26384A"});c.fillStyle=col;c.fillRect(x+20,yy-39,5,24+n*23-4);yy+=n*23+12})}
-  T(c,"ที่มา: ฝนเฉลี่ยลุ่มน้ำและระดับน้ำ Gt.7/Gt.20 จากการวิเคราะห์น้ำฝน–น้ำท่า คลองบางสะพาน · GT.9/GT.11 จาก ThaiWater (ชป.) · ฝนสูงสุดจากรายงานสถานการณ์น้ำท่วม 29 ต.ค. 69",M,H-18,{s:15,c:MUT});
+  const by=M+168,bot=H-46,LX=M,LW=1230,RX=LX+LW+18,RW=W-M-RX;
+  // shared time axis for both charts (aligned)
+  const gx=LX+64,gw=LW-64-66,hx=i=>gx+(i+.5)*gw/N;
+  const vgrid=(y0,y1)=>{for(let i=0;i<=N;i+=6){const h=i%24,x=gx+i*gw/N;c.strokeStyle=h===0?"#D3DDEA":"#F0F3F7";c.lineWidth=1;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y1);c.stroke()}};
+  const axis=y0=>{c.strokeStyle="#AEBBCB";c.lineWidth=1.2;c.beginPath();c.moveTo(gx,y0);c.lineTo(gx+gw,y0);c.stroke();
+    for(let i=0;i<N;i+=6){const h=i%24,x=gx+i*gw/N;T(c,String(h).padStart(2,"0")+".00",x,y0+20,{s:13,c:MUT,a:"center"});if(h===0)T(c,`${28+i/24} ต.ค. 69`,x+4,y0+40,{s:14.5,w:800,c:NV})}};
+  const hgrid=(Yf,vals,lab)=>{vals.forEach(v=>{c.strokeStyle="#EEF2F6";c.lineWidth=1;c.beginPath();c.moveTo(gx,Yf(v));c.lineTo(gx+gw,Yf(v));c.stroke();T(c,lab(v),gx-10,Yf(v)+4,{s:13,c:MUT,a:"right"})})};
+  // ===== rain card
+  {const y=by,h=300;card(LX,y,LW,h);head(LX,y,LW,"ฝนเฉลี่ยรายชั่วโมง ลุ่มน้ำคลองบางสะพาน (409 ตร.กม. · 12 สถานี)");leg(LX+LW-20,y+32,[[ "#7FB6EA","ฝนรายชั่วโมง (มม.)","bar"],["#9FD0F5","ฝนสะสม (มม.)","line"]]);
+   const r0=y+74,rh=158,rb=r0+rh,rmax=20,cmax=180,Yr=v=>rb-v/rmax*rh;vgrid(r0-6,rb);hgrid(Yr,[0,5,10,15,20],String);
+   [0,60,120,180].forEach(v=>T(c,String(v),gx+gw+10,rb-v/cmax*rh+4,{s:13,c:CC}));T(c,"มม./ชม.",gx-10,r0-14,{s:12.5,w:700,c:MUT,a:"right"});T(c,"สะสม",gx+gw+10,r0-14,{s:12.5,w:700,c:CC});
+   E.R.forEach((v,i)=>{const bw=gw/N*.74;c.fillStyle=v>=10?CR:"#7FB6EA";c.fillRect(hx(i)-bw/2,Yr(v),bw,rb-Yr(v))});
+   let cm=0;const CM=E.R.map(v=>cm+=v);c.strokeStyle=CC;c.lineWidth=2.6;c.beginPath();CM.forEach((v,i)=>{const yy=rb-v/cmax*rh;i?c.lineTo(hx(i),yy):c.moveTo(hx(i),yy)});c.stroke();
+   T(c,`สะสม ${fmt(cm,0)} มม.`,hx(N-1),rb-cm/cmax*rh-10,{s:15,w:800,c:CC,a:"right"});
+   const tag=(i,t)=>{c.font=`700 13.5px ${FF}`;const tw=c.measureText(t).width+16,x=hx(i)-tw/2,yy=Yr(E.R[i])-30;rr(c,x,yy,tw,22,11);c.fillStyle=CR;c.fill();T(c,t,hx(i),yy+16,{s:13.5,w:700,c:"#fff",a:"center"})};
+   tag(13,"10.4 มม./ชม. · 13.00 น.");tag(34,"16.0 มม./ชม. · 10.00 น.");axis(rb)}
+  // ===== hydrograph card
+  {const y=by+300+16,h=bot-y;card(LX,y,LW,h);head(LX,y,LW,"ระดับน้ำรายชั่วโมง คลองบางสะพาน (ม.รทก.)");leg(LX+LW-20,y+32,[["#FF9C85","Gt.7 สะพานบ้านวังยาว","line"],["#CDB8F7","Gt.20 ตัวเมืองบางสะพาน","line"]]);
+   const w0=y+74,wb=y+h-132,lo=0,hi=8,Y=v=>wb-(v-lo)/(hi-lo)*(wb-w0);vgrid(w0-6,wb);hgrid(Y,[0,1,2,3,4,5,6,7,8],String);
+   c.fillStyle="rgba(198,40,40,.06)";c.fillRect(gx,Y(7.5),gw,Y(5.7)-Y(7.5));c.fillStyle="rgba(224,138,0,.07)";c.fillRect(gx,Y(5.7),gw,Y(4.6)-Y(5.7));
+   const thr=(v,col,t,dy)=>{c.save();c.setLineDash([7,5]);c.strokeStyle=col;c.lineWidth=1.5;c.beginPath();c.moveTo(gx,Y(v));c.lineTo(gx+gw,Y(v));c.stroke();c.restore();T(c,t,gx+8,Y(v)+dy,{s:13.5,w:700,c:col})};
+   {c.strokeStyle="#5A2A1E";c.lineWidth=2.2;c.beginPath();c.moveTo(gx,Y(7.5));c.lineTo(gx+gw,Y(7.5));c.stroke();T(c,"ระดับตลิ่ง Gt.7 · 7.50 ม.",gx+8,Y(7.5)-6,{s:13.5,w:800,c:"#5A2A1E"})}thr(5.7,"#C62828","เกณฑ์วิกฤต Gt.7 · 5.70 ม.",-6);thr(4.6,"#D97A00","เกณฑ์เฝ้าระวัง Gt.7 · 4.60 ม.",-6);thr(3.7,C20,"ระดับตลิ่ง Gt.20 · 3.70 ม.",17);
+   c.fillStyle="rgba(122,79,193,.18)";E.W20.forEach((v,i)=>{if(v!=null&&v>3.7){const bw=gw/N;c.fillRect(hx(i)-bw/2,Y(v),bw,Y(3.7)-Y(v))}});
+   const line=(A,col)=>{c.strokeStyle=col;c.lineWidth=3.2;c.lineJoin="round";c.beginPath();let st=0;A.forEach((v,i)=>{if(v==null)return;st?c.lineTo(hx(i),Y(v)):c.moveTo(hx(i),Y(v));st=1});c.stroke()};line(E.W7,C7);line(E.W20,C20);
+   const dot=(i,v,col)=>{c.beginPath();c.arc(hx(i),Y(v),6,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=2.2;c.stroke()};
+   [[31,E.W7[31],"#D97A00"],[37,E.W7[37],"#C62828"],[p7,E.W7[p7],C7],[37,E.W20[37],C20],[p20,E.W20[p20],C20],[48,E.W20[48],"#2E8B3A"]].forEach(([i,v,col])=>dot(i,v,col));
+   const call=(i,v,lines,col,dx,dy,al)=>{const x0=hx(i),y0=Y(v),tx=x0+dx,ty=y0+dy;c.strokeStyle=col;c.lineWidth=1.2;c.beginPath();c.moveTo(x0,y0);c.lineTo(tx+(al==="right"?6:-6),ty-6);c.stroke();lines.forEach((t,k)=>T(c,t,tx,ty+k*19,{s:k?13.5:15,w:k?600:800,c:col,a:al}))};
+   call(p7,E.W7[p7],[`ยอดน้ำ ${fmt(E.W7[p7],2)} ม. · 16.00 น.`,`${fmt(E.Q7[p7],1)} ลบ.ม./วินาที`],C7,-40,-24,"right");
+   call(31,E.W7[31],["เฝ้าระวัง 07.00 น."],"#D97A00",-16,-20,"right");
+   call(37,E.W7[37],["เกินวิกฤต 13.00 น."],"#C62828",14,44,"left");
+   call(p20,E.W20[p20],[`Gt.20 สูงสุด ${fmt(E.W20[p20],2)} ม. · 20.00 น.`,`สูงกว่าตลิ่ง ${fmt(E.W20[p20]-3.7,2)} ม.`],C20,40,-92,"left");
+   call(37,E.W20[37],["ล้นตลิ่ง 13.00 น."],C20,30,44,"left");
+   call(48,E.W20[48],["น้ำลดต่ำกว่าตลิ่ง","30 ต.ค. 00.00 น."],"#2E8B3A",22,96,"left");
+   axis(wb);
+   const ch=[["เตือนล่วงหน้า 6 ชม.","Gt.7 ถึงเฝ้าระวัง 07.00 น. → Gt.20 ล้นตลิ่ง 13.00 น."],["ฝนหนักสุด → ยอดน้ำ Gt.7 · 6 ชม.","ฝน 10.00 น. → Gt.7 สูงสุด 16.00 น."],["Gt.7 → Gt.20 · 4 ชม.","ยอดน้ำถึงตัวเมือง 20.00 น."]],cw=(LW-40-24)/3,cy=y+h-66;
+   ch.forEach(([a,b],k)=>{const xx=LX+20+k*(cw+12);rr(c,xx,cy,cw,50,10);c.fillStyle="#F2F6FC";c.fill();c.fillStyle=NV;rr(c,xx,cy,5,50,2.5);c.fill();fitT(c,a,xx+16,cy+21,cw-26,{s:15.5,w:800,c:NV});fitT(c,b,xx+16,cy+41,cw-26,{s:13.5,c:MUT})})}
+  // ===== right: management summary (timeline)
+  {const y=by,h=bot-by;card(RX,y,RW,h);head(RX,y,RW,"สรุปการบริหารจัดการน้ำ");
+   const P=[[CR,"ปริมาณฝน","29 ต.ค.","ฝนเฉลี่ยทั้งลุ่มน้ำ 139 มม. (สะสม 28–29 ต.ค. 168 มม.) ฝนหนักที่สุดช่วง 04.00–14.00 น."],
+     ["#0E7C86","น้ำไหลมารวม","คลองบางสะพาน","น้ำจากทั้งลุ่มน้ำไหลรวมผ่าน Gt.7 สะพานบ้านวังยาว ระยะ 13.6 กม. ถึงตัวเมือง แยกคลองเดิม (Gt.20) และคลองลัด (Gt.21) รวมกันก่อน ปตร.ปลายคลอง แล้วออกทะเล"],
+     [C7,"ระดับน้ำ Gt.7","เกณฑ์วิกฤต","07.00 น. 4.60 ม. ถึงเกณฑ์เฝ้าระวัง · 13.00 น. 5.94 ม. เกินเกณฑ์วิกฤต · 16.00 น. สูงสุด 6.37 ม. (610.6 ลบ.ม./วินาที) ต่ำกว่าตลิ่ง Gt.7 (7.50 ม.) 1.13 ม."],
+     [C20,"ล้นตลิ่ง","13.00 น.","ตัวเมือง Gt.20 ล้นตลิ่ง 13.00 น. สูงสุด 4.22 ม. (+0.52 ม.) เวลา 20.00 น. · คลองใหญ่ GT.11 10.00–15.00 น. · คลองทับสะแก GT.9 16.00–18.00 น."],
+     ["#2E8B3A","น้ำลด","30 ต.ค. 00.00 น.","Gt.7 ต่ำกว่าเกณฑ์วิกฤต 19.00 น. ต่ำกว่าเฝ้าระวัง 21.00 น. · Gt.20 ลดต่ำกว่าตลิ่ง 30 ต.ค. 00.00 น. · 07.00 น. Gt.7 เหลือ 2.26 ม."]];
+   const cx=RX+38,tx=RX+66,tw=RW-66-22;let yy=y+84;const ys=[];
+   P.forEach(([col,t,tg,d],k)=>{ys.push([yy,col,k+1]);T(c,t,tx,yy+6,{s:19,w:800,c:col});c.font=`800 19px ${FF}`;const w1=c.measureText(t).width;c.font=`700 13px ${FF}`;const w2=c.measureText(tg).width+18;rr(c,tx+w1+10,yy-11,w2,22,11);c.fillStyle=col+"1F";c.fill();T(c,tg,tx+w1+10+w2/2,yy+4,{s:13,w:700,c:col,a:"center"});
+     const n=wrapT(c,d,tx,yy+34,tw,25,{s:16,c:INK});yy+=34+n*25+18});
+   c.strokeStyle="#D5DEEA";c.lineWidth=2;c.beginPath();c.moveTo(cx,ys[0][0]);c.lineTo(cx,ys[ys.length-1][0]);c.stroke();
+   ys.forEach(([y0,col,n])=>{c.beginPath();c.arc(cx,y0,15,0,7);c.fillStyle=col;c.fill();c.strokeStyle="#fff";c.lineWidth=3;c.stroke();T(c,String(n),cx,y0+5.5,{s:15,w:800,c:"#fff",a:"center"})});
+   // station maxima
+   let sy=bot-186;c.strokeStyle="#E3EAF2";c.lineWidth=1;c.beginPath();c.moveTo(RX+20,sy-10);c.lineTo(RX+RW-20,sy-10);c.stroke();
+   T(c,"ฝนสูงสุดรายสถานี เช้า 29 ต.ค. (มม.)",RX+22,sy+14,{s:16,w:800,c:NV});sy+=26;
+   [["ฝายวังยาว","ต.ร่อนทอง อ.บางสะพาน",250.0],["รร.บ้านทุ่งสีเสียด","ต.ทรายทอง อ.บางสะพานน้อย",164.5],["บ้านสวนขนุน","ต.นาหูกวาง อ.ทับสะแก",163.5]].forEach(([a,b,v])=>{const bw=RW-44;rr(c,RX+22,sy,bw,44,10);c.fillStyle="#F6F9FC";c.fill();T(c,a,RX+36,sy+20,{s:15.5,w:700,c:INK});T(c,b,RX+36,sy+38,{s:12.5,c:MUT});
+     const bx=RX+260,bl=bw-260-80;rr(c,bx,sy+18,bl,10,5);c.fillStyle="#E7EDF4";c.fill();rr(c,bx,sy+18,bl*v/260,10,5);c.fillStyle="#E5372C";c.fill();T(c,fmt(v,1),RX+22+bw-12,sy+30,{s:21,w:800,c:"#C62828",a:"right"});sy+=50})}
+  T(c,"ที่มา: ฝนเฉลี่ยลุ่มน้ำ และระดับน้ำ Gt.7 / Gt.20 จากการวิเคราะห์น้ำฝน–น้ำท่า คลองบางสะพาน · GT.9 / GT.11 จาก ThaiWater (ชป.) · ฝนรายสถานีจากรายงานสถานการณ์น้ำท่วม 29 ต.ค. 69",M,H-18,{s:14.5,c:MUT});
   T(c,"โครงการชลประทานประจวบคีรีขันธ์ · สำนักงานชลประทานที่ 14",W-M,H-18,{s:15,w:600,c:NV,a:"right"});
   return cv;
 }
