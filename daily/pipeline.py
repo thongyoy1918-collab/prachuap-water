@@ -87,6 +87,13 @@ def web_images(d, out):
             except Exception: pass
         raise RuntimeError('ไม่พบภาพ')
     def sat():
+        # ภาพล่าสุดตามหน้าแรก satda.tmd.go.th ณ เวลาที่โหลด
+        try:
+            m = re.search(r'wp-content/uploads/data/(\d{8})/(\d{12})_sat\.jpg', get('https://satda.tmd.go.th/').text)
+            if m:
+                b = get('https://satda.tmd.go.th/' + m.group(0)).content
+                if len(b) > 10000: return b
+        except Exception: pass
         prev = (d - datetime.timedelta(days=1)).strftime('%Y%m%d')
         tries = [(ymd, h) for h in ['0700', '0600', '0500', '0400', '0300', '0200', '0100', '0000']] + [(prev, h) for h in ['2300', '2200', '2100']]
         for day, hh in tries:
