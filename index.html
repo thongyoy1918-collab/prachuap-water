@@ -5060,7 +5060,27 @@ function drawInfo169(K){
   const card=(x,y,w,h,t)=>{c.save();c.shadowColor="rgba(16,40,70,.12)";c.shadowBlur=16;c.shadowOffsetY=3;rr(c,x,y,w,h,18);c.fillStyle="#fff";c.fill();c.restore();c.fillStyle="#17a398";c.fillRect(x+27,y+16,4.5,27);T(c,t,x+43,y+40,{s:26.5,w:700,c:NV})};
   // map card (example x545-1313,y195-1345)
   const mx=425,my=152,mw=598,mh=896;card(mx,my,mw,mh,"ตำแหน่งอ่างเก็บน้ำ");
-  {const sc=693/722,ox=mx+112,oy=my+92,P=(la,lo)=>K?[ox+K.px(lo)*sc,oy+K.py(la)*sc]:[mx+mw/2,my+mh/2];
+  {const sc=693/722,ox=mx+112,oy=my+92,OS=K&&K.os;
+   const DW=398,DH=722,x0=99.1,x1=100.08,y0=10.9,y1=12.72,cs=0.979,dk=Math.min(DW/((x1-x0)*cs),DH/(y1-y0)),dox=(DW-(x1-x0)*cs*dk)/2,doy=(DH-(y1-y0)*dk)/2;
+   const Q=(lo,la)=>[dox+(lo-x0)*cs*dk,doy+(y1-la)*dk];
+   const P=(la,lo)=>OS?(q=>[ox+q[0]*sc,oy+q[1]*sc])(Q(lo,la)):K?[ox+K.px(lo)*sc,oy+K.py(la)*sc]:[mx+mw/2,my+mh/2];
+   if(OS){// แผนที่พื้นหลัง DEM (แบบ onesheet)
+     const G=OS.geo,path=(pts,close)=>{const p=new Path2D();pts.forEach((q,i)=>{const[X,Y]=Q(q[0],q[1]);i?p.lineTo(X,Y):p.moveTo(X,Y)});if(close)p.closePath();return p};
+     const bins={};G.amp.forEach(a=>a.r[0].forEach(q=>{const b=Math.round(q[1]*50);if(!bins[b]||q[0]>bins[b][0])bins[b]=q}));
+     const cp=Object.keys(bins).map(Number).sort((a,b)=>b-a).map(b=>bins[b]).filter(q=>q[1]<12.64).map(q=>Q(q[0],q[1]));
+     c.save();rr(c,mx+14,my+64,mw-28,mh-150,10);c.clip();c.translate(ox,oy);c.scale(sc,sc);
+     const sea=new Path2D();sea.moveTo(DW+400,cp[0][1]);cp.forEach(q=>sea.lineTo(q[0],q[1]));sea.lineTo(cp[cp.length-1][0],DH+200);sea.lineTo(DW+400,DH+200);sea.closePath();c.fillStyle="#D6E7F3";c.fill(sea);
+     const PV=path(OS.prov,true);c.save();c.filter="blur(5px)";c.globalAlpha=.25;c.translate(5,7);c.fillStyle="#0E2A4C";c.fill(PV);c.restore();
+     const k0=Math.min(560/((x1-x0)*cs),840/(y1-y0)),ox0=(560-(x1-x0)*cs*k0)/2,oy0=(840-(y1-y0)*k0)/2,rs=dk/k0;
+     if(OS.img&&OS.img.naturalWidth)c.drawImage(OS.img,dox-ox0*rs,doy-oy0*rs,560*rs,840*rs);
+     c.setLineDash([6,2.5,1.5,2.5]);c.strokeStyle="rgba(20,20,20,.75)";c.lineWidth=1;c.lineJoin="round";G.amp.forEach(a=>c.stroke(path(a.r[0],true)));c.setLineDash([]);
+     c.globalAlpha=.6;c.strokeStyle="#8FE3FF";c.lineWidth=.5;G.sec.forEach(l=>c.stroke(path(l)));c.globalAlpha=1;
+     c.strokeStyle="#B5409A";c.lineWidth=1;G.canal.forEach(l=>c.stroke(path(l)));
+     c.strokeStyle="#3FC1FF";c.lineWidth=1.9;c.lineCap="round";G.main.forEach(l=>c.stroke(path(l)));c.lineCap="butt";
+     c.strokeStyle="#E53935";c.lineWidth=3;c.stroke(PV);c.restore();
+     {const[X,Y]=P(12.05,99.98);c.save();c.translate(X,Y);c.rotate(Math.PI/2);T(c,"อ่าวไทย",0,0,{s:24,w:500,c:"#5d86a8",a:"center"});c.restore()}
+     {const[X,Y]=P(11.75,99.16);c.save();c.translate(X,Y);c.rotate(-Math.PI/2);T(c,"ประเทศเมียนมา",0,0,{s:16,c:"#9aa5ae",a:"center"});c.restore()}
+   }else{
    // sea rectangle (east side)
    const sx=mx+233,sy0=my+96,sw=mx+mw-14-sx,sh=700;c.fillStyle="#d7e7f4";c.fillRect(sx,sy0,sw,sh);
    c.save();c.translate(sx+sw-52,sy0+sh-190);c.rotate(Math.PI/2);T(c,"อ่าวไทย",0,0,{s:26,w:500,c:"#8fb3d6",a:"center"});c.restore();
@@ -5071,11 +5091,11 @@ function drawInfo169(K){
      c.strokeStyle="rgba(120,200,250,.75)";c.lineWidth=0.7/sc;INF_RIVS.forEach(l=>{c.beginPath();l.forEach(([lo,la],i)=>{const X=K.px(lo),Y=K.py(la);i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke()});
      c.strokeStyle="#2fb1f5";c.lineWidth=2.6/sc;c.lineJoin="round";INF_RIV.forEach(l=>{c.beginPath();l.forEach(([lo,la],i)=>{const X=K.px(lo),Y=K.py(la);i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke()});
      c.setLineDash([5/sc,4/sc]);c.strokeStyle="rgba(25,30,35,.75)";c.lineWidth=1.3/sc;INF_AMPB.forEach(l=>{c.beginPath();l.forEach(([lo,la],i)=>{const X=K.px(lo),Y=K.py(la);i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke()});c.setLineDash([]);
-     c.restore();c.strokeStyle="#fff";c.lineWidth=1.5/sc;c.stroke(PK);c.strokeStyle="#e53935";c.lineWidth=3.2/sc;c.stroke(PK);c.restore()}
+     c.restore();c.strokeStyle="#fff";c.lineWidth=1.5/sc;c.stroke(PK);c.strokeStyle="#e53935";c.lineWidth=3.2/sc;c.stroke(PK);c.restore()}}
    INF_AMP.forEach(([t,lo,la])=>{const[X,Y]=P(la,lo);c.font=`700 15px ${FF}`;c.lineWidth=3.5;c.strokeStyle="rgba(10,25,40,.9)";c.lineJoin="round";c.textAlign="center";c.textBaseline="alphabetic";c.strokeText(t,X,Y);T(c,t,X,Y,{s:15,w:700,c:"#fff",a:"center"})});
    // N + scale (example 630,1120 ; 600-695,1200)
    {const nx=mx+67,ny=my+723;T(c,"N",nx,ny-29,{s:15,w:700,c:NV,a:"center"});c.beginPath();c.arc(nx,ny,24,0,7);c.fillStyle="#fff";c.fill();c.strokeStyle=NV;c.lineWidth=1.6;c.stroke();c.beginPath();c.moveTo(nx,ny-17);c.lineTo(nx+7,ny+11);c.lineTo(nx,ny+5);c.lineTo(nx-7,ny+11);c.closePath();c.fillStyle=NV;c.fill();
-    if(K){const px20=(K.px(99.8)-K.px(99.8-20/108.9))*sc,x0=nx-24,sy=ny+57;c.fillStyle="#29a8ee";c.fillRect(x0,sy,px20/2,7);c.fillStyle=NV;c.fillRect(x0+px20/2,sy,px20/2,7);T(c,"0",x0,sy-9,{s:14,c:MUT,a:"center"});T(c,"20 กม.",x0+px20,sy-9,{s:14,w:600,c:NV,a:"center"})}}
+    if(K){const px20=(OS?(Q(99.8,12)[0]-Q(99.8-20/108.9,12)[0]):(K.px(99.8)-K.px(99.8-20/108.9)))*sc,x0=nx-24,sy=ny+57;c.fillStyle="#29a8ee";c.fillRect(x0,sy,px20/2,7);c.fillStyle=NV;c.fillRect(x0+px20/2,sy,px20/2,7);T(c,"0",x0,sy-9,{s:14,c:MUT,a:"center"});T(c,"20 กม.",x0+px20,sy-9,{s:14,w:600,c:NV,a:"center"})}}
    // callouts (example boxes 205x75 -> 160x58)
    const LEFT=["saingam","yangchum","anghin","chakra"],bw=158,bh=58;
    const pts=R.map(r=>{const ll=INF_LL[r.id]||[12,99.7],[X,Y]=P(ll[0],ll[1]);return{r,X,Y,L:LEFT.includes(r.id)}});
@@ -5121,7 +5141,7 @@ function drawInfo169(K){
   return cv}
 
 
-let MK=null;async function mapKit(){if(MK)return MK;for(let k=0;k<60;k++){try{const w=document.getElementById("prWaterFrame").contentWindow;if(w&&w.MAPK){const m=w.MAPK,im=new Image();im.src=m.TERRAIN;try{await im.decode()}catch(e){}MK={...m,img:im};return MK}}catch(e){}await new Promise(r=>setTimeout(r,100))}return null}
+let MK=null;async function mapKit(){if(MK)return MK;for(let k=0;k<60;k++){try{const w=document.getElementById("prWaterFrame").contentWindow;if(w&&w.MAPK){const m=w.MAPK,im=new Image();im.src=m.TERRAIN;try{await im.decode()}catch(e){}let os=null;try{const g=w.eval("({geo:OS_GEO,prov:OS_PROV,terr:OS_TERR})"),ti=new Image();ti.src=g.terr;try{await ti.decode()}catch(e){}os={geo:g.geo,prov:g.prov,img:ti}}catch(e){}MK={...m,img:im,os};return MK}}catch(e){}await new Promise(r=>setTimeout(r,100))}return null}
 function terrMap(c,K,x,y,w,h,marks){const sc=Math.min(w/398,h/722),ox=x+(w-398*sc)/2,oy=y+(h-722*sc)/2;
   c.save();rr(c,x,y,w,h,12);c.clip();const sg=c.createLinearGradient(x,y,x+w,y+h);sg.addColorStop(0,"#1d5687");sg.addColorStop(1,"#0c2f52");c.fillStyle=sg;c.fillRect(x,y,w,h);
   c.translate(ox,oy);c.scale(sc,sc);const PK=new Path2D(K.PK);
